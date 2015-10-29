@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"controller"
+	"fmt"
+	"golang.org/x/net/websocket"
 	"net"
 	"strconv"
 )
@@ -23,6 +26,7 @@ func main() {
 		if err != nil {
 			// handle error
 		}
+
 		go handleConnection(conn)
 	}
 	// for status, err := bufio.NewReader(conn).ReadString('\n'); status != "exit\n"; status, err = bufio.NewReader(conn).ReadString('\n') {
@@ -32,11 +36,17 @@ func main() {
 
 func handleConnection(conn net.Conn) {
 
+	status, err := bufio.NewReader(conn).ReadString('\n')
+	if err != nil {
+		fmt.Print(err)
+		return
+	}
+	fmt.Print("Receive : " + status)
 	d := controller.Dualshock3{}
 	end := []byte("\n")
 	d.P = func(data int) {
 		conn.Write(strconv.AppendInt(nil, int64(data), 10))
 		conn.Write(end)
 	}
-	d.Start()
+	//d.Start()
 }
