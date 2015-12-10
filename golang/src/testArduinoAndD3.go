@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	//"time"
 
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/firmata"
@@ -13,10 +12,13 @@ import (
 func main() {
 	gbot := gobot.NewGobot()
 
-	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM1")
+	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
 	led := gpio.NewLedDriver(firmataAdaptor, "led", "13")
 	servoY := gpio.NewServoDriver(firmataAdaptor, "servoY", "11")
 	servoX := gpio.NewServoDriver(firmataAdaptor, "servoX", "6")
+	motorPin1 := gpio.NewLedDriver(firmataAdaptor, "motor1", "9")
+	motorPin2 := gpio.NewLedDriver(firmataAdaptor, "motor2", "2")
+	motorPin3 := gpio.NewLedDriver(firmataAdaptor, "motor3", "3")
 	joystickAdaptor := joystick.NewJoystickAdaptor("ps3")
 	joystick := joystick.NewJoystickDriver(joystickAdaptor,
 		"ps3",
@@ -24,30 +26,28 @@ func main() {
 	)
 
 	work := func() {
-		// gobot.Every(1*time.Second, func() {
-		// 	i := uint8(gobot.Rand(90))
-		// 	fmt.Println("Turning", i+90)
-		// 	servo.Move(i + 90)
-		// })
+
 		var headX uint8 = 90
 		var headY uint8 = 180
 
 		servoY.Move(headY)
 		servoX.Move(headX)
+		motorPin1.On()
 		gobot.On(joystick.Event("square_press"), func(data interface{}) {
 			fmt.Println("square_press")
-			led.On()
-
+			motorPin2.On()
+			motorPin3.Off()
 		})
 		gobot.On(joystick.Event("square_release"), func(data interface{}) {
 			fmt.Println("square_release")
 		})
 		gobot.On(joystick.Event("triangle_press"), func(data interface{}) {
 			fmt.Println("triangle_press")
+			motorPin2.Off()
+			motorPin3.On()
 		})
 		gobot.On(joystick.Event("triangle_release"), func(data interface{}) {
 			fmt.Println("triangle_release")
-			led.Off()
 		})
 		gobot.On(joystick.Event("left_x"), func(data interface{}) {
 			fmt.Println("left_x", data.(int16)/(32768/90))
@@ -79,7 +79,7 @@ func main() {
 
 	robot := gobot.NewRobot("bot",
 		[]gobot.Connection{firmataAdaptor, joystickAdaptor},
-		[]gobot.Device{led, servoY, servoX, joystick},
+		[]gobot.Device{led, servoY, servoX, joystick, motorPin1, motorPin2, motorPin3},
 		work,
 	)
 
