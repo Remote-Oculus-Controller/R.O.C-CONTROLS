@@ -6,27 +6,34 @@ import (
 	"github.com/hybridgroup/gobot/platforms/joystick"
 )
 
-var ()
-
 type Dualshock3 struct {
 	Controller
-	P func(int)
+	squareP func()
+	squareR func()
+	axisLX  func(int)
+	axisLY  func(int)
 }
 
-func (d Dualshock3) Start() {
+func (d Dualshock3) Create(in chan byte) *gobot.Robot {
 
-	gbot := gobot.NewGobot()
+	d.squareP = func() {
+		in <- 1
+	}
+	d.squareR = func() {
+		in <- 2
+	}
 	joystickAdaptor := joystick.NewJoystickAdaptor("ps3")
 	joystick := joystick.NewJoystickDriver(joystickAdaptor,
 		"ps3",
-		"/run/media/pheos/Media/Workspace/GitHub/R.O.C-Embeded/R.O.C-CONTROLS/golang/src/controller/json/dualshock3.json",
+		"./controller/json/dualshock3.json",
 	)
 	work := func() {
 		gobot.On(joystick.Event("square_press"), func(data interface{}) {
-			fmt.Println("square_press")
+			fmt.Println("square")
+			d.squareP()
 		})
 		gobot.On(joystick.Event("square_release"), func(data interface{}) {
-			fmt.Println("square_release")
+			d.squareR()
 		})
 		gobot.On(joystick.Event("triangle_press"), func(data interface{}) {
 			fmt.Println("triangle_press")
@@ -35,8 +42,7 @@ func (d Dualshock3) Start() {
 			fmt.Println("triangle_release")
 		})
 		gobot.On(joystick.Event("left_x"), func(data interface{}) {
-			fmt.Println("left_x", data)
-			fmt.Println("Direction; axis X", data)
+
 		})
 		gobot.On(joystick.Event("left_y"), func(data interface{}) {
 			fmt.Println("left_y", data)
@@ -55,7 +61,5 @@ func (d Dualshock3) Start() {
 		work,
 	)
 
-	gbot.AddRobot(robot)
-
-	gbot.Start()
+	return robot
 }

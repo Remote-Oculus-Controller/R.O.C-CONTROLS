@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/hybridgroup/gobot"
+	"github.com/hybridgroup/gobot/platforms/joystick"
 	"github.com/hybridgroup/gobot/platforms/keyboard"
 	"net"
 )
@@ -36,6 +37,7 @@ func send(out chan byte, conn net.Conn) {
 func startDevice(out chan byte) {
 
 	gbot := gobot.NewGobot()
+
 	keys := keyboard.NewKeyboardDriver("keyboard")
 	work := func() {
 		gobot.On(keys.Event("key"), func(data interface{}) {
