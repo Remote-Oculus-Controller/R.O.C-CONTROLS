@@ -18,7 +18,7 @@ func main() {
 
 	in := make(chan byte)
 	startTCPServer(in)
-	startRobot(in)
+	//startRobot(in)
 }
 
 func startTCPServer(in chan byte) {
@@ -31,14 +31,16 @@ func startTCPServer(in chan byte) {
 		return
 	}
 	fmt.Println("Server Started")
-	conn, err := ln.Accept()
-	if err != nil {
-		// handle error
-		fmt.Print("Error : " + err.Error() + "\n")
-		return
+	for {
+		conn, err := ln.Accept()
+		if err != nil {
+			// handle error
+			fmt.Print("Error : " + err.Error() + "\n")
+			return
+		}
+		fmt.Println("Client connected")
+		go handleConnection(conn, in)
 	}
-	fmt.Println("Client connected")
-	go handleConnection(conn, in)
 }
 
 func handleConnection(conn net.Conn, in chan byte) {

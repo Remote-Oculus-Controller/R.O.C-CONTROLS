@@ -6,34 +6,43 @@ import (
 	"github.com/hybridgroup/gobot/platforms/joystick"
 )
 
+const (
+	ds3CF = "ds3config.json"
+)
+
 type Dualshock3 struct {
 	Controller
-	squareP func()
-	squareR func()
-	axisLX  func(int)
-	axisLY  func(int)
+
+	out chan byte
 }
 
-func (d Dualshock3) Create(in chan byte) *gobot.Robot {
+func (d *Dualshock3) Type() string {
+	return "DS3"
+}
 
-	d.squareP = func() {
-		in <- 1
-	}
-	d.squareR = func() {
-		in <- 2
+func (d *Dualshock3) Init() {
+
+	// if d.out == nil {
+	// 	fmt.Println("Out channel for " + d.Type() + "not set")
+	// 	return
+	// }
+	err := d.MapControl()
+	if err != nil {
+		fmt.Println("Can't start controller. panicking...")
+		panic(fmt.Sprintf(err.Error()))
 	}
 	joystickAdaptor := joystick.NewJoystickAdaptor("ps3")
 	joystick := joystick.NewJoystickDriver(joystickAdaptor,
 		"ps3",
-		"./controller/json/dualshock3.json",
+		"./src/controller/json/dualshock3.json",
 	)
 	work := func() {
 		gobot.On(joystick.Event("square_press"), func(data interface{}) {
 			fmt.Println("square")
-			d.squareP()
+			//d.out <- d.Controller.cmap["square_p"].code
 		})
 		gobot.On(joystick.Event("square_release"), func(data interface{}) {
-			d.squareR()
+			//d.out <- d.Controller.cmap["square_r"].code
 		})
 		gobot.On(joystick.Event("triangle_press"), func(data interface{}) {
 			fmt.Println("triangle_press")
@@ -55,11 +64,19 @@ func (d Dualshock3) Create(in chan byte) *gobot.Robot {
 		})
 	}
 
-	robot := gobot.NewRobot("joystickBot",
+	d.robot = gobot.NewRobot("joystickBot",
 		[]gobot.Connection{joystickAdaptor},
 		[]gobot.Device{joystick},
 		work,
 	)
+}
 
-	return robot
+func (d Dualshock3) MapControl() error {
+	fmt.Println("Mapping DS3 for robot control\nStart parsing :", ds3CF)
+	err := d.Controller.parseControl(ds3CF)
+	if err != nil {
+		fmt.Println("Failed to parse control.")
+		return err
+	}
+	return nil
 }

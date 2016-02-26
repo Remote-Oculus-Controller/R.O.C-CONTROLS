@@ -3,25 +3,68 @@ package controller
 import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
+	"github.com/hybridgroup/gobot/api"
+	"parser"
 )
 
-type Controller interface {
-	Type() string
-	Init()
-	Speed() float64
-	Direction() float64
+type Controller struct {
+	robot *gobot.Robot
+	gbot  *gobot.Gobot
+	cmap  map[string]parser.Cmd
 }
 
-func Test() {
-	fmt.Print("pass")
+type Bind struct {
+	name string
+	cmd  byte
 }
 
-func StartDS3(in chan byte) {
+func (c *Controller) Type() string {
+	return "Controller"
+}
 
-	gbot := gobot.NewGobot()
-	d3 := Dualshock3{}
-	robot := d3.Create(in)
-	gbot.AddRobot(robot)
+//TODO redo error
+func (c *Controller) Start() error {
 
-	gbot.Start()
+	if c.robot != nil {
+		c.gbot = gobot.NewGobot()
+		a := api.NewAPI(c.gbot)
+		a.Debug()
+		a.Start()
+		c.gbot.AddRobot(c.robot)
+		err := c.gbot.Start()
+		return err[0]
+	}
+	fmt.Println("Pls init controller before starting")
+	return nil
+}
+
+func (c *Controller) Stop() error {
+
+	c.gbot.Stop()
+	return nil
+}
+
+func (c *Controller) parseControl(fp string) error {
+
+	c.cmap = make(map[string]parser.Cmd)
+	b, err := parser.Decode(fp)
+	if err != nil {
+		fmt.Println("Failed to parse", fp)
+		return err
+	}
+	m, err := parser.RobotCommand("command.json")
+	if err != nil {
+		fmt.Println("Failed to parse command.json.")
+		return err
+	}
+	for k, v := range b {
+		fmt.Println("pass", k, v)
+		if vv, ok := m[v.(string)]; ok {
+			fmt.Println("key found", vv, ok)
+			c.cmap[k] = vv
+		} else {
+			return ControllerError{"parseControl", v.(string) + " key can't be found in command.json", nil}
+		}
+	}
+	return nil
 }
