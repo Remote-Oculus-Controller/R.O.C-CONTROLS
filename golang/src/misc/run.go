@@ -2,6 +2,7 @@ package misc
 
 import (
 	"fmt"
+	"log"
 )
 
 type Runner interface {
@@ -14,22 +15,25 @@ type Run struct {
 }
 
 func (r *Run) Start() error {
-	for _, runner := range r.Runners {
+	for i, runner := range r.Runners {
 		err := runner.Start()
 		if err != nil {
-			r.Stop()
-			fmt.Println("Error during runners start")
+			log.Println("Runners : Error during runners start")
+			r.Stop(i)
 			return err
 		}
 	}
 	return nil
 }
 
-func (r *Run) Stop() error {
-	for _, runner := range r.Runners {
+func (r *Run) Stop(j int) error {
+	for i, runner := range r.Runners {
+		if i > j {
+			break
+		}
 		err := runner.Stop()
 		if err != nil {
-			fmt.Println("Error during runners stop")
+			log.Println("Runners : Error during runners stop")
 			return err
 		}
 	}

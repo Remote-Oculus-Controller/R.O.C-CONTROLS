@@ -21,6 +21,7 @@ func sender(conn net.Conn, out chan byte) {
 		select {
 		case b := <-out:
 			buff[0] = b
+			fmt.Println(buff)
 			_, err := conn.Write(buff)
 			if err != nil {
 				fmt.Print("Error : " + err.Error() + "\n")

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/joystick"
+	"log"
 )
 
 const (
@@ -20,12 +21,12 @@ func (d *Dualshock3) Type() string {
 	return "DS3"
 }
 
-func (d *Dualshock3) Init() {
+func (d *Dualshock3) Init(out chan byte) {
 
-	// if d.out == nil {
-	// 	fmt.Println("Out channel for " + d.Type() + "not set")
-	// 	return
-	// }
+	if d.out == nil {
+		log.Println("Out channel for", d.Type(), "not set")
+		return
+	}
 	err := d.MapControl()
 	if err != nil {
 		fmt.Println("Can't start controller. panicking...")
@@ -38,11 +39,10 @@ func (d *Dualshock3) Init() {
 	)
 	work := func() {
 		gobot.On(joystick.Event("square_press"), func(data interface{}) {
-			fmt.Println("square")
-			//d.out <- d.Controller.cmap["square_p"].code
+			out <- d.cmap["square_p"]
 		})
 		gobot.On(joystick.Event("square_release"), func(data interface{}) {
-			//d.out <- d.Controller.cmap["square_r"].code
+			out <- d.Controller.cmap["square_r"]
 		})
 		gobot.On(joystick.Event("triangle_press"), func(data interface{}) {
 			fmt.Println("triangle_press")
@@ -71,7 +71,7 @@ func (d *Dualshock3) Init() {
 	)
 }
 
-func (d Dualshock3) MapControl() error {
+func (d *Dualshock3) MapControl() error {
 	fmt.Println("Mapping DS3 for robot control\nStart parsing :", ds3CF)
 	err := d.Controller.parseControl(ds3CF)
 	if err != nil {

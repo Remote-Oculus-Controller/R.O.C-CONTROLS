@@ -8,7 +8,7 @@ import (
 
 type Cmd struct {
 	Name  string
-	Code  string
+	Code  byte
 	Other []interface{}
 }
 
