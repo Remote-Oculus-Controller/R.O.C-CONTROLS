@@ -2,15 +2,15 @@ package controller
 
 import (
 	"github.com/hybridgroup/gobot"
-	"github.com/hybridgroup/gobot/api"
 	"log"
 	"parser"
 )
 
 type Controller struct {
-	robot *gobot.Robot
 	gbot  *gobot.Gobot
+	robot *gobot.Robot
 	cmap  map[string]byte
+	out   chan byte
 }
 
 type Bind struct {
@@ -27,20 +27,31 @@ func (c *Controller) Start() error {
 
 	if c.robot != nil {
 		c.gbot = gobot.NewGobot()
-		a := api.NewAPI(c.gbot)
-		a.Debug()
-		a.Start()
 		c.gbot.AddRobot(c.robot)
 		err := c.gbot.Start()
-		return err[0]
+		if err != nil {
+			log.Println(err)
+			return err[0]
+		}
+	} else {
+		log.Println("Please use the New'controller' to create controller")
 	}
-	log.Println("Pls init controller before starting")
 	return nil
 }
 
 func (c *Controller) Stop() error {
 
 	c.gbot.Stop()
+	return nil
+}
+
+func (c *Controller) mapControl(file string) error {
+	log.Println("Mapping", c.Type(), "for robot control\nStart parsing :", file)
+	err := c.parseControl(file)
+	if err != nil {
+		log.Println("Failed to parse control.")
+		return err
+	}
 	return nil
 }
 
@@ -59,7 +70,6 @@ func (c *Controller) parseControl(fp string) error {
 		return err
 	}
 	for k, v := range b {
-		log.Println("pass", k, v)
 		if vv, ok := m[v.(string)]; ok {
 			c.cmap[k] = vv.Code
 		} else {

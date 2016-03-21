@@ -14,7 +14,7 @@ type Run struct {
 	Runners []Runner
 }
 
-func (r *Run) Start() error {
+func (r Run) Start() error {
 	for i, runner := range r.Runners {
 		err := runner.Start()
 		if err != nil {
@@ -26,7 +26,7 @@ func (r *Run) Start() error {
 	return nil
 }
 
-func (r *Run) Stop(j int) error {
+func (r Run) Stop(j int) error {
 	for i, runner := range r.Runners {
 		if i > j {
 			break

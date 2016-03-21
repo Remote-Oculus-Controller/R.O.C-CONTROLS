@@ -31,7 +31,6 @@ func RobotCommand(f_path string) (map[string]Cmd, error) {
 		fmt.Println(err)
 		return nil, err
 	}
-	fmt.Println(cmds)
 	for _, kk := range cmds.Commands {
 		c[kk.Name] = kk
 	}

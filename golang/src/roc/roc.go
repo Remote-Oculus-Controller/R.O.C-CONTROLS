@@ -42,8 +42,8 @@ func NewRoc(link *linker.Linker) *Roc {
 		}
 	}
 	roc.control = roc.gbot.AddRobot(gobot.NewRobot("control",
-		[]gobot.Connection{roc.arduino},
-		[]gobot.Device{roc.led},
+		//		[]gobot.Connection{roc.arduino},
+		//		[]gobot.Device{roc.led},
 		work,
 	))
 	roc.controlBind()
