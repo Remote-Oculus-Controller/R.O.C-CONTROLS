@@ -13,11 +13,5 @@ func (roc *Roc) apiCreate() {
 
 func (roc *Roc) controlBind() {
 
-	roc.control.AddCommand("forward", func(params map[string]interface{}) interface{} {
-		return roc.forward(params["speed"].(byte))
-	})
-
-	roc.control.AddCommand("stop", func(params map[string]interface{}) interface{} {
-		return roc.stop()
-	})
+	//TODO Video Server call
 }

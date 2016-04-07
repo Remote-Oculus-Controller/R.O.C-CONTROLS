@@ -13,14 +13,20 @@ func handleConnection(conn net.Conn, in, out chan byte) {
 }
 
 //sender wait for data on channel and send them over the network
-//TODO bufferies and optimise
+//TODO buffer and optimise
 func sender(conn net.Conn, out chan byte) {
 
-	buff := make([]byte, 1)
 	for {
 		select {
 		case b := <-out:
-			buff[0] = b
+			j := b & 0xF0 >> 4
+			buff := make([]byte, int(j+2))
+			buff[0] = 0xAF
+			buff[1] = b
+			fmt.Println(b, j)
+			for i := byte(0); i < j; i++ {
+				buff[i+2] = <-out
+			}
 			fmt.Println(buff)
 			_, err := conn.Write(buff)
 			if err != nil {
@@ -34,11 +40,10 @@ func sender(conn net.Conn, out chan byte) {
 //TODO optimise
 func reader(conn net.Conn, in chan byte) {
 
-	buff := make([]byte, 8)
+	buff := make([]byte, 32)
 	for {
 		l, err := conn.Read(buff)
 		if l > 0 {
-			fmt.Println(buff)
 			for i := 0; i < l; i++ {
 				in <- buff[i]
 			}

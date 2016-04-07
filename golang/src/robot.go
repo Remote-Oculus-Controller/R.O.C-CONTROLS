@@ -9,7 +9,8 @@ import (
 func main() {
 
 	clientL := linker.NewLinker("robot", "127.0.0.1", "4343", true)
-	roc := roc.NewRoc(clientL)
+	roc := &roc.Roc{}
+	roc.Ch = clientL.In
 	run := misc.Run{}
 	run.Runners = append(run.Runners, clientL, roc)
 	misc.PrintRunners("Runners", run.Runners)

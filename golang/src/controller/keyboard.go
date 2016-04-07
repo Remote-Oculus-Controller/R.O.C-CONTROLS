@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/keyboard"
 )
@@ -23,10 +24,11 @@ func NewKeyboard(out chan byte) *Keyboard {
 	k.out = out
 	k.mapControl(KEYBOARD_CF)
 	keys := keyboard.NewKeyboardDriver("keyboard")
+	fmt.Println(k.cmap)
 	work := func() {
 		gobot.On(keys.Event("key"), func(data interface{}) {
 			key := data.(keyboard.KeyEvent)
-			k.out <- k.cmap[string(key.Key)]
+			k.packet([]byte{(k.cmap[string(key.Key)])})
 		})
 	}
 

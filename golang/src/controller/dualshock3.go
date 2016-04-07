@@ -34,10 +34,10 @@ func NewDS3(out chan byte) *Dualshock3 {
 	)
 	work := func() {
 		gobot.On(joystick.Event("square_press"), func(data interface{}) {
-			d.out <- d.cmap["square_p"]
+			d.packet([]byte{d.cmap["square_p"]})
 		})
 		gobot.On(joystick.Event("square_release"), func(data interface{}) {
-			d.out <- d.Controller.cmap["square_r"]
+			d.packet([]byte{d.cmap["square_r"]})
 		})
 		gobot.On(joystick.Event("triangle_press"), func(data interface{}) {
 			fmt.Println("triangle_press")

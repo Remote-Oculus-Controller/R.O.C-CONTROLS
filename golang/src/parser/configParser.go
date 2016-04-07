@@ -21,7 +21,7 @@ func RobotCommand(f_path string) (map[string]Cmd, error) {
 	var cmds Cmds
 
 	c := make(map[string]Cmd)
-	data, err := ioutil.ReadFile("command.json")
+	data, err := ioutil.ReadFile(f_path)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

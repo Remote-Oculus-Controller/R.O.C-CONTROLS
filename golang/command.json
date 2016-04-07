@@ -1,6 +1,6 @@
 {
 	"Commands":[
 		{"Name":"forward","Code":1,"Min":"0x00","Max":"0xFF"},
-		{"Name":"stop","Code":0}
+		{"Name":"stop","Code":2}
 	]
 }

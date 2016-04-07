@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/hybridgroup/gobot"
+	"github.com/hybridgroup/gobot/api"
 	"log"
 	"parser"
 )
@@ -27,6 +29,9 @@ func (c *Controller) Start() error {
 
 	if c.robot != nil {
 		c.gbot = gobot.NewGobot()
+		a := api.NewAPI(c.gbot)
+		a.Debug()
+		a.Start()
 		c.gbot.AddRobot(c.robot)
 		err := c.gbot.Start()
 		if err != nil {
@@ -45,6 +50,15 @@ func (c *Controller) Stop() error {
 	return nil
 }
 
+func (c *Controller) packet(b []byte) {
+	v := ((len(b)) << 4) | 0xA
+	c.out <- byte(v)
+	fmt.Println("controller data", b)
+	for i := range b {
+		fmt.Println(b[i])
+		c.out <- byte(b[i])
+	}
+}
 func (c *Controller) mapControl(file string) error {
 	log.Println("Mapping", c.Type(), "for robot control\nStart parsing :", file)
 	err := c.parseControl(file)
