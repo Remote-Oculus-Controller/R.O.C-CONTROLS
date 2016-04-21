@@ -1,6 +1,10 @@
 {
 	"Commands":[
-		{"Name":"forward","Code":1,"Min":"0x00","Max":"0xFF"},
-		{"Name":"stop","Code":2}
-	]
+      {"Name":"forward","Code":1,"Min":0,"Max":255, "Default":127},
+      {"Name":"stop","Code":2},
+      {"Name":"head_y","Code":3,"Min":-32768,"Max":32767},
+      {"Name":"head_x","Code":4,"Min":-32768,"Max":32767},
+      {"Name":"head_xp","Code":5,"Default":127},
+      {"Name":"head_xm","Code":6,"Default":127}
+    ]
 }

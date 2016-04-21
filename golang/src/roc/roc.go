@@ -1,16 +1,17 @@
 package roc
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/hybridgroup/gobot"
-	"log"
 )
 
 type Roc struct {
-	gbot    *gobot.Gobot
-	control *gobot.Robot
-	cmap    map[byte]func([]byte) error
-	Ch      chan byte
+	gbot     *gobot.Gobot
+	control  *gobot.Robot
+	motion   *gobot.Robot
+	cmap     map[byte]func(*bytes.Buffer) error
+	Chr, Chl chan []byte
 }
 
 const (
@@ -28,14 +29,17 @@ func (roc *Roc) Start() error {
 	work := func() {
 		for {
 			select {
-			case b := <-roc.Ch:
-				switch b {
-				case 0xAF:
-					emptyChannel(roc.Ch)
-					//roc.dispatch(link.In)
-				default:
-					log.Println("Wrong packet")
-				}
+			case b := <-roc.Chr:
+				fmt.Println(b)
+				/*
+					switch b {
+					case 0xAF:
+						//emptyChannel(roc.Ch)
+						//go roc.action(buff)
+					default:
+						log.Println("Wrong packet")
+					}
+				*/
 			}
 		}
 	}
@@ -53,28 +57,47 @@ func (roc *Roc) Stop() error {
 	return roc.gbot.Stop()[0]
 }
 
-func (roc *Roc) addFunc(f func([]byte) error, code byte, api bool, name string) {
-	roc.cmap[code] = f
+/*func (roc *Roc) addFunc(f func(*bytes.Buffer) error, code byte, api bool, name string) {
+	log.Println("Assigning function", name, "to code", code)
+	if (!roc.cmap[code]) {
+		roc.cmap[code] = f
+	} else {
+		log.Println("Code", code, "already assigned")
+	}
 	if api {
+		log.Println("Creating api entry for function")
 		roc.control.AddCommand(name, func(params map[string]interface{}) interface{} {
-			_, k := params["packet"]
+			d, k := params["packet"]
 			if k {
-				v := []byte(params["packet"].([]byte))
+				v := bytes.Buffer{misc.GetBytes(d)}
 				return f(v)
 			}
-			return fmt.Errorf("Wrong arguments or format")
+			return log.Println("API", name, "Wrong arguments or format")
 		})
 	}
-}
+}*/
 
-func emptyChannel(in chan byte) []byte {
+/*func (roc *Roc)action(buff bytes.Buffer)  {
 
-	l := int(((<-in) & UPPERMASK) >> 4)
-	buff := make([]byte, int(l))
-	fmt.Println("len", l)
-	for i := 0; i < l; i++ {
-		buff[i] = <-in
+	if buff.Len() < 2 {
+		log.Println("Error sent packet do not contains enough data")
+		return
 	}
-	fmt.Println(buff, len(buff))
+	switch buff.ReadByte() {
+	case 0xA:
+		roc.cmap[buff.ReadByte()](buff)
+	}
+}*/
+
+func emptyChannel(in chan []byte) *bytes.Buffer {
+
+	buff := new(bytes.Buffer)
+	l := <-in
+	/*
+		for i := byte(0); i < l; i++ {
+			buff.WriteByte(<-in)
+		}
+	*/
+	fmt.Println(l, buff.Bytes())
 	return buff
 }

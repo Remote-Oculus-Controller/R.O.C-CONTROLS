@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/keyboard"
+	"linker"
 )
 
 type Keyboard struct {
@@ -18,17 +19,18 @@ func (k Keyboard) Type() string {
 	return "Keyboard"
 }
 
-func NewKeyboard(out chan byte) *Keyboard {
+func NewKeyboard(link *linker.Linker) *Keyboard {
 
-	k := Keyboard{}
-	k.out = out
+	k := new(Keyboard)
+	k.link = link
 	k.mapControl(KEYBOARD_CF)
 	keys := keyboard.NewKeyboardDriver("keyboard")
 	fmt.Println(k.cmap)
 	work := func() {
 		gobot.On(keys.Event("key"), func(data interface{}) {
 			key := data.(keyboard.KeyEvent)
-			k.packet([]byte{(k.cmap[string(key.Key)])})
+			p := k.cmap[string(key.Key)]
+			k.packet(p.Code, p.Default)
 		})
 	}
 
@@ -37,5 +39,5 @@ func NewKeyboard(out chan byte) *Keyboard {
 		[]gobot.Device{keys},
 		work,
 	)
-	return &k
+	return k
 }

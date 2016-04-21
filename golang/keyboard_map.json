@@ -1,4 +1,6 @@
 {
   "z":"forward",
-  "s":"stop"
+  "s":"stop",
+  "q":"head_xm",
+  "d":"head_xp"
 }

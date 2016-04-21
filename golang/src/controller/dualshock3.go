@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/joystick"
+	"linker"
 )
 
 const (
@@ -18,10 +19,10 @@ func (d *Dualshock3) Type() string {
 	return "DS3"
 }
 
-func NewDS3(out chan byte) *Dualshock3 {
+func NewDS3(link *linker.Linker) *Dualshock3 {
 
-	d := Dualshock3{}
-	d.out = out
+	d := new(Dualshock3)
+	d.link = link
 	err := d.mapControl(DS3_CF)
 	if err != nil {
 		fmt.Println("Can't start controller. panicking...")
@@ -34,28 +35,30 @@ func NewDS3(out chan byte) *Dualshock3 {
 	)
 	work := func() {
 		gobot.On(joystick.Event("square_press"), func(data interface{}) {
-			d.packet([]byte{d.cmap["square_p"]})
+			p := d.cmap["square_p"]
+			d.packet(p.Code, p.Default)
 		})
 		gobot.On(joystick.Event("square_release"), func(data interface{}) {
-			d.packet([]byte{d.cmap["square_r"]})
+			p := d.cmap["square_r"]
+			d.packet(p.Code, p.Default)
 		})
 		gobot.On(joystick.Event("triangle_press"), func(data interface{}) {
-			fmt.Println("triangle_press")
+			d.packet(d.cmap["triangle_p"].Code, data)
 		})
 		gobot.On(joystick.Event("triangle_release"), func(data interface{}) {
-			fmt.Println("triangle_release")
+			d.packet(d.cmap["triangle_r"].Code, data)
 		})
 		gobot.On(joystick.Event("left_x"), func(data interface{}) {
-
+			d.packet(d.cmap["left_x"].Code, data)
 		})
 		gobot.On(joystick.Event("left_y"), func(data interface{}) {
-			fmt.Println("left_y", data)
+			d.packet(d.cmap["left_y"].Code, data)
 		})
 		gobot.On(joystick.Event("right_x"), func(data interface{}) {
-			fmt.Println("right_x", data)
+			d.packet(d.cmap["right_x"].Code, data)
 		})
 		gobot.On(joystick.Event("right_y"), func(data interface{}) {
-			fmt.Println("right_y", data)
+			d.packet(d.cmap["right_y"].Code, data)
 		})
 	}
 
@@ -64,5 +67,5 @@ func NewDS3(out chan byte) *Dualshock3 {
 		[]gobot.Device{joystick},
 		work,
 	)
-	return &d
+	return d
 }

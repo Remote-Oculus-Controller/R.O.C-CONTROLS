@@ -1,4 +1,6 @@
 {
-	"square_p":"forward",
-	"square_r":"stop"
+  "square_p":"forward",
+  "square_r":"stop",
+  "left_x":"head_x",
+  "left_y":"head_y"
 }

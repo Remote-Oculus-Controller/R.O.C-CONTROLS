@@ -2,17 +2,13 @@ package main
 
 import (
 	"linker"
-	"misc"
 	"roc"
 )
 
 func main() {
 
-	clientL := linker.NewLinker("robot", "127.0.0.1", "4343", true)
-	roc := &roc.Roc{}
-	roc.Ch = clientL.In
-	run := misc.Run{}
-	run.Runners = append(run.Runners, clientL, roc)
-	misc.PrintRunners("Runners", run.Runners)
-	run.Start()
+	clientL := linker.NewLinker("", "127.0.0.1:4343", false, true)
+	roc := &roc.Roc{Chr: clientL.RegisterChannel(true),
+		Chl: clientL.RegisterChannel(false)}
+	roc.Start()
 }

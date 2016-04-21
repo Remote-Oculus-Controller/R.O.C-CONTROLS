@@ -4,20 +4,17 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/api"
+	"linker"
 	"log"
+	"misc"
 	"parser"
 )
 
 type Controller struct {
 	gbot  *gobot.Gobot
 	robot *gobot.Robot
-	cmap  map[string]byte
-	out   chan byte
-}
-
-type Bind struct {
-	name string
-	cmd  byte
+	cmap  map[string]parser.Cmd
+	link  *linker.Linker
 }
 
 func (c *Controller) Type() string {
@@ -50,15 +47,17 @@ func (c *Controller) Stop() error {
 	return nil
 }
 
-func (c *Controller) packet(b []byte) {
-	v := ((len(b)) << 4) | 0xA
-	c.out <- byte(v)
-	fmt.Println("controller data", b)
-	for i := range b {
-		fmt.Println(b[i])
-		c.out <- byte(b[i])
+//TODO see to buffer
+func (c *Controller) packet(code byte, data interface{}) {
+
+	b, err := misc.GetBytes(data)
+	if err != nil {
+		panic(fmt.Sprintf(err.Error()))
 	}
+	b = append([]byte{linker.CMD | linker.DST_R | linker.DST_L | linker.MV, byte(len(b) + 1), code}, b...)
+	c.link.Send(b)
 }
+
 func (c *Controller) mapControl(file string) error {
 	log.Println("Mapping", c.Type(), "for robot control\nStart parsing :", file)
 	err := c.parseControl(file)
@@ -72,7 +71,7 @@ func (c *Controller) mapControl(file string) error {
 // TODO change association to direct function, no map of pointer to function !
 func (c *Controller) parseControl(fp string) error {
 
-	c.cmap = make(map[string]byte)
+	c.cmap = make(map[string]parser.Cmd)
 	b, err := parser.Decode(fp)
 	if err != nil {
 		log.Println("Failed to parse", fp)
@@ -85,7 +84,7 @@ func (c *Controller) parseControl(fp string) error {
 	}
 	for k, v := range b {
 		if vv, ok := m[v.(string)]; ok {
-			c.cmap[k] = vv.Code
+			c.cmap[k] = vv
 		} else {
 			return ControllerError{"parseControl", v.(string) + " key can't be found in command.json", nil}
 		}

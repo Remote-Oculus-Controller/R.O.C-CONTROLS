@@ -7,9 +7,9 @@ import (
 )
 
 type Cmd struct {
-	Name  string
-	Code  byte
-	Other []interface{}
+	Name              string
+	Code              byte
+	Min, Max, Default int
 }
 
 type Cmds struct {
