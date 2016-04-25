@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/hybridgroup/gobot"
+	"github.com/hybridgroup/gobot/platforms/firmata"
+	"github.com/hybridgroup/gobot/platforms/gpio"
 )
 
 type Roc struct {
@@ -26,8 +28,8 @@ func (roc *Roc) Start() error {
 	roc.apiCreate()
 	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
 
-	roc.motion.LeftCameraMotor := gpio.NewAnalogSensorDriver(firmataAdaptor, "cameraMotor", "0")
-	roc.motion.RightCameraMotor := gpio.NewAnalogSensorDriver(firmataAdaptor, "cameraMotor", "1")
+	roc.motion.mLCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotor", "0")
+	roc.motion.mRCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotor", "1")
 	roc.motion.temperatureSensor := gpio.NewAnalogSensorDriver(firmataAdaptor, "temperature", "2")
 	roc.motion.potentiometerSensor := gpio.NewAnalogSensorDriver(firmataAdaptor, "potensiometer", "3")
 	roc.motion.LeftWheelMotor := gpio.NewMotorDriver(firmataAdaptor, "wheelMotor", "4")
@@ -57,22 +59,15 @@ func (roc *Roc) Start() error {
 			}
 		}
 	}
-	workMotion := func() {
-
-	}
 
 	roc.control = gobot.NewRobot("control",
 		[]gobot.Connection{},
 		[]gobot.Device{},
 		work)
 
-	roc.motion = gobot.NewRobot("motion",
-		[]gobot.Connection{},
-		[]gobot.Device{},
-		workMotion)
-
 	roc.controlBind()
 	roc.gbot.AddRobot(roc.control)
+	roc.gbot.AddRobot(newMotion())
 	roc.gbot.Start()
 	return nil
 }
