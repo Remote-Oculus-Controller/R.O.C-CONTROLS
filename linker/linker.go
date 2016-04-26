@@ -2,8 +2,8 @@ package linker
 
 import (
 	"fmt"
-	"misc"
 	"net"
+	"R.O.C-CONTROLS/misc"
 )
 
 const (
@@ -52,9 +52,7 @@ func NewLinker(lS, rS string, lT, rT bool) *Linker {
 	go handleConn(&l.remote, &l.local, DST_R)
 	if len(lS) != 0 {
 		l.local.conn, err = startConn(lS, lT)
-		if err != nil {
-			misc.CheckError(err, "Establishing local connection", true)
-		}
+		misc.CheckError(err, "Establishing local connection", true)
 		go handleConn(&l.local, &l.remote, DST_RL)
 	}
 	return &l
@@ -77,20 +75,20 @@ func (l *Linker) Send(b []byte) {
 	r := b[0]
 	if r&(DST_R|DST_RL) > 0 {
 		fmt.Println("remote")
-		l.remote.in <- b
+		l.remote.out <- b
 	}
 	if r&DST_L > 0 {
 		fmt.Println("local")
-		l.local.in <- b
+		l.local.out <- b
 	}
 }
 
 func (l *Linker) RegisterChannel(r bool) chan []byte {
 
 	if r {
-		return l.remote.out
+		return l.remote.in
 	}
-	return l.local.out
+	return l.local.in
 }
 
 func handleConn(l, o *Link, t uint8) {
@@ -106,7 +104,7 @@ func handleConn(l, o *Link, t uint8) {
 			select {
 			case <-quit:
 				return
-			case b := <-l.in:
+			case b := <-l.out:
 				fmt.Println("Sending", b, "to", t)
 				_, err := l.conn.Write(append([]byte{MAGIC}, b...))
 				misc.CheckError(err, "Sending data to conn", true)
@@ -120,7 +118,7 @@ func handleConn(l, o *Link, t uint8) {
 			fmt.Println("Wrong packet")
 			return
 		}
-		fmt.Println(buff)
+		//TODO redirect to local or remote if necessary
 		/*
 			switch m := buff[1]; {
 			case m &^ t > 0 && o != nil:
@@ -128,10 +126,16 @@ func handleConn(l, o *Link, t uint8) {
 				o.in <- buff[0:]
 			default:
 		*/
-		fmt.Println("link")
-		l.out <- buff[0:]
+		l.in <- buff[0:]
 		/*
 			}
 		*/
+	}
+}
+
+func (l *Linker) Stop()  {
+	l.remote.conn.Close()
+	if l.local.conn != nil {
+		l.local.conn.Close()
 	}
 }
