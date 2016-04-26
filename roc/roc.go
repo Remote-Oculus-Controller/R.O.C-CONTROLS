@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/hybridgroup/gobot"
-	"github.com/hybridgroup/gobot/platforms/firmata"
-	"github.com/hybridgroup/gobot/platforms/gpio"
 )
 
 type Roc struct {
@@ -26,20 +24,6 @@ func (roc *Roc) Start() error {
 
 	roc.gbot = gobot.NewGobot()
 	roc.apiCreate()
-	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
-
-	roc.motion.mLCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotor", "0")
-	roc.motion.mRCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotor", "1")
-	roc.motion.temperatureSensor := gpio.NewAnalogSensorDriver(firmataAdaptor, "temperature", "2")
-	roc.motion.potentiometerSensor := gpio.NewAnalogSensorDriver(firmataAdaptor, "potensiometer", "3")
-	roc.motion.LeftWheelMotor := gpio.NewMotorDriver(firmataAdaptor, "wheelMotor", "4")
-	roc.motion.RightWheelMotor := gpio.NewMotorDriver(firmataAdaptor, "wheelMotor", "5")
-
-	roc.motion.piezo := gpio.NewLedDriver(firmataAdaptor, "piezzo", "0")
-	roc.motion.button1 := gpio.NewLedDriver(firmataAdaptor, "button", "1")
-	roc.motion.button2 := gpio.NewLedDriver(firmataAdaptor, "button", "2")
-	roc.motion.button3 := gpio.NewLedDriver(firmataAdaptor, "button", "3")
-	roc.motion.tilt := gpio.NewLedDriver(firmataAdaptor, "tilt", "4")
 
 	//TODO config file
 	work := func() {
