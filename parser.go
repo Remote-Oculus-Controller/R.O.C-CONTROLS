@@ -1,9 +1,9 @@
-package parser
+package roc
 
 import (
-	"encoding/json"
-	"fmt"
 	"io/ioutil"
+	"fmt"
+	"encoding/json"
 )
 
 type Cmd struct {
@@ -37,3 +37,19 @@ func RobotCommand(f_path string) (map[string]Cmd, error) {
 	fmt.Println(c)
 	return c, nil
 }
+
+func Decode(fp string) (map[string]interface{}, error) {
+
+	var c interface{}
+
+	b, err := ioutil.ReadFile(fp)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(b, &c)
+	if err != nil {
+		return nil, err
+	}
+	return c.(map[string]interface{}), nil
+}
+

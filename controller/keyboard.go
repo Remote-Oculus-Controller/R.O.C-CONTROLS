@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/keyboard"
-	"linker"
+	"R.O.C-CONTROLS"
 )
 
 type Keyboard struct {
@@ -12,14 +12,14 @@ type Keyboard struct {
 }
 
 const (
-	KEYBOARD_CF = "keyboard_map.json"
+	KEYBOARD_CF = "./config/keyboard_map.json"
 )
 
 func (k Keyboard) Type() string {
 	return "Keyboard"
 }
 
-func NewKeyboard(link *linker.Linker) *Keyboard {
+func NewKeyboard(link *roc.Linker) *Keyboard {
 
 	k := new(Keyboard)
 	k.link = link

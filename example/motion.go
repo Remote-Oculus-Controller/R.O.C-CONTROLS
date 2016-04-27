@@ -1,4 +1,4 @@
-package roc
+package main
 
 import (
 	"fmt"
@@ -11,18 +11,18 @@ import (
 type Motion struct {
 	gobot.Robot
 
-	mLCam	gpio.ServoDriver
-	mRCam	gpio.ServoDriver
-	tempSens gpio.AnalogSensorDriver
-	potSens gpio.AnalogSensorDriver
-	mLWheel gpio.MotorDriver
-	mRWheel gpio.MotorDriver
+	mLCam	*gpio.ServoDriver
+	mRCam	*gpio.ServoDriver
+	tempSens *gpio.AnalogSensorDriver
+	potSens *gpio.AnalogSensorDriver
+	mLWheel *gpio.MotorDriver
+	mRWheel *gpio.MotorDriver
 
-	piezo 	gpio.LedDriver
-	button1 gpio.LedDriver
-	button2 gpio.LedDriver
-	button3 gpio.LedDriver
-	tilt	gpio.LedDriver
+	piezo 	*gpio.LedDriver
+	button1 *gpio.ButtonDriver
+	button2 *gpio.ButtonDriver
+	button3 *gpio.ButtonDriver
+	tilt	*gpio.LedDriver
 
 	moving 	bool
 }
@@ -42,16 +42,17 @@ func newMotion() *gobot.Robot{
 	r.mRCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotor", "1")
 	r.tempSens = gpio.NewAnalogSensorDriver(firmataAdaptor, "temperature", "2")
 	r.potSens = gpio.NewAnalogSensorDriver(firmataAdaptor, "potensiometer", "3")
-	r.mLWheel = gpio.NewMotorDriver(firmataAdaptor, "wheelMotor", "4")
-	r.mRWheel = gpio.NewMotorDriver(firmataAdaptor, "wheelMotor", "5")
+	r.mLWheel = gpio.NewMotorDriver(firmataAdaptor, "LWheel", "4")
+	r.mRWheel = gpio.NewMotorDriver(firmataAdaptor, "RWheel", "5")
 
 	r.piezo = gpio.NewLedDriver(firmataAdaptor, "piezzo", "0")
-	r.button1 = gpio.NewLedDriver(firmataAdaptor, "button", "1")
-	r.button2 = gpio.NewLedDriver(firmataAdaptor, "button", "2")
-	r.button3 = gpio.NewLedDriver(firmataAdaptor, "button", "3")
+	r.button1 = gpio.NewButtonDriver(firmataAdaptor, "button1", "1")
+	r.button2 = gpio.NewButtonDriver(firmataAdaptor, "button2", "2")
+	r.button3 = gpio.NewButtonDriver(firmataAdaptor, "button3", "3")
 	r.tilt = gpio.NewLedDriver(firmataAdaptor, "tilt", "4")
 
 	work := func() {
+		/*
 		gobot.On(r.motion.temperaturSensor.Event("data"), func(data interface{}) {
 			temp := uint8(
 				gobot.ToScale(gobot.FromScale(float64(data.(int)), 0, 1024), 0, 255),
@@ -60,6 +61,7 @@ func newMotion() *gobot.Robot{
 
 		})
 
+		*/
 		//Start and stop moving robot
 		gobot.On(r.button1.Event("push"), func(data interface{}) {
 			//r.moving ? moveForwardWheel(r, VRUN) : moveForwardWheel(r, VSTOP)
@@ -97,7 +99,7 @@ func extractRobot(r Motion) {
 
 func simulMotor(r Motion, speed byte) {
 	i := uint8(0)
-	gobot.Every((speed/10)*time.Millisecond, func() {
+	gobot.Every((time.Duration(speed)/10)*time.Millisecond, func() {
 		i += 1
 		fmt.Println("Turning", i)
 		r.mLCam.Move(i)
@@ -114,11 +116,11 @@ func moveBackwardWheel(r Motion, speed byte) {
 }
 
 func moveForwardWheel(r Motion, speed byte) {
-	r.mRWheel.speed(speed)
-	r.mLWheel.speed(speed)
+	r.mRWheel.Forward(speed)
+	r.mLWheel.Forward(speed)
 }
 
 func stopWheel(r Motion) {
-	r.mRWheel.speed(VSTOP)
-	r.mLWheel.speed(VSTOP)
+	r.mRWheel.Halt()
+	r.mLWheel.Halt()
 }

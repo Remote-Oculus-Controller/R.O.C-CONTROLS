@@ -4,18 +4,21 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/api"
-	"linker"
 	"log"
-	"misc"
-	"parser"
+	"R.O.C-CONTROLS/misc"
+	"R.O.C-CONTROLS"
 )
 
 type Controller struct {
 	gbot  *gobot.Gobot
 	robot *gobot.Robot
-	cmap  map[string]parser.Cmd
-	link  *linker.Linker
+	cmap  map[string]roc.Cmd
+	link  *roc.Linker
 }
+
+const (
+	CMD_FILE = "./config/command.json"
+)
 
 func (c *Controller) Type() string {
 	return "Controller"
@@ -54,7 +57,7 @@ func (c *Controller) packet(code byte, data interface{}) {
 	if err != nil {
 		panic(fmt.Sprintf(err.Error()))
 	}
-	b = append([]byte{linker.CMD | linker.DST_R | linker.DST_L | linker.MV, byte(len(b) + 1), code}, b...)
+	b = append([]byte{roc.CMD | roc.DST_R | roc.DST_L | roc.MV, byte(len(b) + 1), code}, b...)
 	c.link.Send(b)
 }
 
@@ -71,13 +74,13 @@ func (c *Controller) mapControl(file string) error {
 // TODO change association to direct function, no map of pointer to function !
 func (c *Controller) parseControl(fp string) error {
 
-	c.cmap = make(map[string]parser.Cmd)
-	b, err := parser.Decode(fp)
+	c.cmap = make(map[string]roc.Cmd)
+	b, err := roc.Decode(fp)
 	if err != nil {
 		log.Println("Failed to parse", fp)
 		return err
 	}
-	m, err := parser.RobotCommand("command.json")
+	m, err := roc.RobotCommand(CMD_FILE)
 	if err != nil {
 		log.Println("Failed to parse command.json.")
 		return err

@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/joystick"
-	"linker"
+	"R.O.C-CONTROLS"
 )
 
 const (
-	DS3_CF = "ds3_map.json"
+	DS3_CF = "./config/ds3_map.json"
 )
 
 type Dualshock3 struct {
@@ -19,7 +19,7 @@ func (d *Dualshock3) Type() string {
 	return "DS3"
 }
 
-func NewDS3(link *linker.Linker) *Dualshock3 {
+func NewDS3(link *roc.Linker) *Dualshock3 {
 
 	d := new(Dualshock3)
 	d.link = link
@@ -31,7 +31,7 @@ func NewDS3(link *linker.Linker) *Dualshock3 {
 	joystickAdaptor := joystick.NewJoystickAdaptor("ps3")
 	joystick := joystick.NewJoystickDriver(joystickAdaptor,
 		"ps3",
-		"./src/controller/json/dualshock3.json",
+		"./controller/json/dualshock3.json",
 	)
 	work := func() {
 		gobot.On(joystick.Event("square_press"), func(data interface{}) {
