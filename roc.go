@@ -11,7 +11,7 @@ type Roc struct {
 	control  *gobot.Robot
 	motion   *gobot.Robot
 	cmap     map[byte]func(*bytes.Buffer) error
-	Chr, Chl chan []byte
+	chr, chl chan []byte
 }
 
 const (
@@ -19,27 +19,24 @@ const (
 	BOTTOMMASK = 0x0F
 )
 
-//TODO error check
-func (roc *Roc) Start() error {
+func NewRoc(chr chan []byte) *Roc {
 
-	roc.gbot = gobot.NewGobot()
-	roc.apiCreate()
-
-	//TODO config file
+	roc := new(Roc)
+	roc.chr	= chr
 	work := func() {
 		for {
 			select {
-			case b := <-roc.Chr:
+			case b := <-roc.chr:
 				fmt.Println(b)
-				/*
-					switch b {
-					case 0xAF:
-						//emptyChannel(roc.Ch)
-						//go roc.action(buff)
-					default:
-						log.Println("Wrong packet")
-					}
-				*/
+			/*
+				switch b {
+				case 0xAF:
+					//emptyChannel(roc.Ch)
+					//go roc.action(buff)
+				default:
+					log.Println("Wrong packet")
+				}
+			*/
 			}
 		}
 	}
@@ -50,8 +47,17 @@ func (roc *Roc) Start() error {
 		work)
 
 	roc.controlBind()
+
+	return roc
+}
+//TODO error check
+func (roc *Roc) Start() error {
+
+	roc.gbot = gobot.NewGobot()
+	roc.apiCreate()
+
+	//TODO config file
 	roc.gbot.AddRobot(roc.control)
-	roc.gbot.AddRobot(newMotion())
 	roc.gbot.Start()
 	return nil
 }

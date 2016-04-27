@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/joystick"
-	"linker"
+	"R.O.C-CONTROLS"
 )
 
 const (
-	XBOX_CF = "xbox_map.json"
+	XBOX_CF = "./config/xbox_map.json"
 )
 
 type Xbox struct {
@@ -19,7 +19,7 @@ func (d *Xbox) Type() string {
 	return "Xbox"
 }
 
-func NewXbox(conn *linker.Linker) *Xbox {
+func NewXbox(conn *roc.Linker) *Xbox {
 
 	x := new(Xbox)
 	x.link = conn
@@ -31,7 +31,7 @@ func NewXbox(conn *linker.Linker) *Xbox {
 	joystickAdaptor := joystick.NewJoystickAdaptor("ps3")
 	joystick := joystick.NewJoystickDriver(joystickAdaptor,
 		"xbox",
-		"./src/controller/json/Xbox.json",
+		"./controller/json/Xbox.json",
 	)
 	work := func() {
 		gobot.On(joystick.Event("a_press"), func(data interface{}) {

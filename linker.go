@@ -1,9 +1,10 @@
-package linker
+package roc
 
 import (
 	"fmt"
 	"net"
 	"R.O.C-CONTROLS/misc"
+	"log"
 )
 
 const (
@@ -41,6 +42,7 @@ type Link struct {
 	out, in chan []byte
 }
 
+//TODO create start method
 func NewLinker(lS, rS string, lT, rT bool) *Linker {
 
 	var err error
@@ -60,13 +62,17 @@ func NewLinker(lS, rS string, lT, rT bool) *Linker {
 
 func startConn(s string, t bool) (*net.TCPConn, error) {
 
+	log.Print("Starting connection on ", s)
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", s)
-	misc.CheckError(err, "Creating server in Linker", true)
+	misc.CheckError(err, "Starting connection in Linker", true)
 	if t {
+		log.Print("Creating server/Listening for client")
 		listener, err := net.ListenTCP("tcp", tcpAddr)
 		misc.CheckError(err, "Creating listener for Server in Linker", true)
+		log.Print("Client acepted")
 		return listener.AcceptTCP()
 	}
+	log.Print("Dialing...")
 	return net.DialTCP("tcp", nil, tcpAddr)
 }
 
@@ -74,11 +80,9 @@ func (l *Linker) Send(b []byte) {
 
 	r := b[0]
 	if r&(DST_R|DST_RL) > 0 {
-		fmt.Println("remote")
 		l.remote.out <- b
 	}
 	if r&DST_L > 0 {
-		fmt.Println("local")
 		l.local.out <- b
 	}
 }
@@ -96,6 +100,9 @@ func handleConn(l, o *Link, t uint8) {
 	var quit chan byte
 
 	defer l.conn.Close()
+	defer close(l.in)
+	defer close(l.out)
+
 	defer func() { quit <- 1 }()
 
 	buff := make([]byte, 32)
@@ -105,15 +112,18 @@ func handleConn(l, o *Link, t uint8) {
 			case <-quit:
 				return
 			case b := <-l.out:
-				fmt.Println("Sending", b, "to", t)
 				_, err := l.conn.Write(append([]byte{MAGIC}, b...))
-				misc.CheckError(err, "Sending data to conn", true)
+				if misc.CheckError(err, "Sending data to conn", false) != nil {
+					return
+				}
 			}
 		}
 	}()
 	for {
 		_, err := l.conn.Read(buff[0:])
-		misc.CheckError(err, "Receiving data from conn", true)
+		if misc.CheckError(err, "Receiving data from conn", false) != nil {
+			return
+		}
 		if buff[0] != MAGIC || len(buff) < 3 {
 			fmt.Println("Wrong packet")
 			return
@@ -134,8 +144,14 @@ func handleConn(l, o *Link, t uint8) {
 }
 
 func (l *Linker) Stop()  {
-	l.remote.conn.Close()
+	if l.remote.conn != nil {
+		l.remote.conn.Close()
+		close(l.remote.in)
+		close(l.remote.out)
+	}
 	if l.local.conn != nil {
 		l.local.conn.Close()
+		close(l.local.in)
+		close(l.local.out)
 	}
 }

@@ -1,14 +1,14 @@
 package main
 
 import (
-	"linker"
-	"roc"
+)
+import (
+	"R.O.C-CONTROLS"
 )
 
 func main() {
 
-	clientL := linker.NewLinker("", "127.0.0.1:4343", false, true)
-	roc := &roc.Roc{Chr: clientL.RegisterChannel(true),
-		Chl: clientL.RegisterChannel(false)}
+	clientL := roc.NewLinker("", "127.0.0.1:4343", false, true)
+	roc := roc.NewRoc(clientL.RegisterChannel(true))
 	roc.Start()
 }
