@@ -6,57 +6,57 @@ import (
 	"github.com/hybridgroup/gobot/platforms/gpio"
 	"time"
 	"fmt"
+	"cmd/compile/internal/gc"
+)
+
+type Data struct {
+	lux 		uint8
+	iter		int
+	iterMaxLux 	int
+	iterMax		int
+}
+
+const (
+	COEFDIFF 	= 0.5
 )
 
 func main() {
 
 	gbot := gobot.NewGobot()
 	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
-	sensor := gpio.NewAnalogSensorDriver(firmataAdaptor, "sensor", "0")
+	sensor := gpio.NewAnalogSensorDriver(firmataAdaptor, "sensor", "0", 200*time.Millisecond)
 	led := gpio.NewLedDriver(firmataAdaptor, "led", "8")
 	button := gpio.NewButtonDriver(firmataAdaptor, "button", "9")
-	work := func() {
-		led.On()
 
+	work := func() {
+		Data.lux = -1
 		gobot.On(sensor.Event("data"), func(data interface{}) {
-			brightness := uint8(
+			Data.iter += 1
+			temp := uint8(
 				gobot.ToScale(gobot.FromScale(float64(data.(int)), 0, 1024), 0, 255),
 			)
-			fmt.Println("sensor", data)
-			fmt.Println("brightness", brightness)
+			if (diffIsCorrect(temp, Data.lux)) {
+				Data.lux = temp
+				Data.iterMaxLux = Data.iter
+			}
 		})
 
 		gobot.On(button.Event("push"), func(data interface{}) {
-			_ = time.Millisecond
-			fmt.Println("push")
-			led.On()
-			data, _ = firmataAdaptor.AnalogRead("0")
-			fmt.Println(data)
-			data, _ = firmataAdaptor.AnalogRead("1")
-			fmt.Println(data)
-			data, _ = firmataAdaptor.AnalogRead("2")
-			fmt.Println(data)
-			data, _ = firmataAdaptor.AnalogRead("3")
-			fmt.Println(data)
-			data, _ = firmataAdaptor.AnalogRead("4")
-			fmt.Println(data)
-			data, _ = sensor.Read()
-			fmt.Println(data)
+			fmt.Println("button1 pushed")
+			fmt.Println("check for maxi lux by turning around")
+			Data.iter = 0
+			Data.iterMax = 0
+			Data.lux = 0
+			Data.iterMaxLux = 0
+		})
 
-		})
 		gobot.On(button.Event("release"), func(data interface{}) {
-			fmt.Println("release")
-			led.Off()
+			Data.iterMax = Data.iter
+			fmt.Println("button1 released")
+			fmt.Println("Step completed")
+			fmt.Println("Max lux is at: ", getAngle(), " degrees")
 		})
-		/*
-		for {
-			if button.Active {
-				led.On()
-			} else {
-				led.Off()
-			}
-		}
-		*/
+
 	}
 
 	robot := gobot.NewRobot("bot",
@@ -69,4 +69,20 @@ func main() {
 
 	gbot.Start()
 
+}
+
+func getAngle() int{
+	angle := (360 / Data.iterMaxLux) * Data.iterMax
+	return angle
+
+}
+
+func diffIsCorrect(old int, new int) bool {
+	if (old == -1) {
+		return true
+	}
+	if ((old - new) / old < COEFDIFF && (old - new) / old > -COEFDIFF) {
+		return true
+	}
+	return false
 }
