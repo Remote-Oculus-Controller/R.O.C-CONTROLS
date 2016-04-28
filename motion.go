@@ -1,15 +1,14 @@
-package main
+package roc
 
 import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/gpio"
-	"time"
 	"github.com/hybridgroup/gobot/platforms/firmata"
 )
 
 type Motion struct {
-	gobot.Robot
+	G      *gobot.Robot
 
 	mLCam	*gpio.ServoDriver
 	mRCam	*gpio.ServoDriver
@@ -33,17 +32,17 @@ const (
 	ROTSERVO = 180
 )
 
-func newMotion() *gobot.Robot{
+func NewMotion() *Motion{
 
-	r := Motion{}
-	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
+	r := new(Motion)
+	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM1")
 
-	r.mLCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotor", "0")
-	r.mRCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotor", "1")
+	r.mLCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotorL", "5")
+	r.mRCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotorR", "6")
 	r.tempSens = gpio.NewAnalogSensorDriver(firmataAdaptor, "temperature", "2")
 	r.potSens = gpio.NewAnalogSensorDriver(firmataAdaptor, "potensiometer", "3")
-	r.mLWheel = gpio.NewMotorDriver(firmataAdaptor, "LWheel", "4")
-	r.mRWheel = gpio.NewMotorDriver(firmataAdaptor, "RWheel", "5")
+	/*r.mLWheel = gpio.NewMotorDriver(firmataAdaptor, "LWheel", "4")
+	r.mRWheel = gpio.NewMotorDriver(firmataAdaptor, "RWheel", "5")*/
 
 	r.piezo = gpio.NewLedDriver(firmataAdaptor, "piezzo", "0")
 	r.button1 = gpio.NewButtonDriver(firmataAdaptor, "button1", "1")
@@ -84,38 +83,48 @@ func newMotion() *gobot.Robot{
 		})
 	}
 
-	robot := gobot.NewRobot("motion",
-		[]gobot.Connection{},
-		[]gobot.Device{},
+
+	r.G = gobot.NewRobot("motion",
+		[]gobot.Connection{firmataAdaptor},
+		[]gobot.Device{r.mLCam, r.mRCam},
 		work)
 
-	return robot
+
+	return r
 }
 
-func extractRobot(r Motion) {
+func (m *Motion) Forward(b []byte) (byte, error)  {
+	simulMotor(m, 200)
+	return 200, nil
+}
+
+func extractRobot(r *Motion) {
 	r.mLCam.Move(0)
 	simulMotor(r, VRUN)
 }
 
-func simulMotor(r Motion, speed byte) {
-	i := uint8(0)
-	gobot.Every((time.Duration(speed)/10)*time.Millisecond, func() {
+func simulMotor(r *Motion, speed byte) {
+	i := uint8(gobot.Rand(180))
+	fmt.Println("Turning", i)
+	r.mLCam.Move(i)
+	r.mRCam.Move(i)
+	/*gobot.Every((time.Duration(speed)/10)*time.Millisecond, func() {
 		i += 1
 		fmt.Println("Turning", i)
 		r.mLCam.Move(i)
 		r.mRCam.Move(ROTSERVO - i)
-	})
+	})*/
 }
 
 func stopSimulMotor() {
 	// Stop gobot.Every loop or do an another loop
 }
 
-func moveBackwardWheel(r Motion, speed byte) {
+func moveBackwardWheel(r *Motion, speed byte) {
 
 }
 
-func moveForwardWheel(r Motion, speed byte) {
+func moveForwardWheel(r *Motion, speed byte) {
 	r.mRWheel.Forward(speed)
 	r.mLWheel.Forward(speed)
 }

@@ -66,6 +66,7 @@ func startConn(s string, t bool) (*net.TCPConn, error) {
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", s)
 	misc.CheckError(err, "Starting connection in Linker", true)
 	if t {
+		//TODO for accept
 		log.Print("Creating server/Listening for client")
 		listener, err := net.ListenTCP("tcp", tcpAddr)
 		misc.CheckError(err, "Creating listener for Server in Linker", true)
@@ -136,7 +137,7 @@ func handleConn(l, o *Link, t uint8) {
 				o.in <- buff[0:]
 			default:
 		*/
-		l.in <- buff[0:]
+		l.in <- buff[3:]
 		/*
 			}
 		*/

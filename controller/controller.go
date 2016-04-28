@@ -53,7 +53,7 @@ func (c *Controller) Stop() error {
 //TODO see to buffer
 func (c *Controller) packet(code byte, data interface{}) {
 
-	b, err := misc.GetBytes(data)
+	b, err := misc.EncodeBytes(data)
 	if err != nil {
 		panic(fmt.Sprintf(err.Error()))
 	}
