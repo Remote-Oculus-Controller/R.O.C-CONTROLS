@@ -12,6 +12,6 @@ func main() {
 	r := roc.NewRoc(clientL.RegisterChannel(true))
 	m := roc.NewMotion()
 	r.SetMotion(m.G)
-	//r.AddFunc(m.Forward, 2, true, "motion forward")
+	r.AddFunc(m.Forward, 2, true, "motion forward")
 	r.Start()
 }

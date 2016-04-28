@@ -43,10 +43,6 @@ func TestSendReceive(t *testing.T) {
 	for _, c := range cases {
 		client.Send(c.in)
 		got := <-ch
-		if got[0] != MAGIC {
-			t.Error("Expecting magic number for first byte")
-		}
-		got = got[1:]
 		if bytes.Compare(c.in, got) == 0 {
 			t.Errorf("Send(%q) != %q", c.in, got)
 		}

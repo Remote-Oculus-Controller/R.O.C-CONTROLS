@@ -50,15 +50,17 @@ func NewRoc(chr chan []byte) *Roc {
 func (roc *Roc) Start() error {
 
 	roc.gbot = gobot.NewGobot()
-	roc.apiCreate()
+//	roc.apiCreate()
 
 	//TODO config file
-	roc.gbot.AddRobot(roc.control)
 	if (roc.motion != nil) {
-		fmt.Println("MOTION")
 		roc.gbot.AddRobot(roc.motion)
 	}
-	roc.gbot.Start()
+	roc.gbot.AddRobot(roc.control)
+	errs := roc.gbot.Start()
+	for _, err := range errs {
+		log.Println(err.Error())
+	}
 	return nil
 }
 
