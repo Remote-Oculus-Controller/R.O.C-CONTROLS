@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/keyboard"
-	"R.O.C-CONTROLS"
+	"github.com/Happykat/R.O.C-CONTROLS"
 )
 
 type Keyboard struct {

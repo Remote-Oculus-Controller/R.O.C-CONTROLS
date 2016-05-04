@@ -1,10 +1,6 @@
 package main
 
-import (
-)
-import (
-	"R.O.C-CONTROLS"
-)
+import "github.com/Happykat/R.O.C-CONTROLS"
 
 func main() {
 

@@ -1,0 +1,91 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "AKjqgiWov1IJWbnpCkjVEs6NunQ=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/bmizerany/pat",
+			"path": "github.com/bmizerany/pat",
+			"revision": "c068ca2f0aacee5ac3681d68e4d0a003b7d1fd2c",
+			"revisionTime": "2016-02-17T10:30:50Z"
+		},
+		{
+			"checksumSHA1": "LXa9028bMwadDJnJjgGdXx1sZsM=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/hybridgroup/gobot",
+			"path": "github.com/hybridgroup/gobot",
+			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
+			"revisionTime": "2016-04-12T21:32:53Z"
+		},
+		{
+			"checksumSHA1": "QZprPRY1jVc5CWzaEWDJFbk405k=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/hybridgroup/gobot/api",
+			"path": "github.com/hybridgroup/gobot/api",
+			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
+			"revisionTime": "2016-04-12T21:32:53Z"
+		},
+		{
+			"checksumSHA1": "6MlDU03XQ6GOjNASy/dOjiyYdos=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/hybridgroup/gobot/api/robeaux",
+			"path": "github.com/hybridgroup/gobot/api/robeaux",
+			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
+			"revisionTime": "2016-04-12T21:32:53Z"
+		},
+		{
+			"checksumSHA1": "BcrSvEILkktJlO+NfPEZpNrzcKE=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/hybridgroup/gobot/platforms/firmata",
+			"path": "github.com/hybridgroup/gobot/platforms/firmata",
+			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
+			"revisionTime": "2016-04-12T21:32:53Z"
+		},
+		{
+			"checksumSHA1": "9OF9ms4A3alhyfcVXGHByaCdOcw=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/hybridgroup/gobot/platforms/firmata/client",
+			"path": "github.com/hybridgroup/gobot/platforms/firmata/client",
+			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
+			"revisionTime": "2016-04-12T21:32:53Z"
+		},
+		{
+			"checksumSHA1": "mHYZZP8wVuLfdpE4PFfOo6/gA4s=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/hybridgroup/gobot/platforms/gpio",
+			"path": "github.com/hybridgroup/gobot/platforms/gpio",
+			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
+			"revisionTime": "2016-04-12T21:32:53Z"
+		},
+		{
+			"checksumSHA1": "q8LQ3TvcumbJ+MoGIjVlj3YhwGg=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/hybridgroup/gobot/platforms/i2c",
+			"path": "github.com/hybridgroup/gobot/platforms/i2c",
+			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
+			"revisionTime": "2016-04-12T21:32:53Z"
+		},
+		{
+			"checksumSHA1": "sMMKzaxr1grS5f+vrLXHPs9bTyo=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/hybridgroup/gobot/platforms/joystick",
+			"path": "github.com/hybridgroup/gobot/platforms/joystick",
+			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
+			"revisionTime": "2016-04-12T21:32:53Z"
+		},
+		{
+			"checksumSHA1": "e6XzV7R0hia4lKsr/HeA3Y2fVv4=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/hybridgroup/gobot/platforms/keyboard",
+			"path": "github.com/hybridgroup/gobot/platforms/keyboard",
+			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
+			"revisionTime": "2016-04-12T21:32:53Z"
+		},
+		{
+			"checksumSHA1": "/8A+wGFPFcBoT5+9APp05ueeokU=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/tarm/goserial",
+			"path": "github.com/tarm/goserial",
+			"revision": "b3440c3c63556c3fd67e915be3b92195bc70294a",
+			"revisionTime": "2015-10-07T20:54:00Z"
+		},
+		{
+			"checksumSHA1": "1OQSwH1y7GnTgjgB35uFC/fToi0=",
+			"origin": "github.com/Happykat/R.O.C-CONTROLS/vendor/github.com/veandco/go-sdl2/sdl",
+			"path": "github.com/veandco/go-sdl2/sdl",
+			"revision": "75093c9da4534ebb7fda7ddedcc3521015b035c1",
+			"revisionTime": "2016-04-25T12:52:20Z"
+		}
+	],
+	"rootPath": "github.com/Happykat/R.O.C-CONTROLS"
+}

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"R.O.C-CONTROLS"
-	"R.O.C-CONTROLS/controller"
+	"github.com/Happykat/R.O.C-CONTROLS/controller"
+	"github.com/Happykat/R.O.C-CONTROLS"
 )
 
 //TODO opt

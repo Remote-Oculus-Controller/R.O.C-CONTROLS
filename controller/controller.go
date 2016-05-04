@@ -2,11 +2,11 @@ package controller
 
 import (
 	"fmt"
+	"log"
+	"github.com/Happykat/R.O.C-CONTROLS"
+	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/api"
-	"log"
-	"R.O.C-CONTROLS/misc"
-	"R.O.C-CONTROLS"
 )
 
 type Controller struct {

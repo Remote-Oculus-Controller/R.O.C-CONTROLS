@@ -3,8 +3,8 @@ package roc
 import (
 	"fmt"
 	"net"
-	"R.O.C-CONTROLS/misc"
 	"log"
+	"github.com/Happykat/R.O.C-CONTROLS/misc"
 )
 
 const (
