@@ -1,18 +1,18 @@
 package roc
 
 import (
+	"R.O.C-CONTROLS/misc"
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"log"
-	"R.O.C-CONTROLS/misc"
 )
 
 type Roc struct {
-	gbot     *gobot.Gobot
-	control  *gobot.Robot
-	motion   *gobot.Robot
-	cmap     map[byte]func([]byte) (byte, error)
-	chr, chl chan []byte
+	gbot     *gobot.Gobot                        //Gobot
+	control  *gobot.Robot                        //Control robot
+	motion   *gobot.Robot                        //Motion Robot
+	cmap     map[byte]func([]byte) (byte, error) //cmd func map
+	chr, chl chan []byte                         //chr: Link out needed for robot creation
 }
 
 const (
@@ -23,14 +23,14 @@ const (
 func NewRoc(chr chan []byte) *Roc {
 
 	roc := new(Roc)
-	roc.chr	= chr
+	roc.chr = chr
 	roc.cmap = make(map[byte]func([]byte) (byte, error))
 	work := func() {
 		for {
 			select {
 			case b := <-roc.chr:
-				f, k:= roc.cmap[b[0]]
-				if (k) {
+				f, k := roc.cmap[b[0]]
+				if k {
 					f(b[1:])
 				}
 			}
@@ -46,14 +46,15 @@ func NewRoc(chr chan []byte) *Roc {
 
 	return roc
 }
+
 //TODO error check
 func (roc *Roc) Start() error {
 
 	roc.gbot = gobot.NewGobot()
-//	roc.apiCreate()
+	//	roc.apiCreate()
 
 	//TODO config file
-	if (roc.motion != nil) {
+	if roc.motion != nil {
 		roc.gbot.AddRobot(roc.motion)
 	}
 	roc.gbot.AddRobot(roc.control)
@@ -75,7 +76,7 @@ func (roc *Roc) SetMotion(m *gobot.Robot) {
 func (roc *Roc) AddFunc(f func([]byte) (byte, error), code byte, api bool, name string) {
 	log.Println("Assigning function", name, "to code", code)
 	_, k := roc.cmap[code]
-	if (!k) {
+	if !k {
 		roc.cmap[code] = f
 		if api {
 			log.Println("Creating api entry for function")

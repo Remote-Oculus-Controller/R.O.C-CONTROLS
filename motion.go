@@ -35,7 +35,7 @@ const (
 func NewMotion() *Motion{
 
 	r := new(Motion)
-	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM1")
+	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
 
 	r.mLCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotorL", "5")
 	r.mRCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotorR", "6")

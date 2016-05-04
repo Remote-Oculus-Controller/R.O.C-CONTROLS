@@ -22,7 +22,7 @@ const (
 func main() {
 
 	gbot := gobot.NewGobot()
-	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM1")
+	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
 	sensor := gpio.NewAnalogSensorDriver(firmataAdaptor, "sensor", "0", 200*time.Millisecond)
 	led := gpio.NewLedDriver(firmataAdaptor, "led", "8")
 	button := gpio.NewButtonDriver(firmataAdaptor, "button", "9")

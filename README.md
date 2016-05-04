@@ -1,7 +1,7 @@
 # R.O.C-CONTROLS
 Repository of the ROC Controls
 
-Basic client and robot exemple for R.O.C. Link with unity unavailable.
+Basic client and robot exemple for R.O.C. Link with local unavailable.
 
 **NEW**
 
@@ -15,13 +15,18 @@ Be sure to be in golang directory when you are executing
 
 **TODO**
 
+doc and doc.go
+
 finish protocol
 
-unity link
+local link
 
 add test
 
-axis protocol
+Possibility to make a Motion a gobot.Robot and not contain a pointer to one.
+Remove control robot as robot and create a simple routine
+
+Study the possiblity to add multiple motion bot. Change SetMotion in AddMotion
 
 see TODO list in project
 

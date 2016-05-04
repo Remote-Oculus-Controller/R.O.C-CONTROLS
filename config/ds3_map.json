@@ -1,6 +1,6 @@
 {
   "square_p":"forward",
-  "square_r":"stop",
+  "triangle_p":"stop",
   "left_x":"head_x",
   "left_y":"head_y"
 }

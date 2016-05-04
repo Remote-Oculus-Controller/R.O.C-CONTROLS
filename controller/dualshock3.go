@@ -43,10 +43,12 @@ func NewDS3(link *roc.Linker) *Dualshock3 {
 			d.packet(p.Code, p.Default)
 		})
 		gobot.On(joystick.Event("triangle_press"), func(data interface{}) {
-			d.packet(d.cmap["triangle_p"].Code, data)
+			p := d.cmap["triangle_p"]
+			d.packet(p.Code, p.Default)
 		})
 		gobot.On(joystick.Event("triangle_release"), func(data interface{}) {
-			d.packet(d.cmap["triangle_r"].Code, data)
+			p := d.cmap["triangle_r"]
+			d.packet(p.Code, p.Default)
 		})
 		gobot.On(joystick.Event("left_x"), func(data interface{}) {
 			d.packet(d.cmap["left_x"].Code, data)
