@@ -17,7 +17,7 @@ type Controller struct {
 }
 
 const (
-	CMD_FILE = "./config/command.json"
+	CMD_FILE = "../config/command.json"
 )
 
 func (c *Controller) Type() string {

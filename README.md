@@ -3,6 +3,8 @@ Repository of the ROC Controls
 
 Basic client and robot exemple for R.O.C. Link with local unavailable.
 
+[![Build Status](https://travis-ci.org/Happykat/R.O.C-CONTROLS.svg?branch=development)](https://travis-ci.org/Happykat/R.O.C-CONTROLS)
+
 **NEW**
 
 KEYBOARD !
