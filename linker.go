@@ -45,36 +45,42 @@ type Link struct {
 //TODO create start method
 func NewLinker(lS, rS string, lT, rT bool) *Linker {
 
-	var err error
-
 	l := Linker{Link{out: make(chan []byte), in: make(chan []byte)},
 		Link{out: make(chan []byte), in: make(chan []byte)}}
-	l.remote.conn, err = startConn(rS, rT)
-	misc.CheckError(err, "Establishing remote connection", true)
-	go handleConn(&l.remote, &l.local, DST_R)
+	l.remote.conn = startConn(rS, rT)
 	if len(lS) != 0 {
-		l.local.conn, err = startConn(lS, lT)
-		misc.CheckError(err, "Establishing local connection", true)
-		go handleConn(&l.local, &l.remote, DST_RL)
+		l.local.conn = startConn(lS, lT)
 	}
 	return &l
 }
 
-func startConn(s string, t bool) (*net.TCPConn, error) {
+func (l *Linker) Start() {
+	if (l.local.conn != nil) {
+		log.Print("Staring local work")
+		go handleConn(&l.local, &l.remote, DST_L | DST_RL)
+	}
+	log.Println("Starting remote work")
+	go handleConn(&l.remote, &l.local, DST_R)
+}
+
+func startConn(s string, t bool) (*net.TCPConn) {
 
 	log.Print("Starting connection on ", s)
 	tcpAddr, err := net.ResolveTCPAddr("tcp4", s)
-	misc.CheckError(err, "Starting connection in Linker", true)
+	misc.CheckError(err, "resolving address in linker.go/startConn", true)
 	if t {
 		//TODO for accept
-		log.Print("Creating server/Listening for client")
 		listener, err := net.ListenTCP("tcp", tcpAddr)
-		misc.CheckError(err, "Creating listener for Server in Linker", true)
+		misc.CheckError(err, "listening in linker.go/startConn", true)
+		v, err := listener.AcceptTCP()
+		misc.CheckError(err, "accepting client in linker.go/startConn", true)
 		log.Print("Client acepted")
-		return listener.AcceptTCP()
+		return v
 	}
 	log.Print("Dialing...")
-	return net.DialTCP("tcp", nil, tcpAddr)
+	v, err := net.DialTCP("tcp", nil, tcpAddr)
+	misc.CheckError(err, "dialing adresse in linker.go/startConn", true)
+	return v
 }
 
 func (l *Linker) Send(b []byte) {
@@ -114,7 +120,7 @@ func handleConn(l, o *Link, t uint8) {
 				return
 			case b := <-l.out:
 				_, err := l.conn.Write(append([]byte{MAGIC}, b...))
-				if misc.CheckError(err, "Sending data to conn", false) != nil {
+				if misc.CheckError(err, "Writing data on conn", false) != nil {
 					return
 				}
 			}
@@ -127,20 +133,17 @@ func handleConn(l, o *Link, t uint8) {
 		}
 		if buff[0] != MAGIC || len(buff) < 3 {
 			fmt.Println("Wrong packet")
-			return
+			continue
 		}
 		//TODO redirect to local or remote if necessary
-		/*
-			switch m := buff[1]; {
-			case m &^ t > 0 && o != nil:
-				fmt.Println("other")
-				o.in <- buff[0:]
-			default:
-		*/
+/*		switch m := buff[1]; {
+		case m &^ t > 0 && o != nil:
+			fmt.Println("other")
+			o.out <- buff[0:]
+		default:
+		}*/
 		l.in <- buff[3:]
-		/*
-			}
-		*/
+
 	}
 }
 

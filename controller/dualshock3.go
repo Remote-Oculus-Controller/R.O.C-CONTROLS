@@ -7,9 +7,7 @@ import (
 	"github.com/Happykat/R.O.C-CONTROLS"
 )
 
-const (
-	DS3_CF = "./config/ds3_map.json"
-)
+var DS3_CF = CF_DIR + "ds3_map.json"
 
 type Dualshock3 struct {
 	Controller

@@ -7,6 +7,7 @@ import (
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/api"
+	"os"
 )
 
 type Controller struct {
@@ -15,10 +16,8 @@ type Controller struct {
 	cmap  map[string]roc.Cmd
 	link  *roc.Linker
 }
-
-const (
-	CMD_FILE = "../config/command.json"
-)
+var CF_DIR = os.Getenv("GOPATH") + "/src/github.com/Happykat/R.O.C-CONTROLS/config/"
+var CMD_FILE = CF_DIR + "command.json"
 
 func (c *Controller) Type() string {
 	return "Controller"

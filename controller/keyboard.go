@@ -11,9 +11,7 @@ type Keyboard struct {
 	Controller
 }
 
-const (
-	KEYBOARD_CF = "./config/keyboard_map.json"
-)
+var KEYBOARD_CF = CF_DIR + "keyboard_map.json"
 
 func (k Keyboard) Type() string {
 	return "Keyboard"

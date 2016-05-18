@@ -7,9 +7,7 @@ import (
 	"github.com/Happykat/R.O.C-CONTROLS"
 )
 
-const (
-	XBOX_CF = "./config/xbox_map.json"
-)
+var XBOX_CF = CF_DIR + "xbox_map.json"
 
 type Xbox struct {
 	Controller
