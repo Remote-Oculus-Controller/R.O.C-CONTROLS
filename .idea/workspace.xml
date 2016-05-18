@@ -1,28 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5026938a-a9f2-4a76-ac80-04c720a51fee" name="Default" comment="up readme">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/rocClient.go" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/encodings.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/GOPATH__R_O_C_CONTROLS_.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/commandsAPI.go" afterPath="$PROJECT_DIR$/commandsAPI.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/controller.go" afterPath="$PROJECT_DIR$/controller/controller.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/dualshock3.go" afterPath="$PROJECT_DIR$/controller/dualshock3.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/keyboard.go" afterPath="$PROJECT_DIR$/controller/keyboard.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/xbox.go" afterPath="$PROJECT_DIR$/controller/xbox.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/example/client.go" afterPath="$PROJECT_DIR$/example/client.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/example/robot.go" afterPath="$PROJECT_DIR$/example/robot.go" />
+    <list default="true" id="5026938a-a9f2-4a76-ac80-04c720a51fee" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/linker.go" afterPath="$PROJECT_DIR$/linker.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/misc/error.go" afterPath="$PROJECT_DIR$/misc/error.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser.go" afterPath="$PROJECT_DIR$/parser.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/roc.go" afterPath="$PROJECT_DIR$/roc.go" />
     </list>
     <ignored path="R.O.C-CONTROLS.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -59,8 +40,8 @@
       <file leaf-file-name="controller.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/controller/controller.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-846">
-              <caret line="18" column="83" selection-start-line="18" selection-start-column="83" selection-end-line="18" selection-end-column="83" />
+            <state relative-caret-position="150">
+              <caret line="58" column="59" selection-start-line="58" selection-start-column="59" selection-end-line="58" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -122,8 +103,8 @@
       <file leaf-file-name="linker.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/linker.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="582">
-              <caret line="135" column="32" selection-start-line="135" selection-start-column="32" selection-end-line="135" selection-end-column="32" />
+            <state relative-caret-position="402">
+              <caret line="137" column="0" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
               <folding>
                 <element signature="e#13#87#0" expanded="true" />
               </folding>
@@ -180,16 +161,16 @@
         <option value="$PROJECT_DIR$/example/robot.go" />
         <option value="$PROJECT_DIR$/rocClient.go" />
         <option value="$PROJECT_DIR$/commandsAPI.go" />
-        <option value="$PROJECT_DIR$/controller/controller.go" />
         <option value="$PROJECT_DIR$/controller/xbox.go" />
         <option value="$PROJECT_DIR$/controller/keyboard.go" />
         <option value="$PROJECT_DIR$/misc/error.go" />
         <option value="$PROJECT_DIR$/roc.go" />
         <option value="$PROJECT_DIR$/controller/dualshock3.go" />
         <option value="$PROJECT_DIR$/example/client.go" />
-        <option value="$PROJECT_DIR$/linker.go" />
         <option value="$PROJECT_DIR$/parser.go" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/controller/controller.go" />
+        <option value="$PROJECT_DIR$/linker.go" />
       </list>
     </option>
   </component>
@@ -647,7 +628,14 @@
       <option name="project" value="LOCAL" />
       <updated>1462536921927</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="cleaner roc and link, local link perfect !">
+      <created>1463587603455</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1463587603455</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -695,7 +683,8 @@
     <MESSAGE value="travis" />
     <MESSAGE value="all dependencies&#10;" />
     <MESSAGE value="up readme" />
-    <option name="LAST_COMMIT_MESSAGE" value="up readme" />
+    <MESSAGE value="cleaner roc and link, local link perfect !" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaner roc and link, local link perfect !" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1005,16 +994,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/linker.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="582">
-          <caret line="135" column="32" selection-start-line="135" selection-start-column="32" selection-end-line="135" selection-end-column="32" />
-          <folding>
-            <element signature="e#13#87#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/config/command.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -1027,14 +1006,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/controller/controller.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-846">
-          <caret line="18" column="83" selection-start-line="18" selection-start-column="83" selection-end-line="18" selection-end-column="83" />
           <folding />
         </state>
       </provider>
@@ -1060,6 +1031,24 @@
         <state relative-caret-position="306">
           <caret line="21" column="22" selection-start-line="21" selection-start-column="22" selection-end-line="21" selection-end-column="22" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/controller/controller.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="58" column="59" selection-start-line="58" selection-start-column="59" selection-end-line="58" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/linker.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="402">
+          <caret line="137" column="0" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
+          <folding>
+            <element signature="e#13#87#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

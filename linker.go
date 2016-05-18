@@ -60,7 +60,7 @@ func (l *Linker) Start() {
 		go handleConn(&l.local, &l.remote, DST_L | DST_RL)
 	}
 	log.Println("Starting remote work")
-	go handleConn(&l.remote, &l.local, DST_R)
+	go handleConn(&l.remote, &l.local, DST_R | DST_L)
 }
 
 func startConn(s string, t bool) (*net.TCPConn) {
@@ -135,15 +135,12 @@ func handleConn(l, o *Link, t uint8) {
 			fmt.Println("Wrong packet")
 			continue
 		}
-		//TODO redirect to local or remote if necessary
-/*		switch m := buff[1]; {
-		case m &^ t > 0 && o != nil:
-			fmt.Println("other")
+		if (buff[1] & t == t) {
+			l.in <- buff[3:]
+		}
+		if ((buff[1] & DST_ALL) &^ t != 0 && o != nil) {
 			o.out <- buff[0:]
-		default:
-		}*/
-		l.in <- buff[3:]
-
+		}
 	}
 }
 
