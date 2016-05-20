@@ -57,10 +57,10 @@ func NewLinker(lS, rS string, lT, rT bool) *Linker {
 func (l *Linker) Start() {
 	if (l.local.conn != nil) {
 		log.Print("Staring local work")
-		go handleConn(&l.local, &l.remote, DST_L | DST_RL)
+		go handleConn(&l.local, &l.remote, DST_RL)
 	}
 	log.Println("Starting remote work")
-	go handleConn(&l.remote, &l.local, DST_R | DST_L)
+	go handleConn(&l.remote, &l.local, DST_R)
 }
 
 func startConn(s string, t bool) (*net.TCPConn) {
@@ -86,10 +86,10 @@ func startConn(s string, t bool) (*net.TCPConn) {
 func (l *Linker) Send(b []byte) {
 
 	r := b[0]
-	if r&(DST_R|DST_RL) > 0 {
+	if r&(DST_R|DST_RL) != 0 {
 		l.remote.out <- b
 	}
-	if r&DST_L > 0 {
+	if r&DST_L != 0 {
 		l.local.out <- b
 	}
 }
@@ -135,10 +135,12 @@ func handleConn(l, o *Link, t uint8) {
 			fmt.Println("Wrong packet")
 			continue
 		}
-		if (buff[1] & t == t) {
+		fmt.Printf("buff %b t %b & %b\n", buff[1], t, buff[1] & t)
+		if (buff[1] & t != 0) {
 			l.in <- buff[3:]
 		}
-		if ((buff[1] & DST_ALL) &^ t != 0 && o != nil) {
+		fmt.Printf("buff %b mask %b t %b & %b &^ %b\n", buff[1], DST_ALL, t, buff[1] & DST_ALL, (buff[1] & DST_ALL) &^ t )
+		if ((buff[1] & DST_ALL) &^ (t | DST_L) != 0 && o != nil) {
 			o.out <- buff[0:]
 		}
 	}

@@ -13,7 +13,7 @@ var local_t	bool
 func main() {
 	flag.Parse()
 	r := roc.NewRoc(local, remote, local_t, remote_t)
-	r.SetMotion(roc.NewMotion().Robot)
+	//r.SetMotion(roc.NewMotion().Robot)
 	r.Start()
 }
 
