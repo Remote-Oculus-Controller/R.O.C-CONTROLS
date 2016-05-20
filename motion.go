@@ -8,7 +8,7 @@ import (
 )
 
 type Motion struct {
-	G      *gobot.Robot
+	*gobot.Robot
 
 	mLCam	*gpio.ServoDriver
 	mRCam	*gpio.ServoDriver
@@ -84,7 +84,7 @@ func NewMotion() *Motion{
 	}
 
 
-	r.G = gobot.NewRobot("motion",
+	r.Robot = gobot.NewRobot("motion",
 		[]gobot.Connection{firmataAdaptor},
 		[]gobot.Device{r.mLCam, r.mRCam},
 		work)
