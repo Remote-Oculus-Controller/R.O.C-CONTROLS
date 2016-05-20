@@ -2,9 +2,9 @@ package controller
 
 import (
 	"fmt"
+	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/keyboard"
-	"github.com/Happykat/R.O.C-CONTROLS"
 )
 
 type Keyboard struct {
@@ -22,8 +22,8 @@ func NewKeyboard(link *roc.Linker) *Keyboard {
 	k := new(Keyboard)
 	k.link = link
 	k.mapControl(KEYBOARD_CF)
-	keys := keyboard.NewKeyboardDriver("keyboard")
 	fmt.Println(k.cmap)
+	keys := keyboard.NewKeyboardDriver("keyboard")
 	work := func() {
 		gobot.On(keys.Event("key"), func(data interface{}) {
 			key := data.(keyboard.KeyEvent)
@@ -31,7 +31,6 @@ func NewKeyboard(link *roc.Linker) *Keyboard {
 			k.packet(p.Code, p.Default)
 		})
 	}
-
 	k.robot = gobot.NewRobot("keyboard",
 		[]gobot.Connection{},
 		[]gobot.Device{keys},
