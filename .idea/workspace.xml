@@ -1,28 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5026938a-a9f2-4a76-ac80-04c720a51fee" name="Default" comment="GPS">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/client.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/example/clientKeyboard.go" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/robot.go" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/rocClient.go" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/controller/controller.go" afterPath="$PROJECT_DIR$/controller.go" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/controller/controller_test.go" afterPath="$PROJECT_DIR$/controller_test.go" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/example/client.go" afterPath="$PROJECT_DIR$/example/clientDS3.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/GOPATH__R_O_C_CONTROLS_.xml" afterPath="$PROJECT_DIR$/.idea/libraries/GOPATH__R_O_C_CONTROLS_.xml" />
+    <list default="true" id="5026938a-a9f2-4a76-ac80-04c720a51fee" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/robots/gps.go" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/commands.go" afterPath="$PROJECT_DIR$/commands.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/config/ds3_map.json" afterPath="$PROJECT_DIR$/config/ds3_map.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/dualshock3.go" afterPath="$PROJECT_DIR$/controller/dualshock3.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/keyboard.go" afterPath="$PROJECT_DIR$/controller/keyboard.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/controller/xbox.go" afterPath="$PROJECT_DIR$/controller/xbox.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/example/robot.go" afterPath="$PROJECT_DIR$/example/robot.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/linker.go" afterPath="$PROJECT_DIR$/linker.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/misc/encode.go" afterPath="$PROJECT_DIR$/misc/encode.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser.go" afterPath="$PROJECT_DIR$/parser.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/parser_test.go" afterPath="$PROJECT_DIR$/parser_test.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/roc.go" afterPath="$PROJECT_DIR$/roc.go" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/version.go" afterPath="$PROJECT_DIR$/version.go" />
     </list>
     <ignored path="R.O.C-CONTROLS.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -779,7 +760,14 @@
       <option name="project" value="LOCAL" />
       <updated>1463755696224</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="GPS">
+      <created>1464282787931</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1464282787931</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TodoView">
@@ -793,7 +781,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="6" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32952183" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -807,7 +795,7 @@
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35135135" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14430244" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14430244" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
