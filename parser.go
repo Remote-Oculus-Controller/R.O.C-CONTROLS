@@ -16,7 +16,7 @@ type Cmds struct {
 	Commands []Cmd
 }
 
-func RobotCommand(f_path string) (map[string]Cmd, error) {
+func ParseCommands(f_path string) (map[string]Cmd, error) {
 
 	var cmds Cmds
 
@@ -37,7 +37,7 @@ func RobotCommand(f_path string) (map[string]Cmd, error) {
 	return c, nil
 }
 
-func Decode(fp string) (map[string]interface{}, error) {
+func DecodeJsonFile(fp string) (map[string]interface{}, error) {
 
 	var c interface{}
 

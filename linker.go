@@ -112,7 +112,7 @@ func handleConn(l, o *Link, t uint8) {
 
 	defer func() { quit <- 1 }()
 
-	buff := make([]byte, 32)
+	buff := make([]byte, 128)
 	go func() {
 		for {
 			select {
@@ -131,15 +131,14 @@ func handleConn(l, o *Link, t uint8) {
 		if misc.CheckError(err, "Receiving data from conn", false) != nil {
 			return
 		}
+		fmt.Println(buff)
 		if buff[0] != MAGIC || len(buff) < 3 {
 			fmt.Println("Wrong packet")
 			continue
 		}
-		fmt.Printf("buff %b t %b & %b\n", buff[1], t, buff[1] & t)
 		if (buff[1] & t != 0) {
 			l.in <- buff[3:]
 		}
-		fmt.Printf("buff %b mask %b t %b & %b &^ %b\n", buff[1], DST_ALL, t, buff[1] & DST_ALL, (buff[1] & DST_ALL) &^ t )
 		if ((buff[1] & DST_ALL) &^ (t | DST_L) != 0 && o != nil) {
 			o.out <- buff[0:]
 		}

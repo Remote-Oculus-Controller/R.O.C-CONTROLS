@@ -13,7 +13,7 @@ func TestDecode(t *testing.T)  {
 		"q":"head_xm",
 		"d":"head_xp",
 	}
-	m, err := Decode("./config/parser_test_decode.json")
+	m, err := DecodeJsonFile("./config/parser_test_decode.json")
 	if err != nil {
 		t.Error(err)
 	}

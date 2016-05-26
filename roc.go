@@ -9,7 +9,7 @@ import (
 
 type Roc struct {
 	*gobot.Gobot                        //Gobot
-	cmap    map[byte]func([]byte) (byte, error) //cmd func map
+	cmap    map[byte]func([]byte) (error) //cmd func map
 	l	*Linker
 }
 
@@ -22,13 +22,14 @@ func NewRoc(lS, rS string, lT, rT bool) *Roc {
 
 	roc := new(Roc)
 	roc.Gobot = gobot.NewGobot()
-	roc.cmap = make(map[byte]func([]byte) (byte, error))
+	roc.cmap = make(map[byte]func([]byte) (error))
 	roc.l = NewLinker(lS, rS, lT, rT)
+	roc.apiCreate()
+	roc.AddFunc(roc.forward, 1, true, "forward")
 	go func() {
 		for {
 			select {
 			case b := <-roc.l.remote.in:
-			fmt.Println(b)
 				f, k := roc.cmap[b[0]]
 				if k {
 					f(b[1:])
@@ -56,16 +57,24 @@ func (roc *Roc) Stop() error {
 	return roc.Stop()
 }
 
-func (roc *Roc) SetMotion(m *gobot.Robot) {
-	if (roc.Robot("motion") != nil) {
-		log.Println("Warning ! Motion bot overwritten")
+func (roc *Roc) AddRobot(m *RocRobot) {
+	if (roc.Robot(m.Name) != nil) {
+		log.Println("Warning !" + m.Name + "bot overwritten")
 	}
-	m.Name = "motion"
-	roc.AddRobot(m)
+	m.l = roc.l
+	for k, v := range m.cmap {
+		_, ok := roc.cmap[k]
+		if (ok) {
+			log.Println("command code", k, "already exist skipping")
+			continue
+		}
+		roc.cmap[k] = v
+	}
+	roc.Gobot.AddRobot(m.Robot)
 }
 
 //Directly add func with code, if specified create the api entry
-func (roc *Roc) AddFunc(f func([]byte) (byte, error), code byte, api bool, name string) {
+func (roc *Roc) AddFunc(f func([]byte) (error), code byte, api bool, name string) {
 	log.Println("Assigning function", name, "to code", code)
 	_, k := roc.cmap[code]
 	if !k {
@@ -79,8 +88,8 @@ func (roc *Roc) AddFunc(f func([]byte) (byte, error), code byte, api bool, name 
 					if err != nil {
 						return fmt.Sprintln("API error:", err.Error())
 					}
-					r, err := f(v)
-					return fmt.Sprintln(r, err.Error())
+					err = f(v)
+					return fmt.Sprintln(err.Error())
 				}
 				return fmt.Sprintln("API error: wrong parameter", k)
 			})

@@ -8,7 +8,7 @@ type version struct {
 	Name                string
 }
 
-var Version = version{0, 1, 0, "dev", "baby"}
+var Version = version{0, 2, 1, "dev", "baby"}
 
 var Build string
 

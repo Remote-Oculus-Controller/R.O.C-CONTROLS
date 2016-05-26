@@ -4,24 +4,24 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/joystick"
+	"os"
 	"github.com/Happykat/R.O.C-CONTROLS"
 )
 
-var XBOX_CF = CF_DIR + "xbox_map.json"
+var XBOX_CF = roc.CF_DIR + "xbox_map.json"
 
 type Xbox struct {
-	Controller
+	roc.Controller
 }
 
 func (d *Xbox) Type() string {
 	return "Xbox"
 }
 
-func NewXbox(conn *roc.Linker) *Xbox {
+func NewXbox() *Xbox {
 
 	x := new(Xbox)
-	x.link = conn
-	err := x.mapControl(XBOX_CF)
+	err := x.MapControl(XBOX_CF)
 	if err != nil {
 		fmt.Println("Can't start controller. panicking...")
 		panic(fmt.Sprintf(err.Error()))
@@ -29,32 +29,30 @@ func NewXbox(conn *roc.Linker) *Xbox {
 	joystickAdaptor := joystick.NewJoystickAdaptor("ps3")
 	joystick := joystick.NewJoystickDriver(joystickAdaptor,
 		"xbox",
-		"./controller/json/Xbox.json",
+		os.Getenv("GOPATH") + "/src/github.com/Happykat/R.O.C-CONTROLS/config/xbox360_power_a_mini_proex.json",
 	)
 	work := func() {
 		gobot.On(joystick.Event("a_press"), func(data interface{}) {
-			p := x.cmap["a_p"]
-			x.packet(p.Code, p.Default)
+			x.Packet("a_p", data)
 		})
 		gobot.On(joystick.Event("a_release"), func(data interface{}) {
-			p := x.cmap["a_r"]
-			x.packet(p.Code, p.Default)
+			x.Packet("a_r", data)
 		})
 		gobot.On(joystick.Event("left_x"), func(data interface{}) {
-			x.packet(x.cmap["left_x"].Code, data)
+			x.Packet("left_x", data)
 		})
 		gobot.On(joystick.Event("left_y"), func(data interface{}) {
-			x.packet(x.cmap["left_y"].Code, data)
+			x.Packet("left_y", data)
 		})
 		gobot.On(joystick.Event("right_x"), func(data interface{}) {
-			x.packet(x.cmap["right_x"].Code, data)
+			x.Packet("right_x", data)
 		})
 		gobot.On(joystick.Event("right_y"), func(data interface{}) {
-			x.packet(x.cmap["right_y"].Code, data)
+			x.Packet("right_y", data)
 		})
 	}
 
-	x.robot = gobot.NewRobot("joystickBot",
+	x.Robot = gobot.NewRobot("joystickBot",
 		[]gobot.Connection{joystickAdaptor},
 		[]gobot.Device{joystick},
 		work,

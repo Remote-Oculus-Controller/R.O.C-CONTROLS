@@ -4,24 +4,24 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/joystick"
+	"os"
 	"github.com/Happykat/R.O.C-CONTROLS"
 )
 
-var DS3_CF = CF_DIR + "ds3_map.json"
+var DS3_CF = roc.CF_DIR + "ds3_map.json"
 
 type Dualshock3 struct {
-	Controller
+	roc.Controller
 }
 
 func (d *Dualshock3) Type() string {
 	return "DS3"
 }
 
-func NewDS3(link *roc.Linker) *Dualshock3 {
+func NewDS3() *Dualshock3 {
 
 	d := new(Dualshock3)
-	d.link = link
-	err := d.mapControl(DS3_CF)
+	err := d.MapControl(DS3_CF)
 	if err != nil {
 		fmt.Println("Can't start controller. panicking...")
 		panic(fmt.Sprintf(err.Error()))
@@ -29,40 +29,37 @@ func NewDS3(link *roc.Linker) *Dualshock3 {
 	joystickAdaptor := joystick.NewJoystickAdaptor("ps3")
 	joystick := joystick.NewJoystickDriver(joystickAdaptor,
 		"ps3",
-		"./controller/json/dualshock3.json",
+		os.Getenv("GOPATH") + "/src/github.com/Happykat/R.O.C-CONTROLS/controller/json/dualshock3.json",
 	)
 	work := func() {
 		gobot.On(joystick.Event("square_press"), func(data interface{}) {
-			p := d.cmap["square_p"]
-			d.packet(p.Code, p.Default)
+			fmt.Println("pressing square")
+			d.Packet("s_p", data)
 		})
 		gobot.On(joystick.Event("square_release"), func(data interface{}) {
-			p := d.cmap["square_r"]
-			d.packet(p.Code, p.Default)
+			d.Packet("s_r", data)
 		})
 		gobot.On(joystick.Event("triangle_press"), func(data interface{}) {
-			p := d.cmap["triangle_p"]
-			d.packet(p.Code, p.Default)
+			d.Packet("t_p", data)
 		})
 		gobot.On(joystick.Event("triangle_release"), func(data interface{}) {
-			p := d.cmap["triangle_r"]
-			d.packet(p.Code, p.Default)
+			d.Packet("t_r", data)
 		})
 		gobot.On(joystick.Event("left_x"), func(data interface{}) {
-			d.packet(d.cmap["left_x"].Code, data)
+			d.Packet("left_x", data)
 		})
 		gobot.On(joystick.Event("left_y"), func(data interface{}) {
-			d.packet(d.cmap["left_y"].Code, data)
+			d.Packet("left_y", data)
 		})
 		gobot.On(joystick.Event("right_x"), func(data interface{}) {
-			d.packet(d.cmap["right_x"].Code, data)
+			d.Packet("right_x", data)
 		})
 		gobot.On(joystick.Event("right_y"), func(data interface{}) {
-			d.packet(d.cmap["right_y"].Code, data)
+			d.Packet("right_y", data)
 		})
 	}
 
-	d.robot = gobot.NewRobot("joystickBot",
+	d.Robot = gobot.NewRobot("joystickBot",
 		[]gobot.Connection{joystickAdaptor},
 		[]gobot.Device{joystick},
 		work,

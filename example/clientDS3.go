@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/Happykat/R.O.C-CONTROLS/controller"
-	"github.com/Happykat/R.O.C-CONTROLS"
 	"flag"
+	"github.com/Happykat/R.O.C-CONTROLS"
+	"github.com/Happykat/R.O.C-CONTROLS/controller"
 )
 
 var remote	string
@@ -14,13 +14,9 @@ var local_t	bool
 func main() {
 
 	flag.Parse()
-	robotL := roc.NewLinker(local, remote, local_t, remote_t)
-	device := controller.NewKeyboard(robotL)
-	//device := controller.NewDS3(robotL)
-	//device := controller.NewXbox(robotL)
-	//unityL := linker.NewLinker("unity", "127.0.0.1", "4343", true)
-	robotL.Start()
-	device.Start()
+	client := roc.NewClient(local, remote, local_t, remote_t)
+	client.SetController(&controller.NewDS3().Controller)
+	client.Start()
 }
 
 func init() {
