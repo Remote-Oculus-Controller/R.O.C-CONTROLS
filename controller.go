@@ -12,7 +12,7 @@ import (
 type Controller struct {
 	*gobot.Robot
 	cmap  map[string]Cmd
-	send	func([]byte)
+	send	func([]byte) int
 }
 
 var CF_DIR = os.Getenv("GOPATH") + "/src/github.com/Happykat/R.O.C-CONTROLS/config/"

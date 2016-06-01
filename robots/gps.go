@@ -2,7 +2,6 @@ package robots
 
 import (
 	"github.com/hybridgroup/gobot"
-	"time"
 	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"log"
@@ -36,9 +35,11 @@ func NewGPS() *Gps {
 	gps := new(Gps)
 	gps.RocRobot = roc.NewRocRobot(nil)
 	work := func(){
+		/*
 		gobot.Every(300*time.Millisecond, func(){
 			gps.sendCoord(nil)
 		})
+		*/
 	}
 	fmt.Printf("%+v", gps)
 	gps.Robot = gobot.NewRobot("gps",
@@ -75,10 +76,8 @@ func (gps *Gps) setCoordByte(b []byte) error {
 
 func (gps *Gps) setCoordApi(params map[string]interface{}) interface{} {
 
-	fmt.Println(params)
 	lat, ok := params["lat"]
 	_, assert := lat.(float32)
-	fmt.Println(lat)
 	if (!ok || assert) {
 		log.Println(LAT_ERR)
 		return LAT_ERR

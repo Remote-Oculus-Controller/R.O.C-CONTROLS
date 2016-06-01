@@ -16,6 +16,7 @@ func main() {
 	r := roc.NewRoc(local, remote, local_t, remote_t)
 	//r.AddRobot(roc.NewMotion().Robot)
 	r.AddRobot(robots.NewGPS().RocRobot)
+	r.AddRobot(robots.NewVideo().RocRobot)
 	r.Start()
 }
 

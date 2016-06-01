@@ -5,6 +5,7 @@ import (
 	"net"
 	"log"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
+	"errors"
 )
 
 const (
@@ -83,15 +84,20 @@ func startConn(s string, t bool) (*net.TCPConn) {
 	return v
 }
 
-func (l *Linker) Send(b []byte) {
+func (l *Linker) Send(b []byte) error {
 
 	r := b[0]
 	if r&(DST_R|DST_RL) != 0 {
 		l.remote.out <- b
 	}
 	if r&DST_L != 0 {
-		l.local.out <- b
+		if l.local.conn != nil {
+			l.local.out <- b
+		} else {
+			return errors.New("Local connection not estblished could'nt send message")
+		}
 	}
+	return nil
 }
 
 func (l *Linker) RegisterChannel(r bool) chan []byte {

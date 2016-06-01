@@ -21,6 +21,7 @@ func (d *Dualshock3) Type() string {
 func NewDS3() *Dualshock3 {
 
 	d := new(Dualshock3)
+	fmt.Println(roc.CF_DIR, DS3_CF)
 	err := d.MapControl(DS3_CF)
 	if err != nil {
 		fmt.Println("Can't start controller. panicking...")
