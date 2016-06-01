@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="GOPATH &lt;R.O.C-CONTROLS&gt;">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/../../../gopkg.in" />
-      <root url="file://$PROJECT_DIR$/../../../azul3d.org" />
       <root url="file://$PROJECT_DIR$/../../../golang.org" />
       <root url="file://$PROJECT_DIR$/../.." />
       <root url="file://$PROJECT_DIR$/../../../git.eclipse.org" />
+      <root url="file://$PROJECT_DIR$/../../../azul3d.org" />
+      <root url="file://$PROJECT_DIR$/../../../gopkg.in" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -16,14 +16,6 @@ func NewClient(lS, rS string, lT, rT bool) *RocClient {
 	client := new(RocClient)
 	client.Gobot = gobot.NewGobot()
 	client.l = NewLinker(lS, rS, lT, rT)
-	go func() {
-		for {
-			select {
-			case b := <-client.l.remote.in:
-				fmt.Println(b)
-			}
-		}
-	}()
 	return client
 }
 

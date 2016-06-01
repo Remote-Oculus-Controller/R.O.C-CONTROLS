@@ -27,6 +27,7 @@ func NewRocRobot(l *Linker) *RocRobot{
 func (r *RocRobot) Send(b []byte) error {
 	err := r.l.Send(b)
 	if err != nil {
+		fmt.Print("error1")
 		return errors.New("Could not sent message. "+err.Error())
 	}
 	return nil

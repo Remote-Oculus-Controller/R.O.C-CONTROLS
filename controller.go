@@ -12,17 +12,16 @@ import (
 type Controller struct {
 	*gobot.Robot
 	cmap  map[string]Cmd
-	send	func([]byte) int
+	send	func([]byte) error
 }
 
-var CF_DIR = os.Getenv("GOPATH") + "/src/github.com/Happykat/R.O.C-CONTROLS/config/"
+var CF_DIR = func() string { dir, err := os.Getwd();if err != nil{return "error in work directory"};return dir}() + "/config/"
 var CMD_FILE = CF_DIR + "command.json"
 
 func (c *Controller) Type() string {
 	return "Controller"
 }
 
-//TODO see to buffer
 func (c *Controller) Packet(event string, data interface{}) {
 
 	var b []byte
@@ -32,10 +31,8 @@ func (c *Controller) Packet(event string, data interface{}) {
 	if (!ok) {
 		return
 	}
-	code := e.Code
 	_, def := data.(bool)
 	if (data == nil || def) {
-		fmt.Println("default", e.Default)
 		b, err = misc.EncodeBytes(e.Default)
 	} else {
 		b, err = misc.EncodeBytes(data)
@@ -43,7 +40,7 @@ func (c *Controller) Packet(event string, data interface{}) {
 	if err != nil {
 		panic(fmt.Sprintf(err.Error()))
 	}
-	b = append([]byte{CMD | DST_R | MV, code}, b...)
+	b = append([]byte{CMD | DST_R | MV, e.Code}, b...)
 	c.send(b)
 }
 
@@ -57,7 +54,6 @@ func (c *Controller) MapControl(file string) error {
 	return nil
 }
 
-// TODO change association to direct function, no map of pointer to function !
 func (c *Controller) parseControl(fp string) error {
 
 	c.cmap = make(map[string]Cmd)

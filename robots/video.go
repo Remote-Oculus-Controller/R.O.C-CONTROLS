@@ -7,7 +7,6 @@ import (
 	"log"
 	"go/types"
 	"github.com/hybridgroup/gobot"
-	"debug/dwarf"
 	"errors"
 )
 
@@ -61,67 +60,69 @@ func (vid *Video)startCannyEdge(Min, Max float64) error {
 	b := append(min, max...)
 	buff = append(buff, b...)
 	err = vid.Send(buff)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 func (vid *Video)startCannyEdgeAPI(params map[string]interface{}) interface{} {
-	min, ok := params["min"]
-	_, assert := min.(float64)
-	if (!ok || !assert) {
-		log.Println(MIN_ERROR)
-		return MIN_ERROR
-	}
-	max, ok := params["max"]
-	_, assert = max.(float64)
-	if (!ok || !assert) {
-		log.Println(MAX_ERROR)
-		return MAX_ERROR
-	}
-	err := vid.startCannyEdge(min.(float64), max.(float64))
+
+	err := vid.CheckAPIParams(params, []types.BasicKind{types.Float64, types.Float64}, "min", "max")
+	err = vid.startCannyEdge(params["min"].(float64), params["max"].(float64))
 	if err != nil {
-		return nil
+		return err.Error()
 	}
-	return "OK"
+	return "Image treatment canny activated"
 }
 
-func (vid *Video)stopCannyEdge() {
+func (vid *Video)stopCannyEdge() error {
+
 	b := []byte{roc.DST_L | roc.CMD, CANNY, 0}
-	vid.Send(b)
+	return vid.Send(b)
 }
 func (vid *Video)stopCannyEdgeAPI(params map[string]interface{}) interface{} {
-	vid.stopCannyEdge()
-	return 200
+
+	err := vid.stopCannyEdge()
+	if err != nil {
+		return err.Error()
+	}
+	return "Image treatment canny desactivated"
 }
 
-func (vid *Video)startFaceDetect(Scale float64) {
+func (vid *Video)startFaceDetect(Scale float64) error {
 
 	scale, err := misc.EncodeBytes(Scale)
 	if err != nil {
 		log.Println("Error setting minimum to start canny", err.Error())
-		return
+		return errors.New("Error setting minimum to start canny. " + err.Error())
 	}
 	b := append([]byte{roc.DST_L | roc.CMD, FACE}, scale...)
-	vid.Send(b)
+	return vid.Send(b)
 }
 
 func (vid *Video)startFaceDetectAPI(params map[string]interface{}) interface{} {
+
 	err := vid.CheckAPIParams(params, []types.BasicKind{types.Float64}, "scale")
 	if (err != nil) {
 		log.Println(err.Error())
 		return err.Error()
 	}
-	vid.startFaceDetect(params["scale"].(float64))
-	return 200
+	err = vid.startFaceDetect(params["scale"].(float64))
+	if err != nil {
+		return err.Error()
+	}
+	return "Face detection activated"
 }
 
-func (vid *Video)stopFaceDetect() {
+func (vid *Video)stopFaceDetect() error {
+
 	b := []byte{roc.DST_L | roc.CMD, FACE, 0}
-	vid.Send(b)
+	return vid.Send(b)
 }
+
 func (vid *Video)stopFaceDetectAPI(params map[string]interface{}) interface{} {
-	vid.stopFaceDetect()
-	return 200
+
+	err := vid.stopFaceDetect()
+	if err != nil {
+		return err.Error()
+	}
+	return "Face detection stopped"
 }

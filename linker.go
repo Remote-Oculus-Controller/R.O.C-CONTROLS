@@ -49,6 +49,7 @@ func NewLinker(lS, rS string, lT, rT bool) *Linker {
 	l := Linker{Link{out: make(chan []byte), in: make(chan []byte)},
 		Link{out: make(chan []byte), in: make(chan []byte)}}
 	l.remote.conn = startConn(rS, rT)
+	l.local.conn = nil
 	if len(lS) != 0 {
 		l.local.conn = startConn(lS, lT)
 	}
@@ -94,7 +95,7 @@ func (l *Linker) Send(b []byte) error {
 		if l.local.conn != nil {
 			l.local.out <- b
 		} else {
-			return errors.New("Local connection not estblished could'nt send message")
+			return errors.New("Local connection not established could not send message")
 		}
 	}
 	return nil
@@ -137,7 +138,6 @@ func handleConn(l, o *Link, t uint8) {
 		if misc.CheckError(err, "Receiving data from conn", false) != nil {
 			return
 		}
-		fmt.Println(buff)
 		if buff[0] != MAGIC || len(buff) < 3 {
 			fmt.Println("Wrong packet")
 			continue

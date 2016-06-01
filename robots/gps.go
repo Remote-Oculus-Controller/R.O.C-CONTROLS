@@ -7,6 +7,8 @@ import (
 	"log"
 	"fmt"
 	"encoding/json"
+	"time"
+	"go/types"
 )
 
 const (
@@ -35,11 +37,9 @@ func NewGPS() *Gps {
 	gps := new(Gps)
 	gps.RocRobot = roc.NewRocRobot(nil)
 	work := func(){
-		/*
 		gobot.Every(300*time.Millisecond, func(){
 			gps.sendCoord(nil)
 		})
-		*/
 	}
 	fmt.Printf("%+v", gps)
 	gps.Robot = gobot.NewRobot("gps",
@@ -76,36 +76,29 @@ func (gps *Gps) setCoordByte(b []byte) error {
 
 func (gps *Gps) setCoordApi(params map[string]interface{}) interface{} {
 
-	lat, ok := params["lat"]
-	_, assert := lat.(float32)
-	if (!ok || assert) {
-		log.Println(LAT_ERR)
-		return LAT_ERR
+	err := gps.CheckAPIParams(params, []types.BasicKind{types.Float64, types.Float64}, "lat", "lon")
+	if err != nil {
+		log.Println(err.Error())
+		return err.Error()
 	}
-	long, ok := params["long"]
-	_, assert = long.(float32)
-	if (!ok || !assert) {
-		log.Println(LONG_ERR)
-		return LONG_ERR
-	}
-	gps.setCoord(lat.(float32), long.(float32))
-	return 200
+	gps.setCoord(params["lat"].(float32), params["long"].(float32))
+	return "Gps coord changed"
 }
 
-func (gps *Gps) setDest(lat, long float32) {
+func (gps *Gps) setDest(lat, long float32) error {
 	b, err := misc.EncodeBytes(lat)
 	if err != nil {
-		fmt.Println("Error setting lattitude for destination", err.Error())
-		return
+		log.Println("Error setting lattitude for destination", err.Error())
+		return err
 	}
 	l, err := misc.EncodeBytes(long)
 	if err != nil {
-		fmt.Println("Error setting longitude for destination", err.Error())
-		return
+		log.Println("Error setting longitude for destination", err.Error())
+		return err
 	}
 	b = append([]byte{roc.DST_L | roc.CMD, SET_DEST},b...)
 	b = append(b, l...)
-	gps.Send(b)
+	return gps.Send(b)
 }
 
 func (gps *Gps) setDestByte(b []byte) error {
@@ -115,31 +108,26 @@ func (gps *Gps) setDestByte(b []byte) error {
 		log.Printf(err.Error())
 		return err
 	}
-	long, err := misc.DecodeFloat32(b[4:])
+	long, err := misc.DecodeFloat32(b[4:7])
 	if err != nil {
 		log.Printf(err.Error())
 		return err
 	}
-	gps.setDest(lat, long)
-	return nil
+	return gps.setDest(lat, long)
 }
 
 func (gps *Gps) setDestApi(params map[string]interface{}) interface{} {
 
-	lat, ok := params["lat"]
-	_, assert := lat.(float32)
-	if (!ok || !assert) {
-		log.Println(LAT_ERR)
-		return LAT_ERR
+	err := gps.CheckAPIParams(params, []types.BasicKind{types.Float64, types.Float64}, "lat", "lon")
+	if err != nil {
+		log.Println(err.Error())
+		return err.Error()
 	}
-	long, ok := params["long"]
-	_, assert = long.(float32)
-	if (!ok || !assert) {
-		log.Println(LONG_ERR)
-		return LONG_ERR
+	err = gps.setDest(params["lat"].(float32), params["long"].(float32))
+	if err != nil {
+		return err.Error()
 	}
-	gps.setDest(lat.(float32), long.(float32))
-	return 200
+	return "New Destination !"
 }
 
 func (gps *Gps) getCoord() (float32, float32) {

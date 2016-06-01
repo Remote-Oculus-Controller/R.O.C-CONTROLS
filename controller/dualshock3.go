@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/joystick"
-	"os"
 	"github.com/Happykat/R.O.C-CONTROLS"
 )
 
@@ -21,7 +20,6 @@ func (d *Dualshock3) Type() string {
 func NewDS3() *Dualshock3 {
 
 	d := new(Dualshock3)
-	fmt.Println(roc.CF_DIR, DS3_CF)
 	err := d.MapControl(DS3_CF)
 	if err != nil {
 		fmt.Println("Can't start controller. panicking...")
@@ -30,7 +28,7 @@ func NewDS3() *Dualshock3 {
 	joystickAdaptor := joystick.NewJoystickAdaptor("ps3")
 	joystick := joystick.NewJoystickDriver(joystickAdaptor,
 		"ps3",
-		os.Getenv("GOPATH") + "/src/github.com/Happykat/R.O.C-CONTROLS/controller/json/dualshock3.json",
+		roc.CF_DIR + "dualshock3.json",
 	)
 	work := func() {
 		gobot.On(joystick.Event("square_press"), func(data interface{}) {

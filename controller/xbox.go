@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/joystick"
-	"os"
 	"github.com/Happykat/R.O.C-CONTROLS"
 )
 
@@ -29,7 +28,7 @@ func NewXbox() *Xbox {
 	joystickAdaptor := joystick.NewJoystickAdaptor("ps3")
 	joystick := joystick.NewJoystickDriver(joystickAdaptor,
 		"xbox",
-		os.Getenv("GOPATH") + "/src/github.com/Happykat/R.O.C-CONTROLS/config/xbox360_power_a_mini_proex.json",
+		roc.CF_DIR + "xbox360_power_a_mini_proex.json",
 	)
 	work := func() {
 		gobot.On(joystick.Event("a_press"), func(data interface{}) {
