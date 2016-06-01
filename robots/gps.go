@@ -1,23 +1,23 @@
 package robots
 
 import (
-	"github.com/hybridgroup/gobot"
+	"encoding/json"
+	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
-	"log"
-	"fmt"
-	"encoding/json"
-	"time"
+	"github.com/hybridgroup/gobot"
 	"go/types"
+	"log"
+	"time"
 )
 
 const (
-	GPS_TAG = 0xB0
+	GPS_TAG   = 0xB0
 	SET_COORD = GPS_TAG | 1
-	SET_DEST = GPS_TAG | 2
+	SET_DEST  = GPS_TAG | 2
 	GET_COORD = GPS_TAG
-	LAT_ERR = "Missing lat float32 in parameters"
-	LONG_ERR = "Missing long float32 in paramters"
+	LAT_ERR   = "Missing lat float32 in parameters"
+	LONG_ERR  = "Missing long float32 in paramters"
 )
 
 // Simulating Gps, change to real gps
@@ -36,8 +36,8 @@ func NewGPS() *Gps {
 
 	gps := new(Gps)
 	gps.RocRobot = roc.NewRocRobot(nil)
-	work := func(){
-		gobot.Every(300*time.Millisecond, func(){
+	work := func() {
+		gobot.Every(200*time.Millisecond, func() {
 			gps.sendCoord(nil)
 		})
 	}
@@ -96,7 +96,7 @@ func (gps *Gps) setDest(lat, long float32) error {
 		log.Println("Error setting longitude for destination", err.Error())
 		return err
 	}
-	b = append([]byte{roc.DST_L | roc.CMD, SET_DEST},b...)
+	b = append([]byte{roc.DST_L | roc.CMD, SET_DEST}, b...)
 	b = append(b, l...)
 	return gps.Send(b)
 }
@@ -135,7 +135,7 @@ func (gps *Gps) getCoord() (float32, float32) {
 }
 
 func (gps *Gps) sendCoord([]byte) error {
-	b:= gps.getCoordByte()
+	b := gps.getCoordByte()
 	gps.Send(b)
 	return nil
 }
