@@ -4,13 +4,12 @@ import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
 	"log"
-	"github.com/Happykat/R.O.C-CONTROLS/misc"
 )
 
 type Roc struct {
-	*gobot.Gobot                        //Gobot
-	cmap    map[byte]func([]byte) (error) //cmd func map
-	l	*Linker
+	*gobot.Gobot                             //Gobot
+	cmap         map[byte]func([]byte) error //cmd func map
+	l            *Linker
 }
 
 const (
@@ -22,10 +21,10 @@ func NewRoc(lS, rS string, lT, rT bool) *Roc {
 
 	roc := new(Roc)
 	roc.Gobot = gobot.NewGobot()
-	roc.cmap = make(map[byte]func([]byte) (error))
+	roc.cmap = make(map[byte]func([]byte) error)
 	roc.l = NewLinker(lS, rS, lT, rT)
 	roc.apiCreate()
-	roc.AddFunc(roc.forward, 1, true, "forward")
+	//roc.AddFunc(roc.forward, 1, true, "forward")
 	go func() {
 		for {
 			select {
@@ -44,7 +43,7 @@ func (roc *Roc) Start() error {
 
 	roc.l.Start()
 	errs := roc.Gobot.Start()
-	if (errs != nil) {
+	if errs != nil {
 		for _, err := range errs {
 			log.Println(err)
 		}
@@ -58,13 +57,13 @@ func (roc *Roc) Stop() error {
 }
 
 func (roc *Roc) AddRobot(m *RocRobot) {
-	if (roc.Robot(m.Name) != nil) {
+	if roc.Robot(m.Name) != nil {
 		log.Println("Warning !" + m.Name + "bot overwritten")
 	}
 	m.l = roc.l
 	for k, v := range m.cmap {
 		_, ok := roc.cmap[k]
-		if (ok) {
+		if ok {
 			log.Println("command code", k, "already exist skipping")
 			continue
 		}
@@ -74,27 +73,17 @@ func (roc *Roc) AddRobot(m *RocRobot) {
 }
 
 //Directly add func with code, if specified create the api entry
-func (roc *Roc) AddFunc(f func([]byte) (error), code byte, api bool, name string) {
-	log.Println("Assigning function", name, "to code", code)
-	_, k := roc.cmap[code]
-	if !k {
-		roc.cmap[code] = f
-		if api {
-			log.Println("Creating api entry for function")
-			roc.AddCommand(name, func(params map[string]interface{}) interface{} {
-				d, k := params["packet"]
-				if k {
-					v, err := misc.EncodeBytes(d)
-					if err != nil {
-						return fmt.Sprintln("API error:", err.Error())
-					}
-					err = f(v)
-					return fmt.Sprintln(err.Error())
-				}
-				return fmt.Sprintln("API error: wrong parameter", k)
-			})
+func (r *Roc) AddFunc(f func([]byte) error, code byte, api func(map[string]interface{}) interface{}, name string) {
+	if f != nil && code != 0 {
+		log.Println("Assigning function", name, "to code", code)
+		_, k := r.cmap[code]
+		if k {
+			log.Println("Code", code, "already assigned, override")
 		}
-	} else {
-		log.Println("Code", code, "already assigned")
+		r.cmap[code] = f
+	}
+	if api != nil {
+		log.Println("Creating api entry", name)
+		r.AddCommand(name, api)
 	}
 }

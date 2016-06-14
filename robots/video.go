@@ -1,13 +1,13 @@
 package robots
 
 import (
+	"errors"
+	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
-	"fmt"
-	"log"
-	"go/types"
 	"github.com/hybridgroup/gobot"
-	"errors"
+	"go/types"
+	"log"
 )
 
 type Video struct {
@@ -15,21 +15,21 @@ type Video struct {
 }
 
 const (
-	VIDEO_TAG = 0x10
-	CANNY = VIDEO_TAG | 1
-	FACE = VIDEO_TAG | 2
-	ARROW =	VIDEO_TAG | 3
-	ZOOM = VIDEO_TAG | 4
-	FOCUS		= VIDEO_TAG | 5
-	BRIGHT		= VIDEO_TAG | 6
-	GAIN		= VIDEO_TAG | 7
-	CONTRAST	= VIDEO_TAG | 8
-	SATURATION	= VIDEO_TAG | 9
+	VIDEO_TAG  = 0x10
+	CANNY      = VIDEO_TAG | 1
+	FACE       = VIDEO_TAG | 2
+	ARROW      = VIDEO_TAG | 3
+	ZOOM       = VIDEO_TAG | 4
+	FOCUS      = VIDEO_TAG | 5
+	BRIGHT     = VIDEO_TAG | 6
+	GAIN       = VIDEO_TAG | 7
+	CONTRAST   = VIDEO_TAG | 8
+	SATURATION = VIDEO_TAG | 9
 
-	PARAM_ERR	= "MISSING %s in parameters"
-	MIN_ERROR	= "min"
-	MAX_ERROR	= "max"
-	SCALE_ERROR	= "scale"
+	PARAM_ERR   = "MISSING %s in parameters"
+	MIN_ERROR   = "min"
+	MAX_ERROR   = "max"
+	SCALE_ERROR = "scale"
 )
 
 func NewVideo() *Video {
@@ -44,7 +44,7 @@ func NewVideo() *Video {
 	return vid
 }
 
-func (vid *Video)startCannyEdge(Min, Max float64) error {
+func (vid *Video) startCannyEdge(Min, Max float64) error {
 
 	min, err := misc.EncodeBytes(Min)
 	if err != nil {
@@ -63,7 +63,7 @@ func (vid *Video)startCannyEdge(Min, Max float64) error {
 	return err
 }
 
-func (vid *Video)startCannyEdgeAPI(params map[string]interface{}) interface{} {
+func (vid *Video) startCannyEdgeAPI(params map[string]interface{}) interface{} {
 
 	err := vid.CheckAPIParams(params, []types.BasicKind{types.Float64, types.Float64}, "min", "max")
 	err = vid.startCannyEdge(params["min"].(float64), params["max"].(float64))
@@ -73,12 +73,13 @@ func (vid *Video)startCannyEdgeAPI(params map[string]interface{}) interface{} {
 	return "Image treatment canny activated"
 }
 
-func (vid *Video)stopCannyEdge() error {
+func (vid *Video) stopCannyEdge() error {
 
 	b := []byte{roc.DST_L | roc.CMD, CANNY, 0}
 	return vid.Send(b)
 }
-func (vid *Video)stopCannyEdgeAPI(params map[string]interface{}) interface{} {
+
+func (vid *Video) stopCannyEdgeAPI(params map[string]interface{}) interface{} {
 
 	err := vid.stopCannyEdge()
 	if err != nil {
@@ -87,7 +88,7 @@ func (vid *Video)stopCannyEdgeAPI(params map[string]interface{}) interface{} {
 	return "Image treatment canny desactivated"
 }
 
-func (vid *Video)startFaceDetect(Scale float64) error {
+func (vid *Video) startFaceDetect(Scale float64) error {
 
 	scale, err := misc.EncodeBytes(Scale)
 	if err != nil {
@@ -98,10 +99,10 @@ func (vid *Video)startFaceDetect(Scale float64) error {
 	return vid.Send(b)
 }
 
-func (vid *Video)startFaceDetectAPI(params map[string]interface{}) interface{} {
+func (vid *Video) startFaceDetectAPI(params map[string]interface{}) interface{} {
 
 	err := vid.CheckAPIParams(params, []types.BasicKind{types.Float64}, "scale")
-	if (err != nil) {
+	if err != nil {
 		log.Println(err.Error())
 		return err.Error()
 	}
@@ -112,13 +113,13 @@ func (vid *Video)startFaceDetectAPI(params map[string]interface{}) interface{} {
 	return "Face detection activated"
 }
 
-func (vid *Video)stopFaceDetect() error {
+func (vid *Video) stopFaceDetect() error {
 
 	b := []byte{roc.DST_L | roc.CMD, FACE, 0}
 	return vid.Send(b)
 }
 
-func (vid *Video)stopFaceDetectAPI(params map[string]interface{}) interface{} {
+func (vid *Video) stopFaceDetectAPI(params map[string]interface{}) interface{} {
 
 	err := vid.stopFaceDetect()
 	if err != nil {

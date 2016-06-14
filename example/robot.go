@@ -1,22 +1,23 @@
 package main
 
 import (
-	"github.com/Happykat/R.O.C-CONTROLS"
 	"flag"
+	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/robots"
 )
 
-var remote	string
-var local	string
-var remote_t	bool
-var local_t	bool
+var remote string
+var local string
+var remote_t bool
+var local_t bool
 
 func main() {
 	flag.Parse()
 	r := roc.NewRoc(local, remote, local_t, remote_t)
-	//r.AddRobot(roc.NewMotion().Robot)
+	//r.AddRobot(robots.NewMotion().RocRobot)
 	r.AddRobot(robots.NewGPS().RocRobot)
 	r.AddRobot(robots.NewVideo().RocRobot)
+	//r.AddFunc(nil, 0, ,"simGps")
 	r.Start()
 }
 
@@ -27,4 +28,9 @@ func init() {
 		"Set this side of connection as a server(true)or client(false)")
 	flag.BoolVar(&local_t, "lT", false,
 		"Set this side of connection as a server(true)or client(false)")
+}
+
+func simMoveGps(params map[string]interface{}) interface{} {
+
+	return 200
 }

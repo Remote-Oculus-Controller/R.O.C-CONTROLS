@@ -19,7 +19,7 @@ func EncodeBytes(key interface{}) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-func DecodeBytes(key []byte, v interface{}) (interface{}, error){
+func DecodeBytes(key []byte, v interface{}) (interface{}, error) {
 
 	var buff bytes.Buffer
 
@@ -34,9 +34,10 @@ func DecodeBytes(key []byte, v interface{}) (interface{}, error){
 	return v, nil
 }
 
-func DecodeInt(key []byte, v int) (int, error) {
+func DecodeInt(key []byte) (int, error) {
 
 	var buff bytes.Buffer
+	var v int
 
 	buff.Write(key)
 	dec := gob.NewDecoder(&buff)
@@ -51,13 +52,28 @@ func DecodeInt(key []byte, v int) (int, error) {
 func DecodeFloat32(key []byte) (float32, error) {
 
 	var buff bytes.Buffer
-	var r	float32
+	var r float32
 
 	buff.Write(key)
 	dec := gob.NewDecoder(&buff)
 	err := dec.Decode(&r)
 	if err != nil {
 		log.Println("Error decoding float32 from bytes")
+		return 0, err
+	}
+	return r, nil
+}
+
+func DecodeUint8(key []byte) (uint8, error) {
+
+	var buff bytes.Buffer
+	var r uint8
+
+	buff.Write(key)
+	dec := gob.NewDecoder(&buff)
+	err := dec.Decode(&r)
+	if err != nil {
+		log.Println("Error decoding uint8 from bytes", err.Error())
 		return 0, err
 	}
 	return r, nil

@@ -5,10 +5,9 @@ import (
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 )
 
-func (roc *Roc) forward(data []byte) (error){
-	var i int
+func (roc *Roc) forward(data []byte) error {
 
-	v, err := misc.DecodeInt(data, i)
+	v, err := misc.DecodeInt(data)
 	if err != nil {
 		fmt.Println(err.Error())
 		return err

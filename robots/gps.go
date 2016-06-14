@@ -2,7 +2,6 @@ package robots
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/hybridgroup/gobot"
@@ -14,10 +13,8 @@ import (
 const (
 	GPS_TAG   = 0xB0
 	SET_COORD = GPS_TAG | 1
-	SET_DEST  = GPS_TAG | 2
-	GET_COORD = GPS_TAG
-	LAT_ERR   = "Missing lat float32 in parameters"
-	LONG_ERR  = "Missing long float32 in paramters"
+	SET_DEST  = GPS_TAG | 3
+	GET_COORD = GPS_TAG | 2
 )
 
 // Simulating Gps, change to real gps
@@ -41,7 +38,6 @@ func NewGPS() *Gps {
 			gps.sendCoord(nil)
 		})
 	}
-	fmt.Printf("%+v", gps)
 	gps.Robot = gobot.NewRobot("gps",
 		[]gobot.Connection{},
 		[]gobot.Device{},
@@ -150,6 +146,7 @@ func (gps *Gps) getCoordByte() []byte {
 	b := append([]byte{roc.DST_RL | roc.DATA, GPS_TAG}, lat...)
 	b = append(b, long...)
 	b = append(b, ori...)
+	gps.Send(b)
 	return b
 }
 
