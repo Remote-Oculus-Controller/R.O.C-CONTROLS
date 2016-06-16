@@ -1,39 +1,41 @@
 package roc
 
 import (
-	"github.com/hybridgroup/gobot"
-	"log"
-	"fmt"
-	"go/types"
 	"errors"
+	"fmt"
+	"github.com/hybridgroup/gobot"
+	"go/types"
+	"log"
 )
 
 type RocRobot struct {
 	*gobot.Robot
-	l *Linker
-	cmap map[byte]func([]byte) (error)
+	l    *Linker
+	cmap map[uint32]func(*Packet) error
 }
 
-const 	PARAM_ERR	= "MISSING %s in parameters"
+const PARAM_ERR = "MISSING %s in parameters"
 
-func NewRocRobot(l *Linker) *RocRobot{
+func NewRocRobot(l *Linker) *RocRobot {
 
 	r := new(RocRobot)
 	r.l = l
-	r.cmap = make(map[byte]func([]byte) error)
+	r.cmap = make(map[uint32]func(*Packet) error)
 	return r
 }
 
-func (r *RocRobot) Send(b []byte) error {
-	err := r.l.Send(b)
+func (r *RocRobot) Send(p *Packet) error {
+
+	fmt.Println("Sending Coordinates")
+	p.Header = p.Header | (uint32(Packet_CONTROL_SERVER) << uint32(Packet_SHIFT_SENT))
+	err := r.l.Send(p)
 	if err != nil {
-		fmt.Print("error1")
-		return errors.New("Could not sent message. "+err.Error())
+		return errors.New("Could not sent message. " + err.Error())
 	}
 	return nil
 }
 
-func (r *RocRobot) AddFunc(f func([]byte) (error), code byte, api func(map[string]interface{}) interface{}, name string) {
+func (r *RocRobot) AddFunc(f func(*Packet) error, code uint32, api func(map[string]interface{}) interface{}, name string) {
 	if f != nil && code != 0 {
 		log.Println("Assigning function", name, "to code", code)
 		_, k := r.cmap[code]
@@ -48,18 +50,18 @@ func (r *RocRobot) AddFunc(f func([]byte) (error), code byte, api func(map[strin
 	}
 }
 
-func (r *RocRobot) CheckAPIParams(m map[string] interface{}, t []types.BasicKind, params ...string) error {
+func (r *RocRobot) CheckAPIParams(m map[string]interface{}, t []types.BasicKind, params ...string) error {
 
 	if len(t) != len(params) {
 		return errors.New("Bad formating, expecting same number of type and parameters to create api function")
 	}
-		for i, v := range params {
-			 p, ok := m[v]
-			assert := true
-			fmt.Printf("%v %v %v", i, v, p)
-			if !ok || !assert {
-				return errors.New(fmt.Sprintf(PARAM_ERR, v))
-			}
+	for i, v := range params {
+		p, ok := m[v]
+		assert := true
+		fmt.Printf("%v %v %v", i, v, p)
+		if !ok || !assert {
+			return errors.New(fmt.Sprintf(PARAM_ERR, v))
 		}
+	}
 	return nil
 }

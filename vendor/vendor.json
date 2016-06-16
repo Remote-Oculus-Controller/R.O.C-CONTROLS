@@ -1,67 +1,6 @@
 {
 	"comment": "",
 	"ignore": "test",
-	"package": [
-		{
-			"checksumSHA1": "AKjqgiWov1IJWbnpCkjVEs6NunQ=",
-			"path": "github.com/bmizerany/pat",
-			"revision": "c068ca2f0aacee5ac3681d68e4d0a003b7d1fd2c",
-			"revisionTime": "2016-02-17T10:30:50Z"
-		},
-		{
-			"checksumSHA1": "LXa9028bMwadDJnJjgGdXx1sZsM=",
-			"path": "github.com/hybridgroup/gobot",
-			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
-			"revisionTime": "2016-04-12T21:32:53Z"
-		},
-		{
-			"checksumSHA1": "QZprPRY1jVc5CWzaEWDJFbk405k=",
-			"path": "github.com/hybridgroup/gobot/api",
-			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
-			"revisionTime": "2016-04-12T21:32:53Z"
-		},
-		{
-			"checksumSHA1": "6MlDU03XQ6GOjNASy/dOjiyYdos=",
-			"path": "github.com/hybridgroup/gobot/api/robeaux",
-			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
-			"revisionTime": "2016-04-12T21:32:53Z"
-		},
-		{
-			"checksumSHA1": "BcrSvEILkktJlO+NfPEZpNrzcKE=",
-			"path": "github.com/hybridgroup/gobot/platforms/firmata",
-			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
-			"revisionTime": "2016-04-12T21:32:53Z"
-		},
-		{
-			"checksumSHA1": "9OF9ms4A3alhyfcVXGHByaCdOcw=",
-			"path": "github.com/hybridgroup/gobot/platforms/firmata/client",
-			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
-			"revisionTime": "2016-04-12T21:32:53Z"
-		},
-		{
-			"checksumSHA1": "mHYZZP8wVuLfdpE4PFfOo6/gA4s=",
-			"path": "github.com/hybridgroup/gobot/platforms/gpio",
-			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
-			"revisionTime": "2016-04-12T21:32:53Z"
-		},
-		{
-			"checksumSHA1": "q8LQ3TvcumbJ+MoGIjVlj3YhwGg=",
-			"path": "github.com/hybridgroup/gobot/platforms/i2c",
-			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
-			"revisionTime": "2016-04-12T21:32:53Z"
-		},
-		{
-			"checksumSHA1": "sMMKzaxr1grS5f+vrLXHPs9bTyo=",
-			"path": "github.com/hybridgroup/gobot/platforms/joystick",
-			"revision": "f90acf82a38394d05d6d691b35e0a3c71c96afa6",
-			"revisionTime": "2016-04-12T21:32:53Z"
-		},
-		{
-			"checksumSHA1": "/8A+wGFPFcBoT5+9APp05ueeokU=",
-			"path": "github.com/tarm/goserial",
-			"revision": "b3440c3c63556c3fd67e915be3b92195bc70294a",
-			"revisionTime": "2015-10-07T20:54:00Z"
-		}
-	],
+	"package": [],
 	"rootPath": "github.com/Happykat/R.O.C-CONTROLS"
 }

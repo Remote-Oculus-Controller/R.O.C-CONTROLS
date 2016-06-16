@@ -27,8 +27,10 @@ func NewMotion() *Motion {
 	m.arduino = firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
 	m.servoX = gpio.NewServoDriver(m.arduino, "servoX", "5")
 	m.servoY = gpio.NewServoDriver(m.arduino, "servoY", "6")
-	m.AddFunc(m.rotateX, 4, nil, "")
-	m.AddFunc(m.rotateY, 3, nil, "")
+	/*
+		m.AddFunc(m.rotateX, 4, nil, "")
+		m.AddFunc(m.rotateY, 3, nil, "")
+	*/
 	m.Robot = gobot.NewRobot("motion",
 		[]gobot.Connection{m.arduino},
 		[]gobot.Device{m.servoX, m.servoY})
@@ -37,16 +39,21 @@ func NewMotion() *Motion {
 	return m
 }
 
+/*
 func (m *Motion) rotateX(b []byte) error {
-	/*a, _ := misc.DecodeUint8(b)*/
+*/
+/*a, _ := misc.DecodeUint8(b)*/ /*
+
 	m.servoX.Move(m.x)
 	m.x += 20
 	return nil
 }
 
 func (m *Motion) rotateY(b []byte) error {
-	/*	a, _ := misc.DecodeUint8(b)
-	 */
+*/
+/*	a, _ := misc.DecodeUint8(b)
+ */ /*
+
 	m.servoY.Move(m.y)
 	m.y += 20
 	return nil
@@ -56,3 +63,4 @@ func (m *Motion) moveAPI(params map[string]interface{}) interface{} {
 
 	return 200
 }
+*/

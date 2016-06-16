@@ -1,21 +1,31 @@
 package roc
 
 import (
-	"fmt"
-	"log"
+	/*
+		"fmt"
+	*/
 	"github.com/hybridgroup/gobot"
+	"log"
 	"os"
-	"github.com/Happykat/R.O.C-CONTROLS/misc"
+	/*
+		"github.com/Happykat/R.O.C-CONTROLS/misc"
+	*/
 	"errors"
 )
 
 type Controller struct {
 	*gobot.Robot
-	cmap  map[string]Cmd
-	send	func([]byte) error
+	cmap map[string]Cmd
+	send func(*Packet) error
 }
 
-var CF_DIR = func() string { dir, err := os.Getwd();if err != nil{return "error in work directory"};return dir}() + "/config/"
+var CF_DIR = func() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "error in work directory"
+	}
+	return dir
+}() + "/config/"
 var CMD_FILE = CF_DIR + "command.json"
 
 func (c *Controller) Type() string {
@@ -24,24 +34,29 @@ func (c *Controller) Type() string {
 
 func (c *Controller) Packet(event string, data interface{}) {
 
-	var b []byte
-	var err error
+	/*
+		var b []byte
+		var err error
 
-	e, ok := c.cmap[event]
-	if (!ok) {
-		return
-	}
-	_, def := data.(bool)
-	if (data == nil || def) {
-		b, err = misc.EncodeBytes(e.Default)
-	} else {
-		b, err = misc.EncodeBytes(data)
-	}
-	if err != nil {
-		panic(fmt.Sprintf(err.Error()))
-	}
-	b = append([]byte{CMD | DST_R | MV, e.Code}, b...)
-	c.send(b)
+		e, ok := c.cmap[event]
+		if (!ok) {
+			return
+		}
+		_, def := data.(bool)
+		if (data == nil || def) {
+			b, err = misc.EncodeBytes(e.Default)
+		} else {
+			b, err = misc.EncodeBytes(data)
+		}
+		if err != nil {
+			panic(fmt.Sprintf(err.Error()))
+		}
+	*/
+	/*
+		//TODO redo controller
+		b = append([]byte{CMD | DST_R | MV, e.Code}, b...)
+	*/
+	c.send(&Packet{})
 }
 
 func (c *Controller) MapControl(file string) error {

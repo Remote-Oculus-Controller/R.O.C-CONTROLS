@@ -1,13 +1,8 @@
 package robots
 
 import (
-	"errors"
-	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
-	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/hybridgroup/gobot"
-	"go/types"
-	"log"
 )
 
 type Video struct {
@@ -37,13 +32,14 @@ func NewVideo() *Video {
 	vid := new(Video)
 	vid.RocRobot = roc.NewRocRobot(nil)
 	vid.Robot = gobot.NewRobot("video")
-	vid.AddFunc(nil, 0, vid.startCannyEdgeAPI, "startCanny")
-	vid.AddFunc(nil, 0, vid.stopCannyEdgeAPI, "stopCanny")
-	vid.AddFunc(nil, 0, vid.startFaceDetectAPI, "startFaceDetect")
-	vid.AddFunc(nil, 0, vid.stopFaceDetectAPI, "stopFaceDetect")
+	/*	vid.AddFunc(nil, 0, vid.startCannyEdgeAPI, "startCanny")
+		vid.AddFunc(nil, 0, vid.stopCannyEdgeAPI, "stopCanny")
+		vid.AddFunc(nil, 0, vid.startFaceDetectAPI, "startFaceDetect")
+		vid.AddFunc(nil, 0, vid.stopFaceDetectAPI, "stopFaceDetect")*/
 	return vid
 }
 
+/*
 func (vid *Video) startCannyEdge(Min, Max float64) error {
 
 	min, err := misc.EncodeBytes(Min)
@@ -127,3 +123,4 @@ func (vid *Video) stopFaceDetectAPI(params map[string]interface{}) interface{} {
 	}
 	return "Face detection stopped"
 }
+*/
