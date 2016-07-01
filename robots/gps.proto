@@ -3,7 +3,7 @@ syntax="proto3";
 package robots;
 
 message Coord {
-    float lat = 1;
-    float long = 2;
-    float ori = 3;
+    double lat = 1;
+    double long = 2;
+    double ori = 3;
 }

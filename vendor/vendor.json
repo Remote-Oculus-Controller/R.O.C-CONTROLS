@@ -1,6 +1,85 @@
 {
 	"comment": "",
 	"ignore": "test",
-	"package": [],
+	"package": [
+		{
+			"checksumSHA1": "AKjqgiWov1IJWbnpCkjVEs6NunQ=",
+			"path": "github.com/bmizerany/pat",
+			"revision": "c068ca2f0aacee5ac3681d68e4d0a003b7d1fd2c",
+			"revisionTime": "2016-02-17T10:30:50Z"
+		},
+		{
+			"checksumSHA1": "zb7w9zrHw5g5IFXHe6zX2eD7q2Q=",
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "8616e8ee5e20a1704615e6c8d7afcdac06087a67",
+			"revisionTime": "2016-06-08T21:55:45Z"
+		},
+		{
+			"checksumSHA1": "eQj5yhcPzMVMVgh85CFvOUHB50Q=",
+			"path": "github.com/golang/protobuf/ptypes/any",
+			"revision": "8616e8ee5e20a1704615e6c8d7afcdac06087a67",
+			"revisionTime": "2016-06-08T21:55:45Z"
+		},
+		{
+			"checksumSHA1": "Eyfg0owr76rXFwMiaIKjWOguVTA=",
+			"path": "github.com/hybridgroup/gobot",
+			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
+			"revisionTime": "2016-05-25T04:05:27Z"
+		},
+		{
+			"checksumSHA1": "QZprPRY1jVc5CWzaEWDJFbk405k=",
+			"path": "github.com/hybridgroup/gobot/api",
+			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
+			"revisionTime": "2016-05-25T04:05:27Z"
+		},
+		{
+			"checksumSHA1": "6MlDU03XQ6GOjNASy/dOjiyYdos=",
+			"path": "github.com/hybridgroup/gobot/api/robeaux",
+			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
+			"revisionTime": "2016-05-25T04:05:27Z"
+		},
+		{
+			"checksumSHA1": "BcrSvEILkktJlO+NfPEZpNrzcKE=",
+			"path": "github.com/hybridgroup/gobot/platforms/firmata",
+			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
+			"revisionTime": "2016-05-25T04:05:27Z"
+		},
+		{
+			"checksumSHA1": "9OF9ms4A3alhyfcVXGHByaCdOcw=",
+			"path": "github.com/hybridgroup/gobot/platforms/firmata/client",
+			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
+			"revisionTime": "2016-05-25T04:05:27Z"
+		},
+		{
+			"checksumSHA1": "TadEXSk2ci4TH0fiGSHAx9yf/xY=",
+			"path": "github.com/hybridgroup/gobot/platforms/gpio",
+			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
+			"revisionTime": "2016-05-25T04:05:27Z"
+		},
+		{
+			"checksumSHA1": "q8LQ3TvcumbJ+MoGIjVlj3YhwGg=",
+			"path": "github.com/hybridgroup/gobot/platforms/i2c",
+			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
+			"revisionTime": "2016-05-25T04:05:27Z"
+		},
+		{
+			"checksumSHA1": "sMMKzaxr1grS5f+vrLXHPs9bTyo=",
+			"path": "github.com/hybridgroup/gobot/platforms/joystick",
+			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
+			"revisionTime": "2016-05-25T04:05:27Z"
+		},
+		{
+			"checksumSHA1": "KNA4O3I7ny4l/TZU9Oeho0GcR/4=",
+			"path": "github.com/hybridgroup/gobot/platforms/keyboard",
+			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
+			"revisionTime": "2016-05-25T04:05:27Z"
+		},
+		{
+			"checksumSHA1": "/8A+wGFPFcBoT5+9APp05ueeokU=",
+			"path": "github.com/tarm/goserial",
+			"revision": "b3440c3c63556c3fd67e915be3b92195bc70294a",
+			"revisionTime": "2015-10-07T20:54:00Z"
+		}
+	],
 	"rootPath": "github.com/Happykat/R.O.C-CONTROLS"
 }

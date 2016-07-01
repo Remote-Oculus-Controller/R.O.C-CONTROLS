@@ -33,8 +33,3 @@ message Packet {
 message Error {
     string msg = 2;
 }
-
-message Head {
-    uint32 x = 2;
-    uint32 y = 3;
-}

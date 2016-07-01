@@ -77,7 +77,7 @@ func (l *Link) startConn(s string, m bool, o *Link, t Packet_Section) {
 
 func (l *Linker) Send(p *Packet) error {
 
-	if (p.Header & uint32(Packet_VIDEO_CLIENT)) != 0 {
+	if (p.Header&uint32(Packet_VIDEO_CLIENT)) != 0 && l.remote.conn != nil {
 		l.remote.out <- p
 	}
 	if (p.Header & uint32(Packet_VIDEO_SERVER)) != 0 {
@@ -134,7 +134,6 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 		case <-quit:
 			return
 		case m := <-l.out:
-			fmt.Println("Sending")
 			m.Magic = MAGIC
 			b, err := proto.Marshal(m)
 			if misc.CheckError(err, "linker.go/handleConn", false) != nil {

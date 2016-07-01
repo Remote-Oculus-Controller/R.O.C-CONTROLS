@@ -26,8 +26,11 @@ func NewRocRobot(l *Linker) *RocRobot {
 
 func (r *RocRobot) Send(p *Packet) error {
 
-	fmt.Println("Sending Coordinates")
 	p.Header = p.Header | (uint32(Packet_CONTROL_SERVER) << uint32(Packet_SHIFT_SENT))
+	if r.l == nil {
+		log.Println("Linker not can't send Packet")
+		return nil
+	}
 	err := r.l.Send(p)
 	if err != nil {
 		return errors.New("Could not sent message. " + err.Error())

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package robots;
+
+message Gyro {
+    uint32 x = 1;
+    uint32 y = 2;
+}
+
+message Mouv {
+    int32 gspeed = 1;
+    int32 left = 2;
+    int32 right = 3;
+}
