@@ -13,5 +13,5 @@ install:
   - cd ..
   - go get github.com/kardianos/govendor
   - govendor sync
-  - protoc -I=./proto --go-out=./robots *.proto
-  - mv ./robots/proto.proto .
+  - protoc --go-out=. ./proto/*.proto
+  - protoc --go-out=./robots ./proto/robots/*.proto

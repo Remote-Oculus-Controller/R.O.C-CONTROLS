@@ -46,6 +46,7 @@ func (l *Link) startConn(s string, m bool, o *Link, t Packet_Section) {
 
 	defer close(l.in)
 	defer close(l.out)
+	defer l.conn.Close()
 
 	var listener *net.TCPListener
 
