@@ -49,6 +49,7 @@ func (r *RocRobot) AddFunc(f func(*Packet) error, code uint32, api func(map[stri
 	}
 	if api != nil {
 		log.Println("Creating api entry", name)
+		fmt.Printf("%+v", r)
 		r.AddCommand(name, api)
 	}
 }

@@ -15,6 +15,7 @@ func main() {
 	flag.Parse()
 	r := roc.NewRoc(local, remote, local_t, remote_t)
 	r.AddRobot(robots.NewGPS().RocRobot)
+	r.AddRobot(robots.NewMotion().RocRobot)
 	r.Start()
 }
 

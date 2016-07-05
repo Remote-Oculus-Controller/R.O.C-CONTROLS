@@ -32,22 +32,20 @@ func NewMotion() *Motion {
 	m := new(Motion)
 	m.RocRobot = roc.NewRocRobot(nil)
 	m.arduino = firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
-	m.servoX = gpio.NewServoDriver(m.arduino, "servoX", "5")
-	m.servoY = gpio.NewServoDriver(m.arduino, "servoY", "6")
+	m.servoX = gpio.NewServoDriver(m.arduino, "servoX", "6")
+	m.servoY = gpio.NewServoDriver(m.arduino, "servoY", "5")
 	m.motorL = gpio.NewMotorDriver(m.arduino, "motorL", "9")
 	m.motorR = gpio.NewMotorDriver(m.arduino, "motorR", "10")
-	m.AddFunc(m.moveCam, CAM, nil, "")
-	m.AddFunc(m.getCamPos, GCAM, m.getCamPosApi, "getCamAngle")
 	work := func() {
-		m.servoX.Move(uint8(m.X))
-		m.servoX.Move(uint8(m.Y))
+		m.servoY.Move(135)
+		m.servoX.Move(90)
 	}
 	m.Robot = gobot.NewRobot("motion",
 		[]gobot.Connection{m.arduino},
 		[]gobot.Device{m.servoX, m.servoY},
 		work)
-	m.X = 90
-	m.Y = 90
+	m.AddFunc(m.moveCam, CAM, nil, "moveCam")
+	m.AddFunc(m.getCamPos, GCAM, m.getCamPosApi, "getCamAngle")
 	return m
 }
 
@@ -60,8 +58,10 @@ func (m *Motion) moveCam(p *roc.Packet) error {
 		log.Println("Impossible conversion Message is not a Gyro")
 		return err
 	}
-	m.servoX.Move(uint8(g.X))
-	m.servoY.Move(uint8(g.Y))
+	m.X = gobot.ToScale(gobot.FromScale(g.X, -90, 90), 0, 180)
+	m.Y = gobot.ToScale(gobot.FromScale(g.Y, -35, 35), 90, 180)
+	m.servoX.Move(uint8(m.X))
+	m.servoY.Move(uint8(m.Y))
 	return nil
 }
 
@@ -86,29 +86,3 @@ func (m *Motion) move(p *roc.Packet) error {
 
 	return nil
 }
-
-/*
-func (m *Motion) rotateX(b []byte) error {
-*/
-/*a, _ := misc.DecodeUint8(b)*/ /*
-
-	m.servoX.Move(m.x)
-	m.x += 20
-	return nil
-}
-
-func (m *Motion) rotateY(b []byte) error {
-*/
-/*	a, _ := misc.DecodeUint8(b)
- */ /*
-
-	m.servoY.Move(m.y)
-	m.y += 20
-	return nil
-}
-
-func (m *Motion) moveAPI(params map[string]interface{}) interface{} {
-
-	return 200
-}
-*/
