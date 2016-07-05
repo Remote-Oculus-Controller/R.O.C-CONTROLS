@@ -2,7 +2,6 @@ package roc
 
 import (
 	"errors"
-	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/golang/protobuf/proto"
 	"log"
@@ -48,30 +47,32 @@ func (l *Link) startConn(s string, m bool, o *Link, t Packet_Section) {
 	defer close(l.in)
 	defer close(l.out)
 
+	var listener *net.TCPListener
+
 	log.Print("Starting connection on ", s)
 	tcpAddr, err := net.ResolveTCPAddr("tcp", s)
 	misc.CheckError(err, "resolving address in linker.go/startConn", true)
-	if m {
-		log.Println("Listening on", tcpAddr.String())
-		listener, err := net.ListenTCP("tcp", tcpAddr)
-		misc.CheckError(err, "listening in linker.go/startConn", true)
-		for {
+	for {
+		if m {
+			log.Println("Listening on", tcpAddr.String())
+			listener, err = net.ListenTCP("tcp", tcpAddr)
+			misc.CheckError(err, "listening in linker.go/startConn", true)
 			log.Println("Looking for a client...")
 			l.conn, err = listener.AcceptTCP()
 			misc.CheckError(err, "Accepting client in linker.go/startCnn", true)
 			log.Print("Connection acepted")
-			l.handleConn(o, t)
-			log.Println("Closing connection")
-			l.conn.Close()
-		}
-	} else {
-		for {
+			listener.Close()
+
+		} else {
 			log.Print("Dialing...")
 			l.conn, err = net.DialTCP("tcp", nil, tcpAddr)
 			misc.CheckError(err, "Dialing adresse in linker.go/startConn", true)
-			l.handleConn(o, t)
-			l.conn.Close()
 		}
+		l.handleConn(o, t)
+		log.Println("Closing connection")
+		listener.Close()
+		l.conn.Close()
+		l.conn = nil
 	}
 }
 
@@ -80,12 +81,10 @@ func (l *Linker) Send(p *Packet) error {
 	if (p.Header&uint32(Packet_VIDEO_CLIENT)) != 0 && l.remote.conn != nil {
 		l.remote.out <- p
 	}
-	if (p.Header & uint32(Packet_VIDEO_SERVER)) != 0 {
-		if l.local.conn != nil {
-			l.local.out <- p
-		} else {
-			return errors.New("Local connection not established could not send message")
-		}
+	if (p.Header&uint32(Packet_VIDEO_SERVER)) != 0 && l.local.conn != nil {
+		l.local.out <- p
+	} else {
+		return errors.New("Local connection not established could not send message")
 	}
 	return nil
 }
@@ -114,7 +113,8 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 			}
 			err = proto.Unmarshal(buff[0:r], m)
 			if err != nil {
-				fmt.Println("Cannot Unmarshall packet", err.Error())
+				log.Println("Cannot Unmarshall packet", err.Error())
+				log.Println(r, buff[0:r])
 				continue
 			}
 			if m.Magic != MAGIC {

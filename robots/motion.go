@@ -18,13 +18,16 @@ type Motion struct {
 }
 
 const (
-	M_TAG   = 0xA0
-	CAM     = 0xA0
-	GCAM    = 0xA9
-	STOP    = 0xAF
-	FORWARD = 0xA1
-	BACK    = 0xA2
-	TURN    = 0xA3
+	C_TAG = 0xA0
+	CAM   = 0xA0
+	RCAM  = 0xA1
+	GCAM  = 0xA2
+
+	M_TAG   = 0xB0
+	STOP    = M_TAG | 0xF
+	FORWARD = M_TAG | 0x1
+	BACK    = M_TAG | 0x2
+	TURN    = M_TAG | 0x3
 )
 
 func NewMotion() *Motion {
@@ -37,8 +40,7 @@ func NewMotion() *Motion {
 	m.motorL = gpio.NewMotorDriver(m.arduino, "motorL", "9")
 	m.motorR = gpio.NewMotorDriver(m.arduino, "motorR", "10")
 	work := func() {
-		m.servoY.Move(135)
-		m.servoX.Move(90)
+		m.resetCam(nil)
 	}
 	m.Robot = gobot.NewRobot("motion",
 		[]gobot.Connection{m.arduino},
@@ -46,6 +48,7 @@ func NewMotion() *Motion {
 		work)
 	m.AddFunc(m.moveCam, CAM, nil, "moveCam")
 	m.AddFunc(m.getCamPos, GCAM, m.getCamPosApi, "getCamAngle")
+	m.AddFunc(m.resetCam, RCAM, m.resetCamAPI, "resetCam")
 	return m
 }
 
@@ -82,7 +85,28 @@ func (m *Motion) getCamPosApi(params map[string]interface{}) interface{} {
 	return m.Gyro
 }
 
+func (m *Motion) resetCam(p *roc.Packet) error {
+
+	m.servoY.Move(135)
+	m.servoX.Move(90)
+	return nil
+}
+
+func (m *Motion) resetCamAPI(params map[string]interface{}) interface{} {
+
+	m.resetCam(nil)
+	return "Camera reset to original position"
+}
+
 func (m *Motion) move(p *roc.Packet) error {
 
+	n := &Mouv{}
+	err := protoext.UnpackAny(p.Payload, n)
+	if err != nil {
+		log.Println("Impossible conversion Message is not a Mouv")
+		return err
+	}
+	m.motorL.Speed(byte(n.Left))
+	m.motorR.Speed(byte(n.Right))
 	return nil
 }

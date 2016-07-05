@@ -63,16 +63,16 @@
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-			"checksumSHA1": "sMMKzaxr1grS5f+vrLXHPs9bTyo=",
-			"path": "github.com/hybridgroup/gobot/platforms/joystick",
-			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
-			"revisionTime": "2016-05-25T04:05:27Z"
+			"checksumSHA1": "/a8HGnSCUPzGLk8ODAwMIc3MYGU=",
+			"path": "github.com/larsth/go-gpsdjson",
+			"revision": "8b0a9091ddfeac44817efc4c358693f20878e28c",
+			"revisionTime": "2016-02-23T10:58:57Z"
 		},
 		{
-			"checksumSHA1": "KNA4O3I7ny4l/TZU9Oeho0GcR/4=",
-			"path": "github.com/hybridgroup/gobot/platforms/keyboard",
-			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
-			"revisionTime": "2016-05-25T04:05:27Z"
+			"checksumSHA1": "M9QaacDIgorEPLx6yAc7FQtxrnE=",
+			"path": "github.com/larsth/go-gpsfix",
+			"revision": "8a9f5dfdb1942f6fef27d19c91df8fa382cafa20",
+			"revisionTime": "2015-12-20T19:45:05Z"
 		},
 		{
 			"checksumSHA1": "/8A+wGFPFcBoT5+9APp05ueeokU=",

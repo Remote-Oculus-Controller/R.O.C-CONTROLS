@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	GPS_TAG   = 0xB0
+	GPS_TAG   = 0x10
 	GET_COORD = GPS_TAG | 1
 	TOOGLE    = GPS_TAG | 2
 	H_DCV     = uint32(roc.Packet_DATA)<<uint32(roc.Packet_SHIFT) | uint32(roc.Packet_VIDEO_CLIENT)

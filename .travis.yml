@@ -1,6 +1,17 @@
 language: go
 go: 1.6
 install:
+  - sudo apt-get install autoconf automake libtool curl make g++ unzip
+  - git clone https://github.com/google/protobuf.git
+  - cd protobuf
+  - ./autogen.sh
+  - ./configure
+  - make
+  - make check
+  - sudo make install
+  - sudo ldconfig
+  - cd ..
   - go get github.com/kardianos/govendor
   - govendor sync
-
+  - protoc -I=./proto --go-out=./robots *.proto
+  - mv ./robots/proto.proto .
