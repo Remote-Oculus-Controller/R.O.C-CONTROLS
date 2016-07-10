@@ -1,6 +1,7 @@
 package robots
 
 import (
+	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/protoext"
 	"github.com/hybridgroup/gobot"
@@ -22,6 +23,9 @@ const (
 	CAM   = 0xA0
 	RCAM  = 0xA1
 	GCAM  = 0xA2
+
+	DEFAULT_CAM_X = 90
+	DEFAULT_CAM_Y = 135
 
 	M_TAG   = 0xB0
 	STOP    = M_TAG | 0xF
@@ -56,6 +60,7 @@ func (m *Motion) moveCam(p *roc.Packet) error {
 
 	var g Gyro
 
+	fmt.Println("Moving")
 	err := protoext.UnpackAny(p.Payload, &g)
 	if err != nil {
 		log.Println("Impossible conversion Message is not a Gyro")
@@ -65,19 +70,20 @@ func (m *Motion) moveCam(p *roc.Packet) error {
 	m.Y = gobot.ToScale(gobot.FromScale(g.Y, -35, 35), 90, 180)
 	m.servoX.Move(uint8(m.X))
 	m.servoY.Move(uint8(m.Y))
-	return nil
+	return m.getCamPos(p)
 }
 
 func (m *Motion) getCamPos(p *roc.Packet) error {
 
 	var err error
 
-	s := uint32(p.Header) & (uint32(roc.Packet_MASK_DEST) << uint32(roc.Packet_SHIFT_SENT))
-	p.Header = (uint32(roc.Packet_DATA) << uint32(roc.Packet_SHIFT)) | s>>uint32(roc.Packet_SHIFT_SENT)
-	p.Payload, err = protoext.PackAny(&m.Gyro)
+	protoext.ReverseTo(p, roc.Packet_DATA)
+	g := Gyro{m.X - DEFAULT_CAM_X, m.Y - DEFAULT_CAM_Y}
+	p.Payload, err = protoext.PackAny(&g)
 	if err != nil {
 		return err
 	}
+	fmt.Printf("p: %+v\n", p)
 	return m.Send(p)
 }
 
@@ -87,8 +93,8 @@ func (m *Motion) getCamPosApi(params map[string]interface{}) interface{} {
 
 func (m *Motion) resetCam(p *roc.Packet) error {
 
-	m.servoY.Move(135)
-	m.servoX.Move(90)
+	m.servoY.Move(DEFAULT_CAM_Y)
+	m.servoX.Move(DEFAULT_CAM_X)
 	return nil
 }
 

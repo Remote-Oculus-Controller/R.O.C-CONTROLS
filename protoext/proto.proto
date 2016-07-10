@@ -10,6 +10,11 @@ message Packet {
     uint32 ID = 3;
     google.protobuf.Any payload = 4;
 
+    enum Magic {
+        Nil = 0;
+        MAGIC_Number = 0xAF;
+    }
+
     enum Type {
         option allow_alias = true;
         UNKOWN = 0;

@@ -13,8 +13,17 @@ type Roc struct {
 }
 
 const (
-	UPPERMASK  = 0xF0
-	BOTTOMMASK = 0x0F
+	MAGIC = uint32(Packet_MAGIC_Number)
+
+	Mask_DST   = uint32(Packet_MASK_DEST)
+	Shift_SEND = uint32(Packet_SHIFT_SENT)
+	Mask_SEND  = uint32(Packet_MASK_DEST) << Shift_SEND
+	Shift_TYPE = uint32(Packet_SHIFT)
+	Mask_Type  = uint32(Packet_MASK_TYPE) << Shift_TYPE
+
+	CMD   = uint32(Packet_COMMAND) << Shift_TYPE
+	DATA  = uint32(Packet_DATA) << Shift_TYPE
+	ERROR = uint32(Packet_ERROR) << Shift_TYPE
 )
 
 func NewRoc(lS, rS string, lT, rT bool) *Roc {
@@ -36,16 +45,23 @@ func (r *Roc) handleChannel() {
 	for {
 		select {
 		case b := <-r.l.remote.in:
-			f, k := r.cmap[b.ID]
-			if k {
-				err := f(b)
-				if err != nil {
-					log.Println(err.Error())
-				}
-			} else {
-				log.Println("Unknow code", b.ID)
+			switch b.Header & Mask_Type {
+			case CMD:
+				r.handleCmd(b)
 			}
 		}
+	}
+}
+
+func (r *Roc) handleCmd(p *Packet) {
+	f, k := r.cmap[p.ID]
+	if k {
+		err := f(p)
+		if err != nil {
+			log.Println(err.Error())
+		}
+	} else {
+		log.Println("Unknow code", p.ID)
 	}
 }
 
@@ -67,8 +83,8 @@ func (roc *Roc) Start() error {
 	return nil
 }
 
-func (roc *Roc) Stop() error {
-	return roc.Stop()
+func (roc *Roc) Stop() []error {
+	return roc.Gobot.Stop()
 }
 
 func (roc *Roc) AddRobot(m *RocRobot) {

@@ -28,9 +28,10 @@ func (r *RocRobot) Send(p *Packet) error {
 
 	p.Header = p.Header | (uint32(Packet_CONTROL_SERVER) << uint32(Packet_SHIFT_SENT))
 	if r.l == nil {
-		log.Println("Linker not can't send Packet")
+		log.Println("Linker can not send Packet")
 		return nil
 	}
+	fmt.Printf("Sending %+v\n", p)
 	err := r.l.Send(p)
 	if err != nil {
 		return errors.New("Could not sent message. " + err.Error())

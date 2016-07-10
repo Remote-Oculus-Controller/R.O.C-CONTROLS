@@ -8,11 +8,6 @@ import (
 	"net"
 )
 
-const (
-	//MAGIC
-	MAGIC = 0xAF
-)
-
 type Linker struct {
 	local, remote Link
 	lIp, rIp      string
@@ -46,7 +41,6 @@ func (l *Link) startConn(s string, m bool, o *Link, t Packet_Section) {
 
 	defer close(l.in)
 	defer close(l.out)
-	defer l.conn.Close()
 
 	var listener *net.TCPListener
 
@@ -83,9 +77,11 @@ func (l *Linker) Send(p *Packet) error {
 		l.remote.out <- p
 	}
 	if (p.Header&uint32(Packet_VIDEO_SERVER)) != 0 && l.local.conn != nil {
-		l.local.out <- p
-	} else {
-		return errors.New("Local connection not established could not send message")
+		if l.local.conn != nil {
+			l.local.out <- p
+		} else {
+			return errors.New("Local connection not established could not send message")
+		}
 	}
 	return nil
 }
@@ -135,7 +131,6 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 		case <-quit:
 			return
 		case m := <-l.out:
-			m.Magic = MAGIC
 			b, err := proto.Marshal(m)
 			if misc.CheckError(err, "linker.go/handleConn", false) != nil {
 				continue

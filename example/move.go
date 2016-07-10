@@ -14,6 +14,7 @@ import (
 func main() {
 
 	var err error
+	var buff [128]byte
 
 	conn, err := net.Dial("tcp", "192.168.0.9:8001")
 	if err != nil {
@@ -22,30 +23,34 @@ func main() {
 	}
 	defer conn.Close()
 
-	p := robots.Gyro{X: 0, Y: 0}
-	r := roc.Packet{}
-	r.Magic = roc.MAGIC
-	r.ID = robots.CAM
-	r.Header = uint32(roc.Packet_CONTROL_SERVER)
+	p := robots.Gyro{X: 120, Y: 90}
+	r := protoext.Prepare(robots.CAM, roc.Packet_COMMAND, roc.Packet_VIDEO_CLIENT, roc.Packet_CONTROL_SERVER)
 	r.Payload, err = protoext.PackAny(&p)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	b, err := proto.Marshal(&r)
+	b, err := proto.Marshal(r)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	fmt.Println("Sending")
 	conn.Write(b)
 	<-time.After(time.Second)
-	p.X = 35
-	p.Y = 90
-	r.Payload, err = protoext.PackAny(&p)
+	i, err := conn.Read(buff[0:])
 	if err != nil {
-		log.Fatal(err.Error())
+		fmt.Println(err)
+		return
 	}
-	b, err = proto.Marshal(&r)
+	proto.Unmarshal(b[:i], r)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println(err)
+		return
 	}
-	conn.Write(b)
+	fmt.Printf("p: %+v", r)
+	err = protoext.UnpackAny(r.Payload, &p)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("pos %v - %v", p.X, p.Y)
 }
