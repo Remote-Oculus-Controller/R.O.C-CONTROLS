@@ -38,3 +38,14 @@ message Packet {
 message Error {
     string msg = 2;
 }
+
+message mAI {
+
+    enum Codes {
+        Empty = 0;
+        TAG = 0x20;
+
+    }
+    bool lock = 1;
+    string msg = 2;
+}

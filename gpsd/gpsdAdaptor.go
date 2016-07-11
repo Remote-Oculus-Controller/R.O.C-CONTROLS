@@ -6,6 +6,7 @@ import (
 	"github.com/hybridgroup/gobot"
 	"log"
 	"net"
+	"time"
 )
 
 var _ gobot.Adaptor = (*GpsdAdaptor)(nil)
@@ -88,6 +89,7 @@ func (gpsd *GpsdAdaptor) Finalize() []error {
 
 func (gpsd *GpsdAdaptor) GpsdRead() (string, error) {
 
+	gpsd.conn.SetDeadline(time.Now().Add(time.Second * 4))
 	line, err := gpsd.reader.ReadString('\n')
 	if err != nil {
 		return "", err

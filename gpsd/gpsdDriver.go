@@ -2,6 +2,7 @@ package gpsd
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/larsth/go-gpsdjson"
 	"log"
@@ -58,9 +59,8 @@ func (gpsd *GpsdDriver) Start() (errs []error) {
 			}
 			select {
 			case <-time.After(gpsd.interval):
-			case <-gpsd.pause:
-				<-gpsd.pause
 			case <-gpsd.halt:
+				fmt.Printf("Halting\n")
 				return
 			}
 		}
@@ -80,7 +80,8 @@ func (gpsd *GpsdDriver) Connection() gobot.Connection {
 // Halt stops polling the analog sensor for new information
 func (gpsd *GpsdDriver) Halt() (errs []error) {
 	gpsd.halt <- true
-	return
+	fmt.Printf("Halting gpsddriver\n")
+	return nil
 }
 
 func (gpsd *GpsdDriver) TooglePause() {

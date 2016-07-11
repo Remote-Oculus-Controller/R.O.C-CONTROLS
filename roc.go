@@ -10,6 +10,10 @@ type Roc struct {
 	*gobot.Gobot                                //Gobot
 	cmap         map[uint32]func(*Packet) error //cmd func map
 	l            *Linker
+	aiLock       chan bool
+	cmd          chan *Packet
+	data         chan *Packet
+	error        chan *Packet
 }
 
 const (
@@ -28,10 +32,15 @@ const (
 
 func NewRoc(lS, rS string, lT, rT bool) *Roc {
 
-	roc := new(Roc)
-	roc.Gobot = gobot.NewGobot()
-	roc.cmap = make(map[uint32]func(*Packet) error)
-	roc.l = NewLinker(lS, rS, lT, rT)
+	roc := &Roc{
+		Gobot:  gobot.NewGobot(),
+		cmap:   make(map[uint32]func(*Packet) error),
+		l:      NewLinker(lS, rS, lT, rT),
+		aiLock: make(chan bool),
+		cmd:    make(chan *Packet),
+		data:   make(chan *Packet),
+		error:  make(chan *Packet),
+	}
 	roc.apiCreate()
 	return roc
 }
@@ -42,38 +51,74 @@ func (r *Roc) handleChannel() {
 			log.Println(r, "-> Recovered !!")
 		}
 	}()
+	go r.handleCmd(r.cmd)
+	go r.handleData(r.data)
+	go r.handleError(r.error)
 	for {
 		select {
 		case b := <-r.l.remote.in:
 			switch b.Header & Mask_Type {
 			case CMD:
-				r.handleCmd(b)
+				r.cmd <- b
+			case DATA:
+				r.data <- b
+			case ERROR:
+				r.error <- b
+			default:
+				log.Println("Unknown Type", b.Header&Mask_Type)
 			}
 		}
 	}
 }
 
-func (r *Roc) handleCmd(p *Packet) {
-	f, k := r.cmap[p.ID]
-	if k {
-		err := f(p)
-		if err != nil {
-			log.Println(err.Error())
+func (r *Roc) handleCmd(ch chan *Packet) {
+
+	for {
+		select {
+		case <-r.aiLock:
+		NoneLoop:
+			for {
+				select {
+				case p := <-ch:
+					p = p
+				case <-r.aiLock:
+					break NoneLoop
+				}
+			}
+		case p := <-ch:
+			f, k := r.cmap[p.ID]
+			if k {
+				err := f(p)
+				if err != nil {
+					log.Println(err.Error())
+				}
+			} else {
+				log.Println("Unknow code", p.ID)
+			}
 		}
-	} else {
-		log.Println("Unknow code", p.ID)
 	}
 }
 
-func (roc *Roc) Start() error {
+func (r *Roc) handleData(ch chan *Packet) {
+	p := <-ch
+	log.Printf("Data ! ==> %+v", p)
+}
 
-	roc.l.Start()
+func (r *Roc) handleError(ch chan *Packet) {
+	p := <-ch
+	log.Printf("Error ! ==> %+v", p)
+}
+
+func (r *Roc) Start() error {
+
+	r.l.Start()
+	r.NewAI()
 	go func() {
 		for {
-			roc.handleChannel()
+			r.handleChannel()
 		}
 	}()
-	errs := roc.Gobot.Start()
+	errs := r.Gobot.Start()
 	if errs != nil {
 		for _, err := range errs {
 			log.Println(err)
@@ -87,9 +132,9 @@ func (roc *Roc) Stop() []error {
 	return roc.Gobot.Stop()
 }
 
-func (roc *Roc) AddRobot(m *RocRobot) {
+func (roc *Roc) AddRocRobot(m *RocRobot) {
 	if roc.Robot(m.Name) != nil {
-		log.Println("Warning !" + m.Name + "bot overwritten")
+		log.Println("Warning !", m.Name, "bot overwritten")
 	}
 	m.l = roc.l
 	for k, v := range m.cmap {
