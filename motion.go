@@ -3,133 +3,128 @@ package roc
 import (
 	"fmt"
 	"github.com/hybridgroup/gobot"
-	"github.com/hybridgroup/gobot/platforms/gpio"
 	"github.com/hybridgroup/gobot/platforms/firmata"
+	"github.com/hybridgroup/gobot/platforms/gpio"
+	"log"
 )
 
 type Motion struct {
-	*gobot.Robot
-
-	mLCam	*gpio.ServoDriver
-	mRCam	*gpio.ServoDriver
-	tempSens *gpio.AnalogSensorDriver
-	potSens *gpio.AnalogSensorDriver
-	mLWheel *gpio.MotorDriver
-	mRWheel *gpio.MotorDriver
-
-	piezo 	*gpio.LedDriver
-	button1 *gpio.ButtonDriver
-	button2 *gpio.ButtonDriver
-	button3 *gpio.ButtonDriver
-	tilt	*gpio.LedDriver
-
-	moving 	bool
+	*RocRobot
+	arduino        *firmata.FirmataAdaptor
+	servoX, servoY *gpio.ServoDriver
+	motorL, motorR *gpio.MotorDriver
+	Gyro
 }
 
 const (
-	VSTOP 	= 0
-	VRUN 	= 200
-	ROTSERVO = 180
+	C_TAG = 0xA0
+	CAM   = 0xA0
+	RCAM  = 0xA1
+	GCAM  = 0xA2
+
+	MOUV = 0xA3
+	STOP = 0xAF
+
+	DEFAULT_CAM_X = 90
+	DEFAULT_CAM_Y = 135
 )
 
-func NewMotion() *Motion{
+func NewMotion() *Motion {
 
-	r := new(Motion)
-	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
-
-	r.mLCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotorL", "5")
-	r.mRCam = gpio.NewServoDriver(firmataAdaptor, "cameraMotorR", "6")
-	r.tempSens = gpio.NewAnalogSensorDriver(firmataAdaptor, "temperature", "2")
-	r.potSens = gpio.NewAnalogSensorDriver(firmataAdaptor, "potensiometer", "3")
-	/*r.mLWheel = gpio.NewMotorDriver(firmataAdaptor, "LWheel", "4")
-	r.mRWheel = gpio.NewMotorDriver(firmataAdaptor, "RWheel", "5")*/
-
-	r.piezo = gpio.NewLedDriver(firmataAdaptor, "piezzo", "0")
-	r.button1 = gpio.NewButtonDriver(firmataAdaptor, "button1", "1")
-	r.button2 = gpio.NewButtonDriver(firmataAdaptor, "button2", "2")
-	r.button3 = gpio.NewButtonDriver(firmataAdaptor, "button3", "3")
-	r.tilt = gpio.NewLedDriver(firmataAdaptor, "tilt", "4")
-
+	m := new(Motion)
+	m.RocRobot = NewRocRobot(nil)
+	m.arduino = firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
+	m.servoX = gpio.NewServoDriver(m.arduino, "servoX", "6")
+	m.servoY = gpio.NewServoDriver(m.arduino, "servoY", "5")
+	m.motorL = gpio.NewMotorDriver(m.arduino, "motorL", "9")
+	m.motorR = gpio.NewMotorDriver(m.arduino, "motorR", "10")
 	work := func() {
-		/*
-		gobot.On(r.motion.temperaturSensor.Event("data"), func(data interface{}) {
-			temp := uint8(
-				gobot.ToScale(gobot.FromScale(float64(data.(int)), 0, 1024), 0, 255),
-			)
-			fmt.Println("temperature", temp)
-
-		})
-
-		*/
-		//Start and stop moving robot
-		gobot.On(r.button1.Event("push"), func(data interface{}) {
-			//r.moving ? moveForwardWheel(r, VRUN) : moveForwardWheel(r, VSTOP)
-			if (r.moving) {
-				r.mRCam.Move(ROTSERVO)
-				r.mLCam.Move(0)
-				//moveForwardWheel(r, VRUN)
-				simulMotor(r, VRUN)
-			}
-			if (!r.moving) {
-				//stopWheel(r)
-				stopSimulMotor()
-			}
-		})
-
-		//simulate pression sensor / obstacle non-mouvant
-		gobot.On(r.button2.Event("push"), func(data interface{}) {
-			stopSimulMotor()
-			extractRobot(r)
-		})
+		m.resetCam(nil)
 	}
-
-
-	r.Robot = gobot.NewRobot("motion",
-		[]gobot.Connection{firmataAdaptor},
-		[]gobot.Device{r.mLCam, r.mRCam},
+	m.Robot = gobot.NewRobot("motion",
+		[]gobot.Connection{m.arduino},
+		[]gobot.Device{m.servoX, m.servoY},
 		work)
-
-
-	return r
+	m.AddFunc(m.moveCam, CAM, nil, "moveCam")
+	m.AddFunc(m.getCamPos, GCAM, m.getCamPosApi, "getCamAngle")
+	m.AddFunc(m.resetCam, RCAM, m.resetCamAPI, "resetCam")
+	m.AddFunc(m.move, MOUV, nil, "mv")
+	m.AddEvent("move")
+	return m
 }
 
-func (m *Motion) Forward(b []byte) (byte, error)  {
-	simulMotor(m, 200)
-	return 200, nil
+func (m *Motion) moveCam(p *Packet) error {
+
+	var g Gyro
+
+	fmt.Println("Moving Camera")
+	err := UnpackAny(p.Payload, &g)
+	if err != nil {
+		log.Println("Impossible conversion Message is not a Gyro")
+		return err
+	}
+	x := uint8(gobot.ToScale(gobot.FromScale(g.X, -90, 90), 0, 180))
+	y := uint8(gobot.ToScale(gobot.FromScale(g.Y, -35, 35), 90, 180))
+	m.X = float64(x)
+	m.Y = float64(y)
+	fmt.Print(x, y, m.X, m.Y)
+	m.servoX.Move(x)
+	m.servoY.Move(y)
+	return m.getCamPos(p)
 }
 
-func extractRobot(r *Motion) {
-	r.mLCam.Move(0)
-	simulMotor(r, VRUN)
+func (m *Motion) getCamPos(p *Packet) error {
+
+	var err error
+
+	ReverseTo(p, Packet_DATA)
+	g := Gyro{m.X - DEFAULT_CAM_X, m.Y - DEFAULT_CAM_Y}
+	p.Payload, err = PackAny(&g)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("p: %+v\n", p)
+	return m.Send(p)
 }
 
-func simulMotor(r *Motion, speed byte) {
-	i := uint8(gobot.Rand(180))
-	fmt.Println("Turning", i)
-	r.mLCam.Move(i)
-	r.mRCam.Move(i)
-	/*gobot.Every((time.Duration(speed)/10)*time.Millisecond, func() {
-		i += 1
-		fmt.Println("Turning", i)
-		r.mLCam.Move(i)
-		r.mRCam.Move(ROTSERVO - i)
-	})*/
+func (m *Motion) getCamPosApi(params map[string]interface{}) interface{} {
+	return m.Gyro
 }
 
-func stopSimulMotor() {
-	// Stop gobot.Every loop or do an another loop
+func (m *Motion) resetCam(p *Packet) error {
+
+	m.servoY.Move(DEFAULT_CAM_Y)
+	m.servoX.Move(DEFAULT_CAM_X)
+	return nil
 }
 
-func moveBackwardWheel(r *Motion, speed byte) {
+func (m *Motion) resetCamAPI(params map[string]interface{}) interface{} {
 
+	m.resetCam(nil)
+	return "Camera reset to original position"
 }
 
-func moveForwardWheel(r *Motion, speed byte) {
-	r.mRWheel.Forward(speed)
-	r.mLWheel.Forward(speed)
+func (m *Motion) move(p *Packet) error {
+
+	n := &Mouv{}
+	err := UnpackAny(p.Payload, n)
+	if err != nil {
+		log.Println("Impossible conversion Message is not a Mouv")
+		return err
+	}
+	//gobot.Publish(m.Event("move"), nil)
+	fmt.Println("Spinning MOTORS !")
+	/*
+		y := math.Sin(n.Gspeed)
+		x := math.Cos(n.Gspeed)
+	*/
+	s := uint8(n.Gspeed)
+	m.motorL.Speed(byte(s))
+	return nil
 }
 
-func stopWheel(r Motion) {
-	r.mRWheel.Halt()
-	r.mLWheel.Halt()
+func (m *Motion) Equal(r *gobot.Robot) {
+
+	m.arduino = r.Connection("arduino").(*firmata.FirmataAdaptor)
+	m.servoY = r.Device("servoY").(*gpio.ServoDriver)
 }

@@ -2,7 +2,7 @@
 // source: protoext/robots/motion.proto
 // DO NOT EDIT!
 
-package robots
+package roc
 
 import "github.com/golang/protobuf/proto"
 import "fmt"

@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"github.com/Happykat/R.O.C-CONTROLS"
-	"github.com/Happykat/R.O.C-CONTROLS/robots"
 )
 
 var remote string
@@ -15,7 +14,7 @@ func main() {
 	flag.Parse()
 	r := roc.NewRoc(local, remote, local_t, remote_t)
 	//r.AddRocRobot(robots.NewGPS().RocRobot)
-	r.AddRocRobot(robots.NewMotion().RocRobot)
+	r.AddRocRobot(roc.NewMotion().RocRobot)
 	r.Start()
 }
 

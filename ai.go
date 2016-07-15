@@ -10,6 +10,7 @@ const (
 
 type AI struct {
 	*RocRobot
+	m    *Motion
 	lock chan bool
 }
 
@@ -28,8 +29,9 @@ func (r *Roc) NewAI() *AI {
 	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
 		r.Robot("gps").Command("sim")(nil)
 	})
+
+	ai.m.Equal(r.Robot("motion"))
 	ai.Robot = gobot.NewRobot("ai", work)
-	r.AddRocRobot(ai.RocRobot)
 	return ai
 }
 
