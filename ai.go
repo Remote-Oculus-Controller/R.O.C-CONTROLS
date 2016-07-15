@@ -32,6 +32,7 @@ func (r *Roc) NewAI() *AI {
 
 	ai.m.Equal(r.Robot("motion"))
 	ai.Robot = gobot.NewRobot("ai", work)
+	ai.obstacle()
 	return ai
 }
 

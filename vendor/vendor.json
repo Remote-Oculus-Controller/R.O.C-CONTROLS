@@ -3,79 +3,79 @@
 	"ignore": "test",
 	"package": [
 		{
-			"checksumSHA1": "AKjqgiWov1IJWbnpCkjVEs6NunQ=",
+			"checksumSHA1": "EoomAu2qBa6LBhPt9waqSEFraHY=",
 			"path": "github.com/bmizerany/pat",
 			"revision": "c068ca2f0aacee5ac3681d68e4d0a003b7d1fd2c",
 			"revisionTime": "2016-02-17T10:30:50Z"
 		},
 		{
-			"checksumSHA1": "zb7w9zrHw5g5IFXHe6zX2eD7q2Q=",
+			"checksumSHA1": "f49sBz5WdISQNLosyIysGO4cO6A=",
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "8616e8ee5e20a1704615e6c8d7afcdac06087a67",
 			"revisionTime": "2016-06-08T21:55:45Z"
 		},
 		{
-			"checksumSHA1": "eQj5yhcPzMVMVgh85CFvOUHB50Q=",
+			"checksumSHA1": "uwfM6jm+BfiO2chlsY8+08MFLZQ=",
 			"path": "github.com/golang/protobuf/ptypes/any",
 			"revision": "8616e8ee5e20a1704615e6c8d7afcdac06087a67",
 			"revisionTime": "2016-06-08T21:55:45Z"
 		},
 		{
-			"checksumSHA1": "Eyfg0owr76rXFwMiaIKjWOguVTA=",
+			"checksumSHA1": "eWzzgUr4mAbkCvQkM85s0RWkFmo=",
 			"path": "github.com/hybridgroup/gobot",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-			"checksumSHA1": "QZprPRY1jVc5CWzaEWDJFbk405k=",
+			"checksumSHA1": "PZr3ZFb8WqLpahWnSOekRoX4GVw=",
 			"path": "github.com/hybridgroup/gobot/api",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-			"checksumSHA1": "6MlDU03XQ6GOjNASy/dOjiyYdos=",
+			"checksumSHA1": "XbLFyBQ986QKadmHTEYariAfb8w=",
 			"path": "github.com/hybridgroup/gobot/api/robeaux",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-			"checksumSHA1": "BcrSvEILkktJlO+NfPEZpNrzcKE=",
+			"checksumSHA1": "cD+rHe9DR/MfAMTtL5LX/jPicCs=",
 			"path": "github.com/hybridgroup/gobot/platforms/firmata",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-			"checksumSHA1": "9OF9ms4A3alhyfcVXGHByaCdOcw=",
+			"checksumSHA1": "Gb5Q/dZQuwDMcqm9c9pdPxAAZuM=",
 			"path": "github.com/hybridgroup/gobot/platforms/firmata/client",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-			"checksumSHA1": "TadEXSk2ci4TH0fiGSHAx9yf/xY=",
+			"checksumSHA1": "jMez2AnFjXU3K5VxIU/d7WEeLsw=",
 			"path": "github.com/hybridgroup/gobot/platforms/gpio",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-			"checksumSHA1": "q8LQ3TvcumbJ+MoGIjVlj3YhwGg=",
+			"checksumSHA1": "M3QNURz2PR8tHKxhpYHpCCNPMqA=",
 			"path": "github.com/hybridgroup/gobot/platforms/i2c",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-			"checksumSHA1": "/a8HGnSCUPzGLk8ODAwMIc3MYGU=",
+			"checksumSHA1": "W/nBqg26YNUkvM+PAifN70dKssY=",
 			"path": "github.com/larsth/go-gpsdjson",
 			"revision": "8b0a9091ddfeac44817efc4c358693f20878e28c",
 			"revisionTime": "2016-02-23T10:58:57Z"
 		},
 		{
-			"checksumSHA1": "M9QaacDIgorEPLx6yAc7FQtxrnE=",
+			"checksumSHA1": "WLT+R571pmzQI5tcTMx74lyj0IY=",
 			"path": "github.com/larsth/go-gpsfix",
 			"revision": "8a9f5dfdb1942f6fef27d19c91df8fa382cafa20",
 			"revisionTime": "2015-12-20T19:45:05Z"
 		},
 		{
-			"checksumSHA1": "/8A+wGFPFcBoT5+9APp05ueeokU=",
+			"checksumSHA1": "nBHxztHiv2Do0mcbo+whwjucTW8=",
 			"path": "github.com/tarm/goserial",
 			"revision": "b3440c3c63556c3fd67e915be3b92195bc70294a",
 			"revisionTime": "2015-10-07T20:54:00Z"

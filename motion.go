@@ -27,6 +27,8 @@ const (
 
 	DEFAULT_CAM_X = 90
 	DEFAULT_CAM_Y = 135
+
+	MAXSPEED = 127
 )
 
 func NewMotion() *Motion {
@@ -127,4 +129,37 @@ func (m *Motion) Equal(r *gobot.Robot) {
 
 	m.arduino = r.Connection("arduino").(*firmata.FirmataAdaptor)
 	m.servoY = r.Device("servoY").(*gpio.ServoDriver)
+	m.servoX = r.Device("servoX").(*gpio.ServoDriver)
+	m.motorL = r.Device("motorL").(*gpio.MotorDriver)
+	m.motorR = r.Device("motorR").(*gpio.MotorDriver)
+}
+
+func (m *Motion) moveForward() {
+
+	m.motorL.Speed(MAXSPEED)
+	m.motorR.Speed(MAXSPEED)
+}
+
+func (m *Motion) moveBackward() {
+
+	m.motorL.Speed(-MAXSPEED)
+	m.motorR.Speed(-MAXSPEED)
+}
+
+func (m *Motion) stopMoving() {
+
+	m.motorL.Speed(0)
+	m.motorR.Speed(0)
+}
+
+func (m *Motion) turnLeft() {
+
+	m.motorR.Speed(MAXSPEED)
+	m.motorL.Speed(-MAXSPEED)
+}
+
+func (m *Motion) turnRight() {
+
+	m.motorR.Speed(-MAXSPEED)
+	m.motorL.Speed(MAXSPEED)
 }
