@@ -14,10 +14,6 @@ type Data struct {
 	timeDifference		int
 }
 
-const (
-	TIME 	= float64(0.5)
-)
-
 func (ia *AI) obstacle() {
 
 	gbot := gobot.NewGobot()
@@ -38,7 +34,7 @@ func (ia *AI) obstacle() {
 		gobot.On(button.Event("release"), func(data interface{}) {
 			d.timeDifference = time.Since(d.startPushingTime)
 			log.Println("Envoie d'un message a l'utilisateur, un obstacle gene l'avancer du robot")
-			if d.timeDifference < 3 {
+			if d.timeDifference < (time.Second * 3) {
 				fmt.Println("c'etait un obstacle passager, retour a la normale")
 			} else {
 				ia.sendMessageAI("Warning, AI is taking control")
