@@ -1,65 +1,59 @@
 package roc
 
 import (
-	"github.com/hybridgroup/gobot/platforms/firmata"
-	"github.com/hybridgroup/gobot"
-	"github.com/hybridgroup/gobot/platforms/gpio"
-	"time"
 	"fmt"
+	"github.com/Happykat/R.O.C-CONTROLS/misc"
+	"github.com/hybridgroup/gobot"
 	"log"
+	"time"
 )
 
 type Data struct {
-	startPushingTime 	int
-	timeDifference		int
+	startPushingTime time.Time
+	timeDifference   time.Duration
 }
 
 func (ia *AI) obstacle() {
 
-	gbot := gobot.NewGobot()
-	firmataAdaptor := firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
-	button := gpio.NewButtonDriver(firmataAdaptor, "button", "13")
+	d := new(Data)
+	ch := make(chan bool)
 
-
-	work := func() {
-		d := Data{}
-
-		gobot.On(button.Event("push"), func(data interface{}) {
-			d.startPushingTime = time.Now()
-			log.Println("button1 pushed")
-			ia.sendMessageAI("An obstacle prevents the robot to move forward")
-			ia.toggle(true)
-		})
-
-		gobot.On(button.Event("release"), func(data interface{}) {
-			d.timeDifference = time.Since(d.startPushingTime)
-			log.Println("Envoie d'un message a l'utilisateur, un obstacle gene l'avancer du robot")
-			if d.timeDifference < (time.Second * 3) {
+	gobot.On(ia.button.Event("push"), func(data interface{}) {
+		d.startPushingTime = time.Now()
+		log.Println("Envoie d'un message a l'utilisateur, un obstacle gene l'avancer du robot")
+		ia.sendMessageAI("An obstacle prevents the robot from moving forward")
+		for {
+			select {
+			case <-time.After(time.Second * 3):
+				if ia.button.Active {
+					log.Println("Ai control")
+					ia.sendMessageAI("Warning, AI is taking control")
+					ia.unlockRobot()
+					ia.sendMessageAI("You are taking back control")
+					ia.toggle(false)
+					return
+				}
+			case <-ch:
 				fmt.Println("c'etait un obstacle passager, retour a la normale")
-			} else {
-				ia.sendMessageAI("Warning, AI is taking control")
-				ia.unlockRobot()
-				ia.sendMessageAI("You are taking back control")
-				ia.toggle(false)
 			}
-		})
+		}
+	})
 
-	}
-
-	robot := gobot.NewRobot("bot",
-		[]gobot.Connection{firmataAdaptor},
-		[]gobot.Device{button},
-		work,
-	)
-	gbot.AddRobot(robot)
-	gbot.Start()
+	gobot.On(ia.button.Event("release"), func(data interface{}) {
+		ch <- true
+	})
 
 }
 
 func (ia *AI) sendMessageAI(msg string) {
 
+	var err error
+
 	p := Prepare(LOCK, Packet_DATA, Packet_CONTROL_SERVER, Packet_VIDEO_CLIENT)
-	p.Payload= PackAny(&MAI{Lock: true, Msg: msg})
+	p.Payload, err = PackAny(&MAI{Lock: true, Msg: msg})
+	if misc.CheckError(err, "Sending Ai message", false) != nil {
+		return
+	}
 	ia.Send(p)
 }
 

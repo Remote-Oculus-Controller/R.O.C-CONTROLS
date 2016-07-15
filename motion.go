@@ -28,7 +28,7 @@ const (
 	DEFAULT_CAM_X = 90
 	DEFAULT_CAM_Y = 135
 
-	MAXSPEED = 127
+	MAXSPEED = 90
 )
 
 func NewMotion() *Motion {
@@ -42,10 +42,11 @@ func NewMotion() *Motion {
 	m.motorR = gpio.NewMotorDriver(m.arduino, "motorR", "10")
 	work := func() {
 		m.resetCam(nil)
+
 	}
 	m.Robot = gobot.NewRobot("motion",
 		[]gobot.Connection{m.arduino},
-		[]gobot.Device{m.servoX, m.servoY},
+		[]gobot.Device{m.servoX, m.servoY, m.motorR, m.motorL},
 		work)
 	m.AddFunc(m.moveCam, CAM, nil, "moveCam")
 	m.AddFunc(m.getCamPos, GCAM, m.getCamPosApi, "getCamAngle")
@@ -142,8 +143,8 @@ func (m *Motion) moveForward() {
 
 func (m *Motion) moveBackward() {
 
-	m.motorL.Speed(-MAXSPEED)
-	m.motorR.Speed(-MAXSPEED)
+	m.motorL.Speed(MAXSPEED) // -
+	m.motorR.Speed(MAXSPEED) // -
 }
 
 func (m *Motion) stopMoving() {
@@ -155,11 +156,11 @@ func (m *Motion) stopMoving() {
 func (m *Motion) turnLeft() {
 
 	m.motorR.Speed(MAXSPEED)
-	m.motorL.Speed(-MAXSPEED)
+	m.motorL.Speed(MAXSPEED) // -
 }
 
 func (m *Motion) turnRight() {
 
-	m.motorR.Speed(-MAXSPEED)
+	m.motorR.Speed(MAXSPEED) //-
 	m.motorL.Speed(MAXSPEED)
 }

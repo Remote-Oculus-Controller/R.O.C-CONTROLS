@@ -2,6 +2,7 @@ package roc
 
 import (
 	"github.com/hybridgroup/gobot"
+	"github.com/hybridgroup/gobot/platforms/gpio"
 )
 
 const (
@@ -10,8 +11,9 @@ const (
 
 type AI struct {
 	*RocRobot
-	m    *Motion
-	lock chan bool
+	m      *Motion
+	button *gpio.ButtonDriver
+	lock   chan bool
 }
 
 func (r *Roc) NewAI() *AI {
@@ -30,9 +32,13 @@ func (r *Roc) NewAI() *AI {
 		r.Robot("gps").Command("sim")(nil)
 	})
 
+	ai.m = &Motion{}
 	ai.m.Equal(r.Robot("motion"))
-	ai.Robot = gobot.NewRobot("ai", work)
+	ai.button = gpio.NewButtonDriver(ai.m.arduino, "button", "13")
+	ai.Robot = gobot.NewRobot("ai", work,
+		[]gobot.Device{ai.button})
 	ai.obstacle()
+	r.AddRocRobot(ai.RocRobot)
 	return ai
 }
 
