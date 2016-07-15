@@ -1,9 +1,9 @@
 package robots
 
 import (
+	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/gpsd"
-	"github.com/Happykat/R.O.C-CONTROLS/protoext"
 	"github.com/hybridgroup/gobot"
 	"github.com/larsth/go-gpsdjson"
 	"log"
@@ -21,6 +21,8 @@ type Gps struct {
 	*roc.RocRobot
 	*gpsd.GpsdDriver
 	coord Coord
+
+	xoff, yoff float64
 }
 
 func NewGPS() *Gps {
@@ -42,14 +44,15 @@ func NewGPS() *Gps {
 			log.Println("Event TPV, didn't reveice a TPV message gps.go")
 		}
 		m := &Coord{
-			Lat:  tpv.Lat,
-			Long: tpv.Lon,
+			Lat:  tpv.Lat + gps.xoff,
+			Long: tpv.Lon + gps.yoff,
+			Ori:  tpv.Track,
 		}
 		p := &roc.Packet{
 			ID:     GPS_TAG,
 			Header: H_DCV,
 		}
-		p.Payload, err = protoext.PackAny(m)
+		p.Payload, err = roc.PackAny(m)
 		if err != nil {
 			log.Println("Couldn't pack Gps coor into packet: ", err.Error())
 			return
@@ -58,6 +61,7 @@ func NewGPS() *Gps {
 	})
 	gps.AddFunc(gps.tooglePause, TOOGLE, gps.tooglePauseAPI, "toogle")
 	gps.AddFunc(gps.getCoordByte, GET_COORD, gps.getCoordApi, "getCoord")
+	gps.AddFunc(nil, 0, gps.sim, "sim")
 	return gps
 }
 
@@ -71,7 +75,7 @@ func (gps *Gps) getCoordByte(r *roc.Packet) error {
 
 	s := uint32(r.Header) & (uint32(roc.Packet_MASK_DEST) << uint32(roc.Packet_SHIFT_SENT))
 	r.Header = (uint32(roc.Packet_DATA) << uint32(roc.Packet_SHIFT)) | s>>uint32(roc.Packet_SHIFT_SENT)
-	r.Payload, err = protoext.PackAny(&gps.coord)
+	r.Payload, err = roc.PackAny(&gps.coord)
 	if err != nil {
 		return err
 	}
@@ -90,4 +94,11 @@ func (gps *Gps) tooglePause(p *roc.Packet) error {
 func (gps *Gps) tooglePauseAPI(params map[string]interface{}) interface{} {
 	gps.TooglePause()
 	return "Gps state toogled"
+}
+
+func (gps *Gps) sim(params map[string]interface{}) interface{} {
+	fmt.Printf("Changing position")
+	gps.yoff += 0.001
+	gps.xoff += 0.001
+	return nil
 }

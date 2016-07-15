@@ -3,7 +3,6 @@ package robots
 import (
 	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
-	"github.com/Happykat/R.O.C-CONTROLS/protoext"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/firmata"
 	"github.com/hybridgroup/gobot/platforms/gpio"
@@ -24,14 +23,11 @@ const (
 	RCAM  = 0xA1
 	GCAM  = 0xA2
 
+	MOUV = 0xA3
+	STOP = 0xAF
+
 	DEFAULT_CAM_X = 90
 	DEFAULT_CAM_Y = 135
-
-	M_TAG   = 0xB0
-	STOP    = M_TAG | 0xF
-	FORWARD = M_TAG | 0x1
-	BACK    = M_TAG | 0x2
-	TURN    = M_TAG | 0x3
 )
 
 func NewMotion() *Motion {
@@ -53,6 +49,8 @@ func NewMotion() *Motion {
 	m.AddFunc(m.moveCam, CAM, nil, "moveCam")
 	m.AddFunc(m.getCamPos, GCAM, m.getCamPosApi, "getCamAngle")
 	m.AddFunc(m.resetCam, RCAM, m.resetCamAPI, "resetCam")
+	m.AddFunc(m.move, MOUV, nil, "mv")
+	m.AddEvent("move")
 	return m
 }
 
@@ -60,16 +58,19 @@ func (m *Motion) moveCam(p *roc.Packet) error {
 
 	var g Gyro
 
-	fmt.Println("Moving")
-	err := protoext.UnpackAny(p.Payload, &g)
+	fmt.Println("Moving Camera")
+	err := roc.UnpackAny(p.Payload, &g)
 	if err != nil {
 		log.Println("Impossible conversion Message is not a Gyro")
 		return err
 	}
-	m.X = gobot.ToScale(gobot.FromScale(g.X, -90, 90), 0, 180)
-	m.Y = gobot.ToScale(gobot.FromScale(g.Y, -35, 35), 90, 180)
-	m.servoX.Move(uint8(m.X))
-	m.servoY.Move(uint8(m.Y))
+	x := uint8(gobot.ToScale(gobot.FromScale(g.X, -90, 90), 0, 180))
+	y := uint8(gobot.ToScale(gobot.FromScale(g.Y, -35, 35), 90, 180))
+	m.X = float64(x)
+	m.Y = float64(y)
+	fmt.Print(x, y, m.X, m.Y)
+	m.servoX.Move(x)
+	m.servoY.Move(y)
 	return m.getCamPos(p)
 }
 
@@ -77,9 +78,9 @@ func (m *Motion) getCamPos(p *roc.Packet) error {
 
 	var err error
 
-	protoext.ReverseTo(p, roc.Packet_DATA)
+	roc.ReverseTo(p, roc.Packet_DATA)
 	g := Gyro{m.X - DEFAULT_CAM_X, m.Y - DEFAULT_CAM_Y}
-	p.Payload, err = protoext.PackAny(&g)
+	p.Payload, err = roc.PackAny(&g)
 	if err != nil {
 		return err
 	}
@@ -107,12 +108,21 @@ func (m *Motion) resetCamAPI(params map[string]interface{}) interface{} {
 func (m *Motion) move(p *roc.Packet) error {
 
 	n := &Mouv{}
-	err := protoext.UnpackAny(p.Payload, n)
+	err := roc.UnpackAny(p.Payload, n)
 	if err != nil {
 		log.Println("Impossible conversion Message is not a Mouv")
 		return err
 	}
-	m.motorL.Speed(byte(n.Left))
-	m.motorR.Speed(byte(n.Right))
+	gobot.Publish(m.Event("move"), nil)
+	fmt.Println("Spinning MOTORS !")
+	/*
+		y := math.Sin(n.Gspeed)
+		x := math.Cos(n.Gspeed)
+	*/
+
+	/*
+		m.motorL.Speed(byte(n.Left))
+		m.motorR.Speed(byte(n.Right))
+	*/
 	return nil
 }

@@ -2,6 +2,7 @@ package roc
 
 import (
 	"errors"
+	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/golang/protobuf/proto"
 	"log"
@@ -57,7 +58,6 @@ func (l *Link) startConn(s string, m bool, o *Link, t Packet_Section) {
 			misc.CheckError(err, "Accepting client in linker.go/startCnn", true)
 			log.Print("Connection acepted")
 			listener.Close()
-
 		} else {
 			log.Print("Dialing...")
 			l.conn, err = net.DialTCP("tcp", nil, tcpAddr)
@@ -131,6 +131,7 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 		case <-quit:
 			return
 		case m := <-l.out:
+			fmt.Printf("packet : %+v", m)
 			b, err := proto.Marshal(m)
 			if misc.CheckError(err, "linker.go/handleConn", false) != nil {
 				continue

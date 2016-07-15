@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
-	"github.com/Happykat/R.O.C-CONTROLS/protoext"
 	"github.com/Happykat/R.O.C-CONTROLS/robots"
 	"github.com/golang/protobuf/proto"
 	"net"
@@ -32,7 +31,7 @@ func main() {
 		}
 
 		c := robots.Coord{}
-		err = protoext.UnpackAny(p.GetPayload(), &c)
+		err = roc.UnpackAny(p.GetPayload(), &c)
 		if err != nil {
 			fmt.Println(err.Error())
 			return

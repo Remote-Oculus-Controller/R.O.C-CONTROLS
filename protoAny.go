@@ -1,4 +1,4 @@
-package protoext
+package roc
 
 import (
 	"github.com/golang/protobuf/proto"
@@ -17,6 +17,7 @@ func PackAny(m proto.Message) (*any.Any, error) {
 	return a, nil
 }
 
+//TODO check message url
 func UnpackAny(b *any.Any, m proto.Message) error {
 
 	err := proto.Unmarshal(b.Value, m)

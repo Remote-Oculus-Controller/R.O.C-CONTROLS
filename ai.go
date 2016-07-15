@@ -1,9 +1,7 @@
 package roc
 
 import (
-	"github.com/Happykat/R.O.C-CONTROLS/protoext"
 	"github.com/hybridgroup/gobot"
-	"time"
 )
 
 const (
@@ -20,15 +18,18 @@ func (r *Roc) NewAI() *AI {
 	ai := &AI{RocRobot: NewRocRobot(nil)}
 	ai.lock = r.aiLock
 	work := func() {
-		for {
+		/*for {
 			<-time.After(time.Second * 2)
 			ai.toggle(true)
 			<-time.After(time.Second * 2)
 			ai.toggle(false)
-		}
+		}*/
 	}
+	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
+		r.Robot("gps").Command("sim")(nil)
+	})
 	ai.Robot = gobot.NewRobot("ai", work)
-	r.AddRobot(ai.Robot)
+	r.AddRocRobot(ai.RocRobot)
 	return ai
 }
 
@@ -37,8 +38,8 @@ func (ai *AI) toggle(b bool) error {
 	var err error
 
 	ai.lock <- b
-	p := protoext.Prepare(LOCK, DATA, Packet_CONTROL_SERVER, Packet_VIDEO_CLIENT)
-	p.Payload, err = protoext.PackAny(MAI{Lock: true})
+	p := Prepare(LOCK, Packet_DATA, Packet_CONTROL_SERVER, Packet_VIDEO_CLIENT)
+	p.Payload, err = PackAny(&MAI{Lock: true})
 	if err != nil {
 		return err
 	}
