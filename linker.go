@@ -96,7 +96,7 @@ func (l *Linker) RegisterChannel(r bool) chan *Packet {
 
 func (l *Link) handleConn(o *Link, t Packet_Section) {
 
-	buff := make([]byte, 128)
+	buff := make([]byte, 255)
 	quit := make(chan bool)
 	go func() {
 
@@ -104,7 +104,9 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 
 		m := new(Packet)
 		for {
-			r, err := l.conn.Read(buff[0:])
+			r, err := l.conn.Read(buff[:1])
+			fmt.Printf("buffer : %v", buff)
+			r, err = l.conn.Read(buff[0:r])
 			if misc.CheckError(err, "Receiving data from conn", false) != nil {
 				return
 			}
@@ -131,11 +133,12 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 		case <-quit:
 			return
 		case m := <-l.out:
-			fmt.Printf("packet : %+v", m)
+			fmt.Printf("packet : %+v\n", m)
 			b, err := proto.Marshal(m)
 			if misc.CheckError(err, "linker.go/handleConn", false) != nil {
 				continue
 			}
+			_, err = l.conn.Write([]byte{byte(len(b))})
 			_, err = l.conn.Write(b)
 			if misc.CheckError(err, "linker.go/handleConn", false) != nil {
 				return

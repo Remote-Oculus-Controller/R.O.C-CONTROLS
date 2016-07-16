@@ -8,5 +8,6 @@ message Gyro {
 }
 
 message Mouv {
-    double gspeed = 1;
+    double speed = 1;
+    double angle = 2;
 }

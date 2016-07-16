@@ -65,7 +65,7 @@ func (r *Roc) handleChannel() {
 			case ERROR:
 				r.error <- b
 			default:
-				log.Println("Unknown Type", b.Header&Mask_Type)
+				log.Printf("Unknown Type %v \n packet: %+v", b.Header&Mask_Type, b)
 			}
 		}
 	}
@@ -112,7 +112,7 @@ func (r *Roc) handleError(ch chan *Packet) {
 func (r *Roc) Start() error {
 
 	r.l.Start()
-	r.NewAI()
+	//r.NewAI()
 	go func() {
 		for {
 			r.handleChannel()

@@ -70,10 +70,11 @@ func (m *Motion) moveCam(p *Packet) error {
 	y := uint8(gobot.ToScale(gobot.FromScale(g.Y, -35, 35), 90, 180))
 	m.X = float64(x)
 	m.Y = float64(y)
-	fmt.Print(x, y, m.X, m.Y)
+	fmt.Println(x, y, m.X, m.Y)
 	m.servoX.Move(x)
 	m.servoY.Move(y)
-	return m.getCamPos(p)
+	return nil
+	//return m.getCamPos(p)
 }
 
 func (m *Motion) getCamPos(p *Packet) error {
