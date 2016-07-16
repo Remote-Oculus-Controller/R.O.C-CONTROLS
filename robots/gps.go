@@ -7,6 +7,7 @@ import (
 	"github.com/hybridgroup/gobot"
 	"github.com/larsth/go-gpsdjson"
 	"log"
+	"math"
 )
 
 const (
@@ -22,7 +23,7 @@ type Gps struct {
 	*gpsd.GpsdDriver
 	coord Coord
 
-	xoff, yoff float64
+	xoff, yoff, orioff float64
 }
 
 func NewGPS() *Gps {
@@ -46,7 +47,7 @@ func NewGPS() *Gps {
 		m := &Coord{
 			Lat:  tpv.Lat + gps.xoff,
 			Long: tpv.Lon + gps.yoff,
-			Ori:  tpv.Track,
+			Ori:  gps.orioff,
 		}
 		p := &roc.Packet{
 			ID:     GPS_TAG,
@@ -98,7 +99,10 @@ func (gps *Gps) tooglePauseAPI(params map[string]interface{}) interface{} {
 
 func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	fmt.Printf("Changing position")
-	gps.yoff += 0.001
-	gps.xoff += 0.001
+	n := params["mv"].(roc.Mouv)
+
+	gps.yoff += 0.000001 * math.Sin(n.Angle) * gobot.FromScale(n.Speed, 0, 1)
+	gps.xoff += 0.000001 * math.Cos(n.Angle) * gobot.FromScale(n.Speed, 0, 1)
+	gps.orioff += n.Angle / 10 * gobot.FromScale(n.Speed, 0, 1)
 	return nil
 }

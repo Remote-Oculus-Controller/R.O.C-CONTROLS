@@ -22,7 +22,7 @@ const (
 	RCAM  = 0xA1
 	GCAM  = 0xA2
 
-	MOUV = 0xA3
+	MOUV = 0xA4
 	STOP = 0xAF
 
 	DEFAULT_CAM_X = 90
@@ -73,7 +73,8 @@ func (m *Motion) moveCam(p *Packet) error {
 	fmt.Print(x, y, m.X, m.Y)
 	m.servoX.Move(x)
 	m.servoY.Move(y)
-	return m.getCamPos(p)
+	return nil
+	//	return m.getCamPos(p)
 }
 
 func (m *Motion) getCamPos(p *Packet) error {
@@ -115,14 +116,14 @@ func (m *Motion) move(p *Packet) error {
 		log.Println("Impossible conversion Message is not a Mouv")
 		return err
 	}
-	//gobot.Publish(m.Event("move"), nil)
+	gobot.Publish(m.Event("move"), n)
 	fmt.Println("Spinning MOTORS !")
 	/*
 		y := math.Sin(n.Gspeed)
 		x := math.Cos(n.Gspeed)
 	*/
-	s := uint8(n.Gspeed)
-	m.motorL.Speed(byte(s))
+	//s := uint8(n.Gspeed)
+	//m.motorL.Speed(byte(s))
 	return nil
 }
 

@@ -29,7 +29,7 @@ func (r *Roc) NewAI() *AI {
 		}*/
 	}
 	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
-		r.Robot("gps").Command("sim")(nil)
+		r.Robot("gps").Command("sim")(map[string]interface{}{"mv": d})
 	})
 
 	ai.m = &Motion{}
@@ -37,7 +37,7 @@ func (r *Roc) NewAI() *AI {
 	ai.button = gpio.NewButtonDriver(ai.m.arduino, "button", "13")
 	ai.Robot = gobot.NewRobot("ai", work,
 		[]gobot.Device{ai.button})
-	ai.obstacle()
+	//ai.obstacle()
 	r.AddRocRobot(ai.RocRobot)
 	return ai
 }
