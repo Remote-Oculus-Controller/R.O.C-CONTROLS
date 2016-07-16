@@ -21,9 +21,9 @@ func main() {
 	}
 	defer conn.Close()
 
-	for i := 0.0; i < 255; i++ {
+	for i := 0.0; i < 10; i++ {
 
-		p := roc.Mouv{i}
+		p := roc.Mouv{Speed: 100}
 		r := roc.Prepare(roc.MOUV, roc.Packet_COMMAND, roc.Packet_VIDEO_CLIENT, roc.Packet_CONTROL_SERVER)
 		r.Payload, err = roc.PackAny(&p)
 		if err != nil {
