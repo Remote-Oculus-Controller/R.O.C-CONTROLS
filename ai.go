@@ -39,8 +39,8 @@ func (r *Roc) NewAI() *AI {
 	ai.button = gpio.NewButtonDriver(ai.m.arduino, "button", "13")
 	ai.m.Robot.AddDevice(ai.button)
 	ai.Robot = gobot.NewRobot("ai", work)
-	//ai.AddFunc(nil, 0, ,"pushButton")
-
+	ai.AddFunc(nil, 0, ai.pushButton, "pushButton")
+	ai.AddFunc(nil, 0, ai.releaseButton, "releaseButton")
 	ai.obstacle()
 	r.AddRocRobot(ai.RocRobot)
 	return ai

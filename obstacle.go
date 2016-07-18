@@ -13,6 +13,18 @@ type Data struct {
 	timeDifference   time.Duration
 }
 
+func (ia *AI) pushButton(params map[string]interface{}) interface{} {
+
+	gobot.Publish(ia.button.Event("push"), nil)
+	return "button pushed"
+}
+
+func (ia *AI) releaseButton(params map[string]interface{}) interface{} {
+
+	gobot.Publish(ia.button.Event("release"), nil)
+	return "button released"
+}
+
 func (ia *AI) obstacle() {
 
 	d := new(Data)
