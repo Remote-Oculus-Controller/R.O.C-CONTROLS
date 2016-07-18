@@ -20,26 +20,26 @@ func (ia *AI) obstacle() {
 
 	gobot.On(ia.button.Event("push"), func(data interface{}) {
 		d.startPushingTime = time.Now()
-		log.Println("Envoie d'un message a l'utilisateur, un obstacle gene l'avancer du robot")
+		log.Println("Le bouton poussoir est enfonce")
 		ia.sendMessageAI("An obstacle prevents the robot from moving forward")
 		for {
 			select {
 			case <-time.After(time.Second * 3):
-				if ia.button.Active {
-					log.Println("Ai control")
-					ia.sendMessageAI("Warning, AI is taking control")
-					ia.unlockRobot()
-					ia.sendMessageAI("You are taking back control")
-					ia.toggle(false)
-					return
-				}
+				log.Println("Ai control")
+				ia.sendMessageAI("Warning, AI is taking control")
+				ia.unlockRobot()
+				ia.sendMessageAI("You have the control back")
+				ia.toggle(false)
+				break
 			case <-ch:
 				fmt.Println("c'etait un obstacle passager, retour a la normale")
+				break
 			}
 		}
 	})
 
 	gobot.On(ia.button.Event("release"), func(data interface{}) {
+		log.Println("Button poussoir est relache")
 		ch <- true
 	})
 
