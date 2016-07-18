@@ -1,6 +1,7 @@
 package roc
 
 import (
+	"fmt"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/gpio"
 )
@@ -32,7 +33,8 @@ func (r *Roc) NewAI() *AI {
 		r.Robot("gps").Command("sim")(map[string]interface{}{"mv": d})
 	})
 
-	ai.m = &Motion{}
+	ai.m = NewMotion()
+	fmt.Printf("Motion %+v", ai.m)
 	ai.m.Equal(r.Robot("motion"))
 	ai.button = gpio.NewButtonDriver(ai.m.arduino, "button", "13")
 	ai.m.Robot.AddDevice(ai.button)

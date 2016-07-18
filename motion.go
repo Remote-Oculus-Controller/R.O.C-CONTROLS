@@ -35,7 +35,7 @@ func NewMotion() *Motion {
 
 	m := new(Motion)
 	m.RocRobot = NewRocRobot(nil)
-	m.arduino = firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
+	m.arduino = firmata.NewFirmataAdaptor("arduino", "COM3")
 	m.servoX = gpio.NewServoDriver(m.arduino, "servoX", "6")
 	m.servoY = gpio.NewServoDriver(m.arduino, "servoY", "5")
 	m.motorL = gpio.NewMotorDriver(m.arduino, "motorL", "9")
@@ -133,8 +133,7 @@ func (m *Motion) Equal(r *gobot.Robot) {
 	m.servoX = r.Device("servoX").(*gpio.ServoDriver)
 	m.motorL = r.Device("motorL").(*gpio.MotorDriver)
 	m.motorR = r.Device("motorR").(*gpio.MotorDriver)
-	fmt.Println("\n", r, m)
-	m.Robot = &gobot.Robot{}
+	fmt.Println("Robot src\n", r, "\nRobot Copy\n", m, "\n")
 	m.Robot = r
 }
 
