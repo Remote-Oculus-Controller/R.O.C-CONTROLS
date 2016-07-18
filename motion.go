@@ -133,6 +133,7 @@ func (m *Motion) Equal(r *gobot.Robot) {
 	m.servoX = r.Device("servoX").(*gpio.ServoDriver)
 	m.motorL = r.Device("motorL").(*gpio.MotorDriver)
 	m.motorR = r.Device("motorR").(*gpio.MotorDriver)
+	m.Robot = r
 }
 
 func (m *Motion) moveForward() {
