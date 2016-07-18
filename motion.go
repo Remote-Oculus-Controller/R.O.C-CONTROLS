@@ -87,7 +87,6 @@ func (m *Motion) getCamPos(p *Packet) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("p: %+v\n", p)
 	return m.Send(p)
 }
 
@@ -116,7 +115,7 @@ func (m *Motion) move(p *Packet) error {
 		log.Println("Impossible conversion Message is not a Mouv")
 		return err
 	}
-	gobot.Publish(m.Event("move"), n)
+	gobot.Publish(m.Event("move"), *n)
 	fmt.Println("Spinning MOTORS !")
 	/*
 		y := math.Sin(n.Gspeed)

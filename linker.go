@@ -2,7 +2,6 @@ package roc
 
 import (
 	"errors"
-	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/golang/protobuf/proto"
 	"log"
@@ -131,7 +130,6 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 		case <-quit:
 			return
 		case m := <-l.out:
-			fmt.Printf("packet : %+v", m)
 			b, err := proto.Marshal(m)
 			if misc.CheckError(err, "linker.go/handleConn", false) != nil {
 				continue

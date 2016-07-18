@@ -99,9 +99,12 @@ func (gps *Gps) tooglePauseAPI(params map[string]interface{}) interface{} {
 
 func (gps *Gps) sim(params map[string]interface{}) interface{} {
 
-	fmt.Printf("Changing position")
-	n := params["mv"].(*roc.Mouv)
+	fmt.Printf("Changing position\n")
+	n := params["mv"].(roc.Mouv)
 
+	fmt.Printf("mouv %+v\n", n)
+	fmt.Printf("offset : x %v y %v\n", 0.000001*math.Cos(n.Angle)*gobot.FromScale(n.Speed, math.Pi, 0), 0.000001*math.Sin(n.Angle)*gobot.FromScale(n.Speed, math.Pi, 0))
+	fmt.Printf("Calcjulated ration	x => %v ; y => %v", math.Cos(n.Angle)*gobot.FromScale(n.Speed, math.Pi, 0), math.Sin(n.Angle)*gobot.FromScale(n.Speed, math.Pi, 0))
 	gps.yoff += 0.000001 * math.Sin(n.Angle) * gobot.FromScale(n.Speed, math.Pi, 0)
 	gps.xoff += 0.000001 * math.Cos(n.Angle) * gobot.FromScale(n.Speed, math.Pi, 0)
 	gps.orioff += n.Angle / 10 * gobot.FromScale(n.Speed, math.Pi, 0)

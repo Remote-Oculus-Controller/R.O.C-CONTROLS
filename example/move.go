@@ -14,7 +14,7 @@ func main() {
 	var err error
 	//var buff [128]byte
 
-	conn, err := net.Dial("tcp", ":8001")
+	conn, err := net.Dial("tcp", "192.168.0.9:8001")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -23,7 +23,7 @@ func main() {
 
 	for i := 0.0; i < 10; i++ {
 
-		p := roc.Mouv{Speed: 100}
+		p := roc.Mouv{Speed: 2, Angle: 2}
 		r := roc.Prepare(roc.MOUV, roc.Packet_COMMAND, roc.Packet_VIDEO_CLIENT, roc.Packet_CONTROL_SERVER)
 		r.Payload, err = roc.PackAny(&p)
 		if err != nil {
