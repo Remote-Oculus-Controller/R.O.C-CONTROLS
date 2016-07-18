@@ -103,7 +103,7 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	fmt.Printf("Changing position\n")
 	n := params["mv"].(roc.Mouv)
 
-	gps.yoff += 0.000001 * math.Sin(n.Angle)
+	gps.yoff += 0.000001 * math.Sin(-n.Angle)
 	gps.xoff += 0.000001 * math.Cos(n.Angle)
 	gps.orioff = n.Angle * 180 / math.Pi
 	return nil
