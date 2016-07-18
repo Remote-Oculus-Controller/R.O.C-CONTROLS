@@ -112,7 +112,7 @@ func (r *Roc) handleError(ch chan *Packet) {
 func (r *Roc) Start() error {
 
 	r.l.Start()
-	r.NewAI()
+	//r.NewAI()
 	go func() {
 		for {
 			r.handleChannel()
