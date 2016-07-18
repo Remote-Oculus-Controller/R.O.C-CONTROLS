@@ -35,7 +35,7 @@ func NewMotion() *Motion {
 
 	m := new(Motion)
 	m.RocRobot = NewRocRobot(nil)
-	m.arduino = firmata.NewFirmataAdaptor("arduino", "COM3")
+	m.arduino = firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
 	m.servoX = gpio.NewServoDriver(m.arduino, "servoX", "6")
 	m.servoY = gpio.NewServoDriver(m.arduino, "servoY", "5")
 	m.motorL = gpio.NewMotorDriver(m.arduino, "motorL", "9")
