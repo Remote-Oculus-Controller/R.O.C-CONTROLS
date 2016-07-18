@@ -25,6 +25,7 @@ func (ia *AI) obstacle() {
 		for {
 			select {
 			case <-time.After(time.Second * 3):
+				ia.toggle(false)
 				log.Println("Ai control")
 				ia.sendMessageAI("Warning, AI is taking control")
 				ia.unlockRobot()
