@@ -134,7 +134,7 @@ func (m *Motion) Equal(r *gobot.Robot) {
 	m.motorL = r.Device("motorL").(*gpio.MotorDriver)
 	m.motorR = r.Device("motorR").(*gpio.MotorDriver)
 	m.Robot = &gobot.Robot{}
-	fmt.Println(r, m)
+	fmt.Println("HEEEERRRREEEE \n\n", r, m)
 	m.Robot = r
 }
 
