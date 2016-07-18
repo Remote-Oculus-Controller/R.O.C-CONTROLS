@@ -103,10 +103,11 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	n := params["mv"].(roc.Mouv)
 
 	fmt.Printf("mouv %+v\n", n)
-	fmt.Printf("offset : x %v y %v\n", 0.000001*math.Cos(n.Angle)*gobot.FromScale(n.Speed, math.Pi, 0), 0.000001*math.Sin(n.Angle)*gobot.FromScale(n.Speed, math.Pi, 0))
-	fmt.Printf("Calcjulated ration	x => %v ; y => %v", math.Cos(n.Angle)*gobot.FromScale(n.Speed, math.Pi, 0), math.Sin(n.Angle)*gobot.FromScale(n.Speed, math.Pi, 0))
-	gps.yoff += 0.000001 * math.Sin(n.Angle) * gobot.FromScale(n.Speed, math.Pi, 0)
-	gps.xoff += 0.000001 * math.Cos(n.Angle) * gobot.FromScale(n.Speed, math.Pi, 0)
+	fmt.Printf("offset : x %v y %v\n", 0.000001*math.Cos(n.Angle), 0.000001*math.Sin(n.Angle))
+	fmt.Printf("Calculated ratio	x => %v ; y => %v", math.Cos(n.Angle), math.Sin(n.Angle))
+	gps.yoff += 0.000001 * math.Sin(n.Angle)
+	gps.xoff += 0.000001 * math.Cos(n.Angle)
 	gps.orioff += n.Angle / 10 * gobot.FromScale(n.Speed, math.Pi, 0)
+	fmt.Printf("GPS %+v", gps.coord)
 	return nil
 }
