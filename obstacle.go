@@ -43,6 +43,7 @@ func (ia *AI) obstacle() {
 				ia.unlockRobot()
 				ia.sendMessageAI("You have the control back")
 				ia.toggle(false)
+				return
 				break
 			case <-ch:
 				fmt.Println("c'etait un obstacle passager, retour a la normale")
