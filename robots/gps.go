@@ -106,9 +106,9 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	/*	fmt.Printf("offset : x %v y %v\n", 0.000001*math.Cos(n.Angle), 0.000001*math.Sin(-n.Angle))
 		fmt.Printf("Calculated ratio	x => %v ; y => %v", math.Cos(n.Angle), math.Sin(-n.Angle))*/
 	fmt.Printf("Angle deg : %v", n.Angle*180/math.Pi)
-	gps.yoff += 0.000001 * math.Sin(-n.Angle)
+	gps.yoff += 0.000001 * math.Sin(n.Angle)
 	gps.xoff += 0.000001 * math.Cos(n.Angle)
-	gps.orioff += n.Angle * 180 / math.Pi / 10
-	fmt.Printf("GPS %+v", gps.coord)
+	gps.orioff = n.Angle * 180 / math.Pi
+	fmt.Printf("GPS %+v", gps)
 	return nil
 }
