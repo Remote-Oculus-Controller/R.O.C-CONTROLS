@@ -2,6 +2,7 @@ package roc
 
 import (
 	"fmt"
+	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/firmata"
 	"github.com/hybridgroup/gobot/platforms/gpio"
@@ -120,17 +121,35 @@ func (m *Motion) move(p *Packet) error {
 	gobot.Publish(m.Event("move"), *n)
 	fmt.Println("Spinning MOTORS !")
 
-	a := n.Angle - m.dir
-	x := math.Cos(a)
-	y := math.Sin(a)
+	theta := n.Angle - m.dir
+	theta = ((theta + 180) % 360) - 180    // normalize value to [-180, 180)
+	r := math.Min(math.Max(0, 50), 100)    // normalize value to [0, 100]
+	v_a := r * (45 - theta%90) / 45        // falloff of main motor
+	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a) // compensation of other motor
+	lR, rR := thrust(theta, v_a, v_b)
 
-	fmt.Println("\nAngle : ", a, "\nx : ", x, "\ny : ", y)
+	lS := uint8(MAXSPEED * lR)
+	rS := uint8(MAXSPEED * rR)
 
+	fmt.Printf("Ratio ==> Left %v	; Right %v\nSpeed ===> Left %v	; Right %v\n", lR, rR, lS, rS)
 	//s := uint8(n.Gspeed)
 	//m.motorL.Speed(byte(s))
 	return nil
 }
 
+func thrust(theta, v_a, v_b float64) (float64, float64) {
+
+	if theta < -90 {
+		return -v_b, -v_a
+	}
+	if theta < 0 {
+		return -v_a, v_b
+	}
+	if theta < 90 {
+		return v_b, v_a
+	}
+	return v_a, -v_b
+}
 func (m *Motion) Equal(r *gobot.Robot) {
 
 	m.arduino = r.Connection("arduino").(*firmata.FirmataAdaptor)
