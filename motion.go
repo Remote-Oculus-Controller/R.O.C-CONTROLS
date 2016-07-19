@@ -6,6 +6,7 @@ import (
 	"github.com/hybridgroup/gobot/platforms/firmata"
 	"github.com/hybridgroup/gobot/platforms/gpio"
 	"log"
+	"math"
 )
 
 type Motion struct {
@@ -14,6 +15,7 @@ type Motion struct {
 	servoX, servoY *gpio.ServoDriver
 	motorL, motorR *gpio.MotorDriver
 	Gyro
+	dir float64
 }
 
 const (
@@ -40,9 +42,9 @@ func NewMotion() *Motion {
 	m.servoY = gpio.NewServoDriver(m.arduino, "servoY", "5")
 	m.motorL = gpio.NewMotorDriver(m.arduino, "motorL", "9")
 	m.motorR = gpio.NewMotorDriver(m.arduino, "motorR", "10")
+	m.dir = 0
 	work := func() {
 		m.resetCam(nil)
-
 	}
 	m.Robot = gobot.NewRobot("motion",
 		[]gobot.Connection{m.arduino},
@@ -117,10 +119,13 @@ func (m *Motion) move(p *Packet) error {
 	}
 	gobot.Publish(m.Event("move"), *n)
 	fmt.Println("Spinning MOTORS !")
-	/*
-		y := math.Sin(n.Gspeed)
-		x := math.Cos(n.Gspeed)
-	*/
+
+	a := n.Angle - m.dir
+	x := math.Cos(a)
+	y := math.Sin(a)
+
+	fmt.Println("\nAngle : ", a, "\nx : ", x, "\ny : ", y)
+
 	//s := uint8(n.Gspeed)
 	//m.motorL.Speed(byte(s))
 	return nil
@@ -133,7 +138,6 @@ func (m *Motion) Equal(r *gobot.Robot) {
 	m.servoX = r.Device("servoX").(*gpio.ServoDriver)
 	m.motorL = r.Device("motorL").(*gpio.MotorDriver)
 	m.motorR = r.Device("motorR").(*gpio.MotorDriver)
-	fmt.Println("Robot src\n", r, "\nRobot Copy\n", m, "\n")
 	m.Robot = r
 }
 
