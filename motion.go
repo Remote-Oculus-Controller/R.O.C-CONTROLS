@@ -121,7 +121,7 @@ func (m *Motion) move(p *Packet) error {
 	gobot.Publish(m.Event("move"), *n)
 	fmt.Println("Spinning MOTORS !")
 
-	theta := n.Angle - m.dir
+	theta := int(n.Angle - m.dir)
 	theta = ((theta + 180) % 360) - 180    // normalize value to [-180, 180)
 	r := math.Min(math.Max(0, 50), 100)    // normalize value to [0, 100]
 	v_a := r * (45 - theta%90) / 45        // falloff of main motor
@@ -137,7 +137,7 @@ func (m *Motion) move(p *Packet) error {
 	return nil
 }
 
-func thrust(theta, v_a, v_b float64) (float64, float64) {
+func thrust(theta, v_a, v_b int) (int, int) {
 
 	if theta < -90 {
 		return -v_b, -v_a
