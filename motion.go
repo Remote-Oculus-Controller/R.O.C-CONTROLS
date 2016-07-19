@@ -122,10 +122,10 @@ func (m *Motion) move(p *Packet) error {
 	fmt.Println("Spinning MOTORS !")
 
 	theta := int(n.Angle - m.dir)
-	theta = ((theta + 180) % 360) - 180    // normalize value to [-180, 180)
-	r := math.Min(math.Max(0, 50), 100)    // normalize value to [0, 100]
-	v_a := r * (45 - theta%90) / 45        // falloff of main motor
-	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a) // compensation of other motor
+	theta = ((theta + 180) % 360) - 180      // normalize value to [-180, 180)
+	r := int(math.Min(math.Max(0, 50), 100)) // normalize value to [0, 100]
+	v_a := r * (45 - theta%90) / 45          // falloff of main motor
+	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a)   // compensation of other motor
 	lR, rR := thrust(theta, v_a, v_b)
 
 	lS := uint8(MAXSPEED * lR)
