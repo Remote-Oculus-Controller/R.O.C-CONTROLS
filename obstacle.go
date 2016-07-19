@@ -15,14 +15,14 @@ type Data struct {
 
 func (ia *AI) pushButton(params map[string]interface{}) interface{} {
 
-	gobot.Publish(ia.button.Event("push"), nil)
-	return "button pushed"
+	gobot.Publish(ia.buttonObstacle.Event("push"), nil)
+	return "buttonObstacle pushed"
 }
 
 func (ia *AI) releaseButton(params map[string]interface{}) interface{} {
 
-	gobot.Publish(ia.button.Event("release"), nil)
-	return "button released"
+	gobot.Publish(ia.buttonObstacle.Event("release"), nil)
+	return "buttonObstacle released"
 }
 
 func (ia *AI) obstacle() {
@@ -30,7 +30,7 @@ func (ia *AI) obstacle() {
 	d := new(Data)
 	ch := make(chan bool)
 
-	gobot.On(ia.button.Event("push"), func(data interface{}) {
+	gobot.On(ia.buttonObstacle.Event("push"), func(data interface{}) {
 		d.startPushingTime = time.Now()
 		log.Println("Le bouton poussoir est enfonce")
 		ia.sendMessageAI("An obstacle prevents the robot from moving forward")
@@ -49,7 +49,7 @@ func (ia *AI) obstacle() {
 		}
 	})
 
-	gobot.On(ia.button.Event("release"), func(data interface{}) {
+	gobot.On(ia.buttonObstacle.Event("release"), func(data interface{}) {
 		log.Println("Button poussoir est relache")
 		ch <- true
 	})

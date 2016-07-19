@@ -12,9 +12,12 @@ const (
 
 type AI struct {
 	*RocRobot
-	m      *Motion
-	button *gpio.ButtonDriver
-	lock   chan bool
+	m      					*Motion
+	buttonObstacle 	*gpio.ButtonDriver
+	sensorLight 		*gpio.AnalogSensorDriver
+	pending					bool
+	firstTime				bool
+	lock chan 			bool
 }
 
 func (r *Roc) NewAI() *AI {
@@ -36,12 +39,17 @@ func (r *Roc) NewAI() *AI {
 	ai.m = NewMotion()
 	fmt.Printf("Motion %+v", ai.m)
 	ai.m.Equal(r.Robot("motion"))
-	ai.button = gpio.NewButtonDriver(ai.m.arduino, "button", "13")
-	ai.m.Robot.AddDevice(ai.button)
+	ai.buttonObstacle = gpio.NewButtonDriver(ai.m.arduino, "buttonObstacle", "13")
+	ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorLight", "0")
+	ai.m.Robot.AddDevice(ai.buttonObstacle)
+	ai.m.Robot.AddDevice(ai.sensorLight)
 	ai.Robot = gobot.NewRobot("ai", work)
 	ai.AddFunc(nil, 0, ai.pushButton, "pushButton")
 	ai.AddFunc(nil, 0, ai.releaseButton, "releaseButton")
+	ai.AddFunc(nil, 0, ai.pushLightButton, "pushLightButton")
 	ai.obstacle()
+	ai.pending = false
+	ai.firstTime = true
 	r.AddRocRobot(ai.RocRobot)
 	return ai
 }

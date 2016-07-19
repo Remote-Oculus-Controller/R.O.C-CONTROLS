@@ -28,7 +28,7 @@ func main() {
 	button := gpio.NewButtonDriver(firmataAdaptor, "button", "9")
 
 	work := func() {
-		d := Data{}
+		d := &Data{}
 		gobot.On(sensor.Event("data"), func(data interface{}) {
 			d.iter += 1
 			temp := gobot.ToScale(gobot.FromScale(float64(data.(int)), 0, 1024), 0, 255)
