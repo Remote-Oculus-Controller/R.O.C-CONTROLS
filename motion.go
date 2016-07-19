@@ -128,8 +128,8 @@ func (m *Motion) move(p *Packet) error {
 	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a)   // compensation of other motor
 	lR, rR := thrust(theta, v_a, v_b)
 
-	lS := uint8(MAXSPEED * lR)
-	rS := uint8(MAXSPEED * rR)
+	lS := uint8(MAXSPEED * (lR / 100))
+	rS := uint8(MAXSPEED * (rR / 100))
 
 	fmt.Printf("Ratio ==> Left %v	; Right %v\nSpeed ===> Left %v	; Right %v\n", lR, rR, lS, rS)
 	//s := uint8(n.Gspeed)
