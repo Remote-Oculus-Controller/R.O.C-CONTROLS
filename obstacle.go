@@ -13,6 +13,18 @@ type Data struct {
 	timeDifference   time.Duration
 }
 
+func (ia *AI) pushButton(params map[string]interface{}) interface{} {
+
+	gobot.Publish(ia.button.Event("push"), nil)
+	return "button pushed"
+}
+
+func (ia *AI) releaseButton(params map[string]interface{}) interface{} {
+
+	gobot.Publish(ia.button.Event("release"), nil)
+	return "button released"
+}
+
 func (ia *AI) obstacle() {
 
 	d := new(Data)
@@ -22,20 +34,18 @@ func (ia *AI) obstacle() {
 		d.startPushingTime = time.Now()
 		log.Println("Le bouton poussoir est enfonce")
 		ia.sendMessageAI("An obstacle prevents the robot from moving forward")
-		for {
-			select {
-			case <-time.After(time.Second * 3):
-				ia.toggle(false)
-				log.Println("Ai control")
-				ia.sendMessageAI("Warning, AI is taking control")
-				ia.unlockRobot()
-				ia.sendMessageAI("You have the control back")
-				ia.toggle(false)
-				break
-			case <-ch:
-				fmt.Println("c'etait un obstacle passager, retour a la normale")
-				break
-			}
+		select {
+		case <-time.After(time.Second * 3):
+			ia.toggle(false)
+			log.Println("Ai control")
+			ia.sendMessageAI("Warning, AI is taking control")
+			ia.unlockRobot()
+			ia.sendMessageAI("You have the control back")
+			ia.toggle(false)
+			break
+		case <-ch:
+			fmt.Println("c'etait un obstacle passager, retour a la normale")
+			break
 		}
 	})
 
