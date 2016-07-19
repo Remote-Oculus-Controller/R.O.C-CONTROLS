@@ -23,7 +23,7 @@ type Gps struct {
 	*gpsd.GpsdDriver
 	coord Coord
 
-	xoff, yoff, orioff float64
+	xoff, yoff, orioff, dir float64
 }
 
 func NewGPS() *Gps {
@@ -47,7 +47,7 @@ func NewGPS() *Gps {
 		m := &Coord{
 			Lat:  tpv.Lat + gps.xoff,
 			Long: tpv.Lon + gps.yoff,
-			Ori:  gps.orioff,
+			Ori:  gps.dir * 180 / math.Pi,
 		}
 		log.Printf("Coordinates => %+v\n", m)
 		p := &roc.Packet{
@@ -103,8 +103,8 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	fmt.Printf("Changing position\n")
 	n := params["mv"].(roc.Mouv)
 
-	gps.yoff += 0.000001 * math.Sin(-n.Angle)
-	gps.xoff += 0.000001 * math.Cos(n.Angle)
-	gps.orioff = n.Angle * 180 / math.Pi
+	gps.dir += n.Angle / 5
+	gps.yoff += 0.000001 * math.Sin(-gps.orioff) * n.Speed
+	gps.xoff += 0.000001 * math.Cos(gps.orioff) * n.Speed
 	return nil
 }
