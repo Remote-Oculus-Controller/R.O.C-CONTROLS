@@ -113,6 +113,7 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 				log.Println(r, buff[0:r])
 				continue
 			}
+			log.Println("Reveived packet : %+v", m)
 			if m.Magic != MAGIC {
 				log.Println("Wrong packet")
 				continue
