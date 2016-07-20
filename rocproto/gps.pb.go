@@ -2,22 +2,6 @@
 // source: gps.proto
 // DO NOT EDIT!
 
-/*
-Package rocproto is a generated protocol buffer package.
-
-It is generated from these files:
-	gps.proto
-	motion.proto
-	proto.proto
-
-It has these top-level messages:
-	Coord
-	Gyro
-	Mouv
-	Packet
-	Error
-	MAI
-*/
 package rocproto
 
 import "github.com/golang/protobuf/proto"
@@ -28,12 +12,6 @@ import "math"
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
-
-// This is a compile-time assertion to ensure that this generated file
-// is compatible with the proto package it is being compiled against.
-// A compilation error at this line likely means your copy of the
-// proto package needs to be updated.
-const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
 type Coord struct {
 	Lat  float64 `protobuf:"fixed64,1,opt,name=lat" json:"lat,omitempty"`
@@ -49,7 +27,7 @@ func (m *Coord) String() string {
 }
 func (*Coord) ProtoMessage() {}
 func (*Coord) Descriptor() ([]byte, []int) {
-	return fileDescriptor0, []int{0}
+	return fileDescriptor1, []int{0}
 }
 
 func init() {
@@ -57,10 +35,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("gps.proto", fileDescriptor0)
+	proto.RegisterFile("gps.proto", fileDescriptor1)
 }
 
-var fileDescriptor0 = []byte{
+var fileDescriptor1 = []byte{
 	// 96 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0xe2, 0x4c, 0x2f, 0x28, 0xd6,
 	0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x28, 0xca, 0x4f, 0x06, 0xb3, 0x94, 0xec, 0xb9, 0x58,

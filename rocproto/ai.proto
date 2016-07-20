@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package rocproto;
+
+message AiInfo {
+
+    enum Codes {
+        Empty = 0;
+        TAG = 0x20;
+        LOCK = 0x21;
+        UNLOCK = 0x22;
+        OBSTACLE = 0x23;
+        N_OBSTACLE = 0x24;
+        LIGHT = 0x25;
+    }
+}

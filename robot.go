@@ -27,7 +27,7 @@ func NewRocRobot(l *Linker) *RocRobot {
 
 func (r *RocRobot) Send(p *rocproto.Packet) error {
 
-	p.Header = p.Header | (uint32(rocproto.Packet_CONTROL_SERVER) << uint32(rocproto.Packet_SHIFT_SENT))
+	p.Header = p.Header | (uint32(rocproto.Packet_CONTROL_SERVER) << uint32(rocproto.Packet_SHIFT_SEND))
 	if r.l == nil {
 		log.Println("Linker not set, cannot send rocproto.Packet")
 		return nil

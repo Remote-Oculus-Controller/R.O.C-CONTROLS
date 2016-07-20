@@ -26,7 +26,7 @@ func (m *Gyro) String() string {
 }
 func (*Gyro) ProtoMessage() {}
 func (*Gyro) Descriptor() ([]byte, []int) {
-	return fileDescriptor1, []int{0}
+	return fileDescriptor2, []int{0}
 }
 
 type Mouv struct {
@@ -42,7 +42,7 @@ func (m *Mouv) String() string {
 }
 func (*Mouv) ProtoMessage() {}
 func (*Mouv) Descriptor() ([]byte, []int) {
-	return fileDescriptor1, []int{1}
+	return fileDescriptor2, []int{1}
 }
 
 func init() {
@@ -51,10 +51,10 @@ func init() {
 }
 
 func init() {
-	proto.RegisterFile("motion.proto", fileDescriptor1)
+	proto.RegisterFile("motion.proto", fileDescriptor2)
 }
 
-var fileDescriptor1 = []byte{
+var fileDescriptor2 = []byte{
 	// 111 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0xe2, 0xc9, 0xcd, 0x2f, 0xc9,
 	0xcc, 0xcf, 0xd3, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x28, 0xca, 0x4f, 0x06, 0xb3, 0x94,

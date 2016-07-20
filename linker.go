@@ -110,12 +110,13 @@ func (l *Link) handleConn(o *Link, t rocproto.Packet_Section) {
 			}
 			err = proto.Unmarshal(buff[0:r], m)
 			if err != nil {
-				log.Println("Cannot Unmarshall rocproto.Packet", err.Error())
+				log.Println("Cannot Unmarshall packet", err.Error())
 				log.Println(r, buff[0:r])
 				continue
 			}
+			log.Printf("Reveived packet : %+v", m)
 			if m.Magic != MAGIC {
-				log.Println("Wrong rocproto.Packet")
+				log.Println("Wrong packet")
 				continue
 			}
 			if m.Header&uint32(t) != 0 {

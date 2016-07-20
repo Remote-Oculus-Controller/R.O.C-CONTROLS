@@ -2,13 +2,10 @@ package robots
 
 import (
 	"github.com/Happykat/R.O.C-CONTROLS"
+	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/gpio"
-)
-
-const (
-	LOCK = rocproto.MAI_TAG
 )
 
 type AI struct {
@@ -30,9 +27,9 @@ func NewAI(r *roc.Roc) *AI {
 			ai.toggle(false)
 		}*/
 	}
-	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
+	/*	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
 		r.Robot("gps").Command("sim")(map[string]interface{}{"mv": d})
-	})
+	})*/
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))
 	ai.button = gpio.NewButtonDriver(ai.m.arduino, "button", "13")
@@ -47,13 +44,22 @@ func NewAI(r *roc.Roc) *AI {
 
 func (ai *AI) toggle(b bool) error {
 
+	ai.lock <- b
+	if b {
+		return ai.sendMessageAI(rocproto.AiInfo_LOCK)
+	} else {
+		return ai.sendMessageAI(rocproto.AiInfo_UNLOCK)
+	}
+
+}
+
+func (ia *AI) sendMessageAI(id rocproto.AiInfo_Codes) error {
+
 	var err error
 
-	ai.lock <- b
-	p := rocproto.Prepare(LOCK, rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
-	p.Payload, err = rocproto.PackAny(&rocproto.MAI{Lock: true})
-	if err != nil {
+	p := rocproto.Prepare(uint32(id), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
+	if misc.CheckError(err, "Sending Ai message", false) != nil {
 		return err
 	}
-	return ai.Send(p)
+	return ia.Send(p)
 }

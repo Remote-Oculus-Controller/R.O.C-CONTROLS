@@ -2,7 +2,6 @@ package robots
 
 import (
 	"fmt"
-	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
 	"log"
@@ -34,14 +33,13 @@ func (ia *AI) obstacle() {
 	gobot.On(ia.button.Event("push"), func(data interface{}) {
 		d.startPushingTime = time.Now()
 		log.Println("Le bouton poussoir est enfonce")
-		ia.sendMessageAI("An obstacle prevents the robot from moving forward")
+		ia.sendMessageAI(rocproto.AiInfo_OBSTACLE)
 		select {
 		case <-time.After(time.Second * 3):
 			ia.toggle(false)
 			log.Println("Ai control")
-			ia.sendMessageAI("Warning, AI is taking control")
 			ia.unlockRobot()
-			ia.sendMessageAI("You have the control back")
+			log.Println("Ai eeleasing Control")
 			ia.toggle(false)
 			break
 		case <-ch:
@@ -52,21 +50,10 @@ func (ia *AI) obstacle() {
 
 	gobot.On(ia.button.Event("release"), func(data interface{}) {
 		log.Println("Button poussoir est relache")
+		ia.sendMessageAI(rocproto.AiInfo_N_OBSTACLE)
 		ch <- true
 	})
 
-}
-
-func (ia *AI) sendMessageAI(msg string) {
-
-	var err error
-
-	p := rocproto.Prepare(LOCK, rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
-	p.Payload, err = rocproto.PackAny(&rocproto.MAI{Lock: true, Msg: msg})
-	if misc.CheckError(err, "Sending Ai message", false) != nil {
-		return
-	}
-	ia.Send(p)
 }
 
 func (ia *AI) unlockRobot() {

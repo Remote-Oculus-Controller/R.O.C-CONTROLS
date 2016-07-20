@@ -20,9 +20,6 @@ type Roc struct {
 const (
 	MAGIC = uint32(rocproto.Packet_MAGIC_Number)
 
-	Mask_DST   = uint32(rocproto.Packet_MASK_DEST)
-	Shift_SEND = uint32(rocproto.Packet_SHIFT_SENT)
-	Mask_SEND  = uint32(rocproto.Packet_MASK_DEST) << Shift_SEND
 	Shift_TYPE = uint32(rocproto.Packet_SHIFT)
 	Mask_Type  = uint32(rocproto.Packet_MASK_TYPE) << Shift_TYPE
 

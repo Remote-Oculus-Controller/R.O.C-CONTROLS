@@ -76,8 +76,8 @@ func (gps *Gps) getCoordByte(r *rocproto.Packet) error {
 
 	var err error
 
-	s := uint32(r.Header) & (uint32(rocproto.Packet_MASK_DEST) << uint32(rocproto.Packet_SHIFT_SENT))
-	r.Header = (uint32(rocproto.Packet_DATA) << uint32(rocproto.Packet_SHIFT)) | s>>uint32(rocproto.Packet_SHIFT_SENT)
+	s := uint32(r.Header) & (uint32(rocproto.Packet_MASK_DEST) << uint32(rocproto.SHIFT_SEND))
+	r.Header = (uint32(rocproto.Packet_DATA) << uint32(rocproto.Packet_SHIFT)) | s>>uint32(rocproto.SHIFT_SEND)
 	r.Payload, err = rocproto.PackAny(&gps.coord)
 	if err != nil {
 		return err
