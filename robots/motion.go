@@ -1,8 +1,10 @@
-package roc
+package robots
 
 import (
 	"fmt"
+	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
+	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/firmata"
 	"github.com/hybridgroup/gobot/platforms/gpio"
@@ -11,11 +13,11 @@ import (
 )
 
 type Motion struct {
-	*RocRobot
+	*roc.RocRobot
 	arduino        *firmata.FirmataAdaptor
 	servoX, servoY *gpio.ServoDriver
 	motorL, motorR *gpio.ServoDriver
-	Gyro
+	rocproto.Gyro
 	dir float64
 }
 
@@ -40,7 +42,7 @@ const (
 func NewMotion() *Motion {
 
 	m := new(Motion)
-	m.RocRobot = NewRocRobot(nil)
+	m.RocRobot = roc.NewRocRobot(nil)
 	m.arduino = firmata.NewFirmataAdaptor("arduino", "COM3")
 	m.servoX = gpio.NewServoDriver(m.arduino, "servoX", "6")
 	m.servoY = gpio.NewServoDriver(m.arduino, "servoY", "5")
@@ -69,12 +71,12 @@ func (m *Motion) Stop() {
 	m.motorL.Move(90)
 }
 
-func (m *Motion) moveCam(p *Packet) error {
+func (m *Motion) moveCam(p *rocproto.Packet) error {
 
-	var g Gyro
+	var g rocproto.Gyro
 
 	fmt.Println("Moving Camera")
-	err := UnpackAny(p.Payload, &g)
+	err := rocproto.UnpackAny(p.Payload, &g)
 	if err != nil {
 		log.Println("Impossible conversion Message is not a Gyro")
 		return err
@@ -90,13 +92,13 @@ func (m *Motion) moveCam(p *Packet) error {
 	//	return m.getCamPos(p)
 }
 
-func (m *Motion) getCamPos(p *Packet) error {
+func (m *Motion) getCamPos(p *rocproto.Packet) error {
 
 	var err error
 
-	ReverseTo(p, Packet_DATA)
-	g := Gyro{m.X - DEFAULT_CAM_X, m.Y - DEFAULT_CAM_Y}
-	p.Payload, err = PackAny(&g)
+	rocproto.ReverseTo(p, rocproto.Packet_DATA)
+	g := rocproto.Gyro{m.X - DEFAULT_CAM_X, m.Y - DEFAULT_CAM_Y}
+	p.Payload, err = rocproto.PackAny(&g)
 	if err != nil {
 		return err
 	}
@@ -107,7 +109,7 @@ func (m *Motion) getCamPosApi(params map[string]interface{}) interface{} {
 	return m.Gyro
 }
 
-func (m *Motion) resetCam(p *Packet) error {
+func (m *Motion) resetCam(p *rocproto.Packet) error {
 
 	m.servoY.Move(DEFAULT_CAM_Y)
 	m.servoX.Move(DEFAULT_CAM_X)
@@ -120,10 +122,10 @@ func (m *Motion) resetCamAPI(params map[string]interface{}) interface{} {
 	return "Camera reset to original position"
 }
 
-func (m *Motion) move(p *Packet) error {
+func (m *Motion) move(p *rocproto.Packet) error {
 
-	n := &Mouv{}
-	err := UnpackAny(p.Payload, n)
+	n := &rocproto.Mouv{}
+	err := rocproto.UnpackAny(p.Payload, n)
 	if err != nil {
 		log.Println("Impossible conversion Message is not a Mouv")
 		return err

@@ -3,6 +3,7 @@ package roc
 import (
 	"errors"
 	"fmt"
+	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
 	"go/types"
 	"log"
@@ -11,7 +12,7 @@ import (
 type RocRobot struct {
 	*gobot.Robot
 	l    *Linker
-	cmap map[uint32]func(*Packet) error
+	cmap map[uint32]func(*rocproto.Packet) error
 }
 
 const PARAM_ERR = "MISSING %s in parameters"
@@ -20,15 +21,15 @@ func NewRocRobot(l *Linker) *RocRobot {
 
 	r := new(RocRobot)
 	r.l = l
-	r.cmap = make(map[uint32]func(*Packet) error)
+	r.cmap = make(map[uint32]func(*rocproto.Packet) error)
 	return r
 }
 
-func (r *RocRobot) Send(p *Packet) error {
+func (r *RocRobot) Send(p *rocproto.Packet) error {
 
-	p.Header = p.Header | (uint32(Packet_CONTROL_SERVER) << uint32(Packet_SHIFT_SENT))
+	p.Header = p.Header | (uint32(rocproto.Packet_CONTROL_SERVER) << uint32(rocproto.Packet_SHIFT_SENT))
 	if r.l == nil {
-		log.Println("Linker not set, cannot send Packet")
+		log.Println("Linker not set, cannot send rocproto.Packet")
 		return nil
 	}
 	err := r.l.Send(p)
@@ -38,7 +39,7 @@ func (r *RocRobot) Send(p *Packet) error {
 	return nil
 }
 
-func (r *RocRobot) AddFunc(f func(*Packet) error, code uint32, api func(map[string]interface{}) interface{}, name string) {
+func (r *RocRobot) AddFunc(f func(*rocproto.Packet) error, code uint32, api func(map[string]interface{}) interface{}, name string) {
 	if f != nil && code != 0 {
 		log.Println("Assigning function", name, "to code", code)
 		_, k := r.cmap[code]

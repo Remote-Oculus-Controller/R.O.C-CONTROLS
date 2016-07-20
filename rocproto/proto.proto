@@ -2,7 +2,7 @@ syntax="proto3";
 
 import "google/protobuf/any.proto";
 
-package roc;
+package rocproto;
 
 message Packet {
     uint32 magic = 1;
@@ -32,6 +32,7 @@ message Packet {
         CONTROL_SERVER = 4;
         MASK_DEST = 7; //00 000111
         SHIFT_SENT = 3;
+        MASK_SENT = 56; //00 111000
     }
 }
 

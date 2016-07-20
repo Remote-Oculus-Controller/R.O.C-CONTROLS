@@ -1,8 +1,9 @@
-package roc
+package robots
 
 import (
 	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
+	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
 	"log"
 	"time"
@@ -60,8 +61,8 @@ func (ia *AI) sendMessageAI(msg string) {
 
 	var err error
 
-	p := Prepare(LOCK, Packet_DATA, Packet_CONTROL_SERVER, Packet_VIDEO_CLIENT)
-	p.Payload, err = PackAny(&MAI{Lock: true, Msg: msg})
+	p := rocproto.Prepare(LOCK, rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
+	p.Payload, err = rocproto.PackAny(&rocproto.MAI{Lock: true, Msg: msg})
 	if misc.CheckError(err, "Sending Ai message", false) != nil {
 		return
 	}
