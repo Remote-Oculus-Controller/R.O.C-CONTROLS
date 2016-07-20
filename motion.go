@@ -14,7 +14,7 @@ type Motion struct {
 	*RocRobot
 	arduino        *firmata.FirmataAdaptor
 	servoX, servoY *gpio.ServoDriver
-	motorL, motorR *gpio.MotorDriver
+	motorL, motorR *gpio.ServoDriver
 	Gyro
 	dir float64
 }
@@ -31,18 +31,21 @@ const (
 	DEFAULT_CAM_X = 90
 	DEFAULT_CAM_Y = 135
 
-	MAXSPEED = 90
+	MAXSPEED  uint8 = 180
+	CALCSPEED       = 90
+	STOPSPEED uint8 = 90
+	BACKWARD        = 0
 )
 
 func NewMotion() *Motion {
 
 	m := new(Motion)
 	m.RocRobot = NewRocRobot(nil)
-	m.arduino = firmata.NewFirmataAdaptor("arduino", "/dev/ttyACM0")
+	m.arduino = firmata.NewFirmataAdaptor("arduino", "COM3")
 	m.servoX = gpio.NewServoDriver(m.arduino, "servoX", "6")
 	m.servoY = gpio.NewServoDriver(m.arduino, "servoY", "5")
-	m.motorL = gpio.NewMotorDriver(m.arduino, "motorL", "9")
-	m.motorR = gpio.NewMotorDriver(m.arduino, "motorR", "10")
+	m.motorL = gpio.NewServoDriver(m.arduino, "motorL", "9")
+	m.motorR = gpio.NewServoDriver(m.arduino, "motorR", "10")
 	m.dir = 0
 	work := func() {
 		m.resetCam(nil)
@@ -57,6 +60,13 @@ func NewMotion() *Motion {
 	m.AddFunc(m.move, MOUV, nil, "mv")
 	m.AddEvent("move")
 	return m
+}
+
+func (m *Motion) Stop() {
+	log.Println("Motion : reset cam pos and stopping motors")
+	m.resetCam(nil)
+	m.motorR.Move(90)
+	m.motorL.Move(90)
 }
 
 func (m *Motion) moveCam(p *Packet) error {
@@ -119,25 +129,21 @@ func (m *Motion) move(p *Packet) error {
 		return err
 	}
 	gobot.Publish(m.Event("move"), *n)
-	fmt.Println("Spinning MOTORS !")
 
-	theta := int(n.Angle - m.dir)
-	theta = ((theta + 180) % 360) - 180      // normalize value to [-180, 180)
-	r := int(math.Min(math.Max(0, 50), 100)) // normalize value to [0, 100]
-	v_a := r * (45 - theta%90) / 45          // falloff of main motor
-	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a)   // compensation of other motor
+	var r int64 = 50
+
+	theta := int64(n.Angle * 180 / math.Pi)
+	v_a := r * (45 - theta%90) / 45        // falloff of main motor
+	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a) // compensation of other motor
 	lR, rR := thrust(theta, v_a, v_b)
-
-	lS := uint8(MAXSPEED * (lR / 100))
-	rS := uint8(MAXSPEED * (rR / 100))
-
-	fmt.Printf("Ratio ==> Left %v	; Right %v\nSpeed ===> Left %v	; Right %v\n", lR, rR, lS, rS)
-	//s := uint8(n.Gspeed)
-	//m.motorL.Speed(byte(s))
+	lS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(lR)/100), -90, 90), 0, 180)
+	rS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(rR)/100), -90, 90), 0, 180)
+	m.motorL.Move(uint8(lS))
+	m.motorR.Move(uint8(rS))
 	return nil
 }
 
-func thrust(theta, v_a, v_b int) (int, int) {
+func thrust(theta, v_a, v_b int64) (int64, int64) {
 
 	if theta < -90 {
 		return -v_b, -v_a
@@ -155,37 +161,37 @@ func (m *Motion) Equal(r *gobot.Robot) {
 	m.arduino = r.Connection("arduino").(*firmata.FirmataAdaptor)
 	m.servoY = r.Device("servoY").(*gpio.ServoDriver)
 	m.servoX = r.Device("servoX").(*gpio.ServoDriver)
-	m.motorL = r.Device("motorL").(*gpio.MotorDriver)
-	m.motorR = r.Device("motorR").(*gpio.MotorDriver)
+	m.motorL = r.Device("motorL").(*gpio.ServoDriver)
+	m.motorR = r.Device("motorR").(*gpio.ServoDriver)
 	m.Robot = r
 }
 
 func (m *Motion) moveForward() {
 
-	m.motorL.Speed(MAXSPEED)
-	m.motorR.Speed(MAXSPEED)
+	m.motorL.Move(MAXSPEED)
+	m.motorR.Move(MAXSPEED)
 }
 
 func (m *Motion) moveBackward() {
 
-	m.motorL.Speed(MAXSPEED) // -
-	m.motorR.Speed(MAXSPEED) // -
+	m.motorL.Move(BACKWARD) // -
+	m.motorR.Move(BACKWARD) // -
 }
 
 func (m *Motion) stopMoving() {
 
-	m.motorL.Speed(0)
-	m.motorR.Speed(0)
+	m.motorL.Move(STOPSPEED)
+	m.motorR.Move(STOPSPEED)
 }
 
 func (m *Motion) turnLeft() {
 
-	m.motorR.Speed(MAXSPEED)
-	m.motorL.Speed(MAXSPEED) // -
+	m.motorR.Move(BACKWARD)
+	m.motorL.Move(MAXSPEED) // -
 }
 
 func (m *Motion) turnRight() {
 
-	m.motorR.Speed(MAXSPEED) //-
-	m.motorL.Speed(MAXSPEED)
+	m.motorR.Move(MAXSPEED) //-
+	m.motorL.Move(BACKWARD)
 }

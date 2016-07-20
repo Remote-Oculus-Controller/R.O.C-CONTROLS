@@ -28,9 +28,9 @@ func (r *Roc) NewAI() *AI {
 			ai.toggle(false)
 		}*/
 	}
-	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
+	/*	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
 		r.Robot("gps").Command("sim")(map[string]interface{}{"mv": d})
-	})
+	})*/
 
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))

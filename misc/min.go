@@ -1,10 +1,8 @@
 package misc
 
-func Min(params ...int) int {
+func Min(params ...int64) int64 {
 
-	var r int
-
-	r = params[0]
+	r := params[0]
 	for _, v := range params {
 		if v < r {
 			r = v
