@@ -1,7 +1,6 @@
 package robots
 
 import (
-	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
@@ -23,21 +22,18 @@ const (
 
 func (ia *AI) light() error {
 
-	fmt.Println("LIGHT===")
 	var err error
 	d := &DataLux{iter: 0, iterMax: 0, lux: -1, iterMaxLux: 0}
 	timeout := time.After(3 * time.Second)
 	tick := time.NewTicker(100 * time.Millisecond)
 	ia.toggle(true)
 	defer ia.toggle(false)
-	fmt.Println("LIGH!!!!")
 	for {
 		select {
 		case <-timeout:
 			d.iterMax = d.iter
 			log.Println("Max lux is at: ", d.getAngle(), " degrees")
 			coord := ia.getPos(nil).(rocproto.Coord)
-			fmt.Println("Coord from gps", coord)
 			coord.Lat = coord.Lat + math.Cos(d.getAngle())
 			coord.Long = coord.Long + math.Sin(d.getAngle())
 			p := rocproto.Prepare(uint32(rocproto.AiInfo_DLIGH), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
@@ -82,21 +78,16 @@ func (ia *AI) lightDetect(p *rocproto.Packet) error {
 
 	var err error
 
-	p = nil
-	fmt.Println("Packet light", p)
 	p = &rocproto.Packet{}
 	p.Payload, err = rocproto.PackAny(&rocproto.Mouv{Speed: 0, Angle: math.Pi / 2})
 	if misc.CheckError(err, "Packing in lightDetect", false) != nil {
 		return err
 	}
-	fmt.Println("Moving")
 	ia.m.move(p)
-	fmt.Println("start détection")
 	err = ia.light()
 	if misc.CheckError(err, "Detecting light", false) != nil {
 		return err
 	}
-	fmt.Println("Stoping")
 	ia.m.Stop()
 	return nil
 }
