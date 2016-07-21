@@ -139,6 +139,7 @@ func (m *Motion) move(p *rocproto.Packet) error {
 	lS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(lR)/100), -90, 90), 0, 180)
 	rS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(rR)/100), -90, 90), 0, 180)
 	n.Speed = gobot.FromScale((lS+rS)/2, 0, 180)
+	fmt.Printf("Mouvement ==> %+v\nSpeed ==> L : %v	R : %v", n, lS, lR)
 	gobot.Publish(m.Event("move"), *n)
 	m.motorL.Move(uint8(lS))
 	m.motorR.Move(uint8(rS))

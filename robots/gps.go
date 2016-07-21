@@ -100,9 +100,8 @@ func (gps *Gps) tooglePauseAPI(params map[string]interface{}) interface{} {
 
 func (gps *Gps) sim(params map[string]interface{}) interface{} {
 
-	fmt.Printf("Changing position\n")
 	n := params["mv"].(rocproto.Mouv)
-
+	fmt.Printf("Changing position %+v", n)
 	gps.dir += n.Angle / 5
 	gps.yoff += 0.000001 * math.Sin(-gps.orioff) * n.Speed
 	gps.xoff += 0.000001 * math.Cos(gps.orioff) * n.Speed

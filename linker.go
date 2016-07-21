@@ -114,7 +114,6 @@ func (l *Link) handleConn(o *Link, t rocproto.Packet_Section) {
 				log.Println(r, buff[0:r])
 				continue
 			}
-			log.Printf("Reveived packet : %+v", m)
 			if m.Magic != MAGIC {
 				log.Println("Wrong packet")
 				continue
