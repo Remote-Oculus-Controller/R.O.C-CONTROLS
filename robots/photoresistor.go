@@ -80,16 +80,20 @@ func (ia *AI) lightDetect(p *rocproto.Packet) error {
 
 	var err error
 
+	fmt.Println("Packet light", p)
 	p = &rocproto.Packet{}
 	p.Payload, err = rocproto.PackAny(&rocproto.Mouv{Speed: 0, Angle: math.Pi / 2})
 	if misc.CheckError(err, "Packing in lightDetect", false) != nil {
 		return err
 	}
+	fmt.Println("Moving")
 	ia.m.move(p)
+	fmt.Println("start détection")
 	err = ia.light()
 	if misc.CheckError(err, "Detecting light", false) != nil {
 		return err
 	}
+	fmt.Println("Stoping")
 	ia.m.Stop()
 	return nil
 }
