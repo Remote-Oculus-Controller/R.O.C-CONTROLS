@@ -22,7 +22,7 @@ func PackAny(m proto.Message) (*any.Any, error) {
 func UnpackAny(b *any.Any, m proto.Message) error {
 
 	if b == nil || m == nil {
-		fmt.Printf("Cannot unpack message, one paramters is null any %v message %v", b, m)
+		fmt.Printf("Cannot unpack message, one paramters is null any %v message %v\n", b, m)
 		return nil
 	}
 	err := proto.Unmarshal(b.Value, m)

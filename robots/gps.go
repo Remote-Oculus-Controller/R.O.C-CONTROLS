@@ -50,7 +50,7 @@ func NewGPS() *Gps {
 			Long: tpv.Lon + gps.yoff,
 			Ori:  gps.dir,
 		}
-		fmt.Printf("Coordianates ==> %+v", m)
+		fmt.Printf("Coordianates ==> %+v\n", m)
 		p := &rocproto.Packet{
 			ID:     GPS_TAG,
 			Header: H_DCV,
@@ -102,7 +102,7 @@ func (gps *Gps) tooglePauseAPI(params map[string]interface{}) interface{} {
 func (gps *Gps) sim(params map[string]interface{}) interface{} {
 
 	n := params["mv"].(rocproto.Mouv)
-	fmt.Printf("Changing position %+v", n)
+	fmt.Printf("Changing position %+v\n", n)
 	gps.dir += n.Angle / 5
 	gps.yoff += 0.000001 * math.Sin(-gps.orioff) * n.Speed
 	gps.xoff += 0.000001 * math.Cos(gps.orioff) * n.Speed
