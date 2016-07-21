@@ -34,6 +34,8 @@ func (ia *AI) light() error {
 			d.iterMax = d.iter
 			log.Println("Max lux is at: ", d.getAngle(), " degrees")
 			coord := ia.getPos(nil).(rocproto.Coord)
+			coord.Lat = coord.Lat + math.Cos(d.getAngle())
+			coord.Long = coord.Long + math.Sin(d.getAngle())
 			p := rocproto.Prepare(uint32(rocproto.AiInfo_DLIGH), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
 			p.Payload, err = rocproto.PackAny(&coord)
 			if err != nil {
