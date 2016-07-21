@@ -48,7 +48,7 @@ func NewGPS() *Gps {
 		m := &rocproto.Coord{
 			Lat:  tpv.Lat + gps.xoff,
 			Long: tpv.Lon + gps.yoff,
-			Ori:  gps.dir * 180 / math.Pi,
+			Ori:  gps.dir,
 		}
 		log.Printf("Coordinates => %+v\n", m)
 		p := &rocproto.Packet{

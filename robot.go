@@ -50,7 +50,6 @@ func (r *RocRobot) AddFunc(f func(*rocproto.Packet) error, code uint32, api func
 	}
 	if api != nil {
 		log.Println("Creating api entry", name)
-		fmt.Printf("%+v", r)
 		r.AddCommand(name, api)
 	}
 }
@@ -60,10 +59,9 @@ func (r *RocRobot) CheckAPIParams(m map[string]interface{}, t []types.BasicKind,
 	if len(t) != len(params) {
 		return errors.New("Bad formating, expecting same number of type and parameters to create api function")
 	}
-	for i, v := range params {
-		p, ok := m[v]
+	for _, v := range params {
+		_, ok := m[v]
 		assert := true
-		fmt.Printf("%v %v %v", i, v, p)
 		if !ok || !assert {
 			return errors.New(fmt.Sprintf(PARAM_ERR, v))
 		}

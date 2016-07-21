@@ -85,11 +85,9 @@ func (m *Motion) moveCam(p *rocproto.Packet) error {
 	y := uint8(gobot.ToScale(gobot.FromScale(g.Y, -35, 35), 90, 180))
 	m.X = float64(x)
 	m.Y = float64(y)
-	fmt.Print(x, y, m.X, m.Y)
 	m.servoX.Move(x)
 	m.servoY.Move(y)
 	return nil
-	//	return m.getCamPos(p)
 }
 
 func (m *Motion) getCamPos(p *rocproto.Packet) error {
@@ -130,16 +128,18 @@ func (m *Motion) move(p *rocproto.Packet) error {
 		log.Println("Impossible conversion Message is not a Mouv")
 		return err
 	}
-	gobot.Publish(m.Event("move"), *n)
 
 	var r int64 = 50
 
 	theta := int64(n.Angle * 180 / math.Pi)
+	n.Angle = theta
 	v_a := r * (45 - theta%90) / 45        // falloff of main motor
 	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a) // compensation of other motor
 	lR, rR := thrust(theta, v_a, v_b)
 	lS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(lR)/100), -90, 90), 0, 180)
 	rS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(rR)/100), -90, 90), 0, 180)
+	n.Speed = gobot.FromScale((lS+rS)/2, 0, 180)
+	gobot.Publish(m.Event("move"), *n)
 	m.motorL.Move(uint8(lS))
 	m.motorR.Move(uint8(rS))
 	return nil
