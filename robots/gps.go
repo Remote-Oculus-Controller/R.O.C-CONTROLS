@@ -104,6 +104,12 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	n := params["mv"].(rocproto.Mouv)
 	fmt.Printf("Changing position %+v\n", n)
 	gps.dir += n.Angle / 5
+	if gps.dir > 360 {
+		gps.dir = gps.dir - 360
+	}
+	if gps.dir < 0 {
+		gps.dir = 360 - gps.dir
+	}
 	gps.yoff += 0.000001 * math.Sin(-gps.orioff) * n.Speed
 	gps.xoff += 0.000001 * math.Cos(gps.orioff) * n.Speed
 	return nil
