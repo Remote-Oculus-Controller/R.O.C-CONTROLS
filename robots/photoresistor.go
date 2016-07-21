@@ -1,6 +1,7 @@
 package robots
 
 import (
+	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
@@ -34,6 +35,7 @@ func (ia *AI) light() error {
 			d.iterMax = d.iter
 			log.Println("Max lux is at: ", d.getAngle(), " degrees")
 			coord := ia.getPos(nil).(rocproto.Coord)
+			fmt.Println("Coord from gps", coord)
 			coord.Lat = coord.Lat + math.Cos(d.getAngle())
 			coord.Long = coord.Long + math.Sin(d.getAngle())
 			p := rocproto.Prepare(uint32(rocproto.AiInfo_DLIGH), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
