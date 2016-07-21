@@ -1,7 +1,6 @@
 package robots
 
 import (
-	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/gpsd"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
@@ -101,7 +100,6 @@ func (gps *Gps) tooglePauseAPI(params map[string]interface{}) interface{} {
 func (gps *Gps) sim(params map[string]interface{}) interface{} {
 
 	n := params["mv"].(rocproto.Mouv)
-	fmt.Println(n)
 	if n.Angle < math.Pi-0.0001 || n.Angle > math.Pi+0.0001 {
 		gps.dir -= n.Angle / 180
 	}
