@@ -1,10 +1,10 @@
 package robots
 
 import (
-	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
+	"log"
 	"math"
 	"time"
 )
@@ -27,11 +27,13 @@ func (ia *AI) light() error {
 	d := &DataLux{iter: 0, iterMax: 0, lux: -1, iterMaxLux: 0}
 	timeout := time.After(3 * time.Second)
 	tick := time.NewTicker(100 * time.Millisecond)
+	ia.toggle(true)
+	defer ia.toggle(false)
 	for {
 		select {
 		case <-timeout:
 			d.iterMax = d.iter
-			fmt.Println("Max lux is at: ", d.getAngle(), " degrees")
+			log.Println("Max lux is at: ", d.getAngle(), " degrees")
 			p := rocproto.Prepare(uint32(rocproto.AiInfo_DLIGH), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
 			p.Payload, err = rocproto.PackAny(&rocproto.Coord{Ori: d.getAngle()})
 			if err != nil {
@@ -46,7 +48,7 @@ func (ia *AI) light() error {
 			}
 			d.iter += 1
 			temp := gobot.ToScale(gobot.FromScale(float64(v), 0, 1024), 0, 255)
-			fmt.Println("Sensor data", temp)
+			//fmt.Println("Sensor data", temp)
 			if diffIsCorrect(d.lux, temp) && temp > d.lux {
 				d.lux = temp
 				d.iterMaxLux = d.iter

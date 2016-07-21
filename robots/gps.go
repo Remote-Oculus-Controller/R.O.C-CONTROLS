@@ -1,7 +1,6 @@
 package robots
 
 import (
-	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/gpsd"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
@@ -102,7 +101,6 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 
 	n := params["mv"].(rocproto.Mouv)
 	gps.dir -= n.Angle / 180
-	fmt.Printf("Changing position %+v\nNew direction ===> %v", n, gps.dir)
 	if gps.dir > 2*math.Pi {
 		gps.dir = gps.dir - 2*math.Pi
 	}
