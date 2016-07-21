@@ -132,7 +132,6 @@ func (m *Motion) move(p *rocproto.Packet) error {
 	var r int64 = 50
 
 	theta := int64(n.Angle * 180 / math.Pi)
-	n.Angle = n.Angle * 180 / math.Pi
 	v_a := r * (45 - theta%90) / 45        // falloff of main motor
 	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a) // compensation of other motor
 	lR, rR := thrust(theta, v_a, v_b)
