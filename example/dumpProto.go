@@ -19,9 +19,9 @@ func main() {
 	defer conn.Close()
 	p := &rocproto.Packet{}
 
-	p = rocproto.Prepare(uint32(rocproto.AiInfo_LIGHT), rocproto.Packet_COMMAND, rocproto.Packet_VIDEO_CLIENT, rocproto.Packet_CONTROL_SERVER)
-	b, err := proto.Marshal(p)
-	conn.Write(b)
+	/*	p = rocproto.Prepare(uint32(rocproto.AiInfo_LIGHT), rocproto.Packet_COMMAND, rocproto.Packet_VIDEO_CLIENT, rocproto.Packet_CONTROL_SERVER)
+		b, err := proto.Marshal(p)
+		conn.Write(b)*/
 	p = &rocproto.Packet{}
 
 	for {
