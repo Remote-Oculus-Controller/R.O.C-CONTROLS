@@ -1,6 +1,6 @@
 syntax="proto3";
 
-package robots;
+package rocproto;
 
 message Coord {
     double lat = 1;

@@ -2,7 +2,7 @@ syntax="proto3";
 
 import "google/protobuf/any.proto";
 
-package roc;
+package rocproto;
 
 message Packet {
     uint32 magic = 1;
@@ -14,6 +14,7 @@ message Packet {
         Nil = 0;
         MAGIC_Number = 0xAF;
     }
+
 
     enum Type {
         option allow_alias = true;
@@ -31,21 +32,7 @@ message Packet {
         VIDEO_SERVER = 2;
         CONTROL_SERVER = 4;
         MASK_DEST = 7; //00 000111
-        SHIFT_SENT = 3;
+        SHIFT_SEND = 3;
+        MASK_SEND = 56; //00 111000
     }
-}
-
-message Error {
-    string msg = 2;
-}
-
-message mAI {
-
-    enum Codes {
-        Empty = 0;
-        TAG = 0x20;
-
-    }
-    bool lock = 1;
-    string msg = 2;
 }

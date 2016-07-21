@@ -1,7 +1,9 @@
-package roc
+package robots
 
 import (
-	"fmt"
+	"github.com/Happykat/R.O.C-CONTROLS"
+	"github.com/Happykat/R.O.C-CONTROLS/misc"
+	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/gpio"
 )
@@ -20,24 +22,16 @@ type AI struct {
 	lock chan 			bool
 }
 
-func (r *Roc) NewAI() *AI {
+func NewAI(r *roc.Roc) *AI {
 
-	ai := &AI{RocRobot: NewRocRobot(nil)}
-	ai.lock = r.aiLock
+	ai := &AI{RocRobot: roc.NewRocRobot(nil)}
+	ai.lock = r.AiLock
 	work := func() {
-		/*for {
-			<-time.After(time.Second * 2)
-			ai.toggle(true)
-			<-time.After(time.Second * 2)
-			ai.toggle(false)
-		}*/
 	}
 	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
 		r.Robot("gps").Command("sim")(map[string]interface{}{"mv": d})
 	})
-
 	ai.m = NewMotion()
-	fmt.Printf("Motion %+v", ai.m)
 	ai.m.Equal(r.Robot("motion"))
 	ai.buttonObstacle = gpio.NewButtonDriver(ai.m.arduino, "buttonObstacle", "13")
 	ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorLight", "0")
@@ -56,13 +50,22 @@ func (r *Roc) NewAI() *AI {
 
 func (ai *AI) toggle(b bool) error {
 
+	ai.lock <- b
+	if b {
+		return ai.sendMessageAI(rocproto.AiInfo_LOCK)
+	} else {
+		return ai.sendMessageAI(rocproto.AiInfo_UNLOCK)
+	}
+
+}
+
+func (ia *AI) sendMessageAI(id rocproto.AiInfo_Codes) error {
+
 	var err error
 
-	ai.lock <- b
-	p := Prepare(LOCK, Packet_DATA, Packet_CONTROL_SERVER, Packet_VIDEO_CLIENT)
-	p.Payload, err = PackAny(&MAI{Lock: true})
-	if err != nil {
+	p := rocproto.Prepare(uint32(id), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
+	if misc.CheckError(err, "Sending Ai message", false) != nil {
 		return err
 	}
-	return ai.Send(p)
+	return ia.Send(p)
 }

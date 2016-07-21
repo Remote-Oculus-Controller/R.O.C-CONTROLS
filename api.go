@@ -10,8 +10,3 @@ func (roc *Roc) apiCreate() {
 	a.Debug()
 	a.Start()
 }
-
-func (roc *Roc) controlBind() {
-
-	//TODO Video Server call
-}

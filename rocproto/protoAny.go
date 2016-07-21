@@ -1,4 +1,4 @@
-package roc
+package rocproto
 
 import (
 	"fmt"
