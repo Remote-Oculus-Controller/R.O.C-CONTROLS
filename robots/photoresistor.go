@@ -82,6 +82,7 @@ func (ia *AI) lightDetect(p *rocproto.Packet) error {
 
 	var err error
 
+	p = nil
 	fmt.Println("Packet light", p)
 	p = &rocproto.Packet{}
 	p.Payload, err = rocproto.PackAny(&rocproto.Mouv{Speed: 0, Angle: math.Pi / 2})
