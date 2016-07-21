@@ -11,7 +11,7 @@ import (
 func main() {
 
 	buff := make([]byte, 128)
-	conn, err := net.Dial("tcp", "127.0.0.1:8001")
+	conn, err := net.Dial("tcp", "192.168.0.9:8001")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -29,6 +29,11 @@ func main() {
 		if err != nil {
 			fmt.Println(err.Error())
 			return
+		}
+		if p.ID == 38 || p.ID == 16 {
+			coor := &rocproto.Coord{}
+			rocproto.UnpackAny(p.Payload, coor)
+			fmt.Println(coor)
 		}
 		log.Printf("%+v\n", p)
 	}

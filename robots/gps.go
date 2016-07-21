@@ -67,7 +67,7 @@ func NewGPS() *Gps {
 }
 
 func (gps *Gps) getCoord() (float64, float64) {
-	return gps.coord.Lat, gps.coord.Long
+	return gps.coord.Lat + gps.xoff, gps.coord.Long + gps.yoff
 }
 
 func (gps *Gps) getCoordByte(r *rocproto.Packet) error {
