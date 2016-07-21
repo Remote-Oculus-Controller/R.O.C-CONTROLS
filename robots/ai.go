@@ -8,18 +8,14 @@ import (
 	"github.com/hybridgroup/gobot/platforms/gpio"
 )
 
-const (
-	LOCK = uint32(MAI_TAG)
-)
-
 type AI struct {
-	*RocRobot
-	m      					*Motion
-	buttonObstacle 	*gpio.ButtonDriver
-	sensorLight 		*gpio.AnalogSensorDriver
-	pending					bool
-	firstTime				bool
-	lock chan 			bool
+	*roc.RocRobot
+	m              *Motion
+	buttonObstacle *gpio.ButtonDriver
+	sensorLight    *gpio.AnalogSensorDriver
+	pending        bool
+	firstTime      bool
+	lock           chan bool
 }
 
 func NewAI(r *roc.Roc) *AI {
@@ -34,13 +30,13 @@ func NewAI(r *roc.Roc) *AI {
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))
 	ai.buttonObstacle = gpio.NewButtonDriver(ai.m.arduino, "buttonObstacle", "13")
-	ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorLight", "0")
+	ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorL", "15")
 	ai.m.Robot.AddDevice(ai.buttonObstacle)
 	ai.m.Robot.AddDevice(ai.sensorLight)
 	ai.Robot = gobot.NewRobot("ai", work)
 	ai.AddFunc(nil, 0, ai.pushButton, "pushButton")
 	ai.AddFunc(nil, 0, ai.releaseButton, "releaseButton")
-	ai.AddFunc(nil, 0, ai.pushLightButton, "pushLightButton")
+	ai.AddFunc(ai.lightDetect, rocproto.AiInfo_LIGHT, ai.startLightDetect, "pushLightButton")
 	ai.obstacle()
 	ai.pending = false
 	ai.firstTime = true

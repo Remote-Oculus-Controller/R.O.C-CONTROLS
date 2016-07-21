@@ -158,6 +158,7 @@ func thrust(theta, v_a, v_b int64) (int64, int64) {
 	}
 	return v_a, -v_b
 }
+
 func (m *Motion) Equal(r *gobot.Robot) {
 
 	m.arduino = r.Connection("arduino").(*firmata.FirmataAdaptor)
