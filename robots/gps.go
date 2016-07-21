@@ -110,7 +110,7 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	if gps.dir < 0 {
 		gps.dir = 360 - gps.dir
 	}
-	gps.yoff += 0.000001 * math.Sin(-gps.orioff) * n.Speed
-	gps.xoff += 0.000001 * math.Cos(gps.orioff) * n.Speed
+	gps.yoff += 0.000001 * math.Sin(-gps.dir) * n.Speed
+	gps.xoff += 0.000001 * math.Cos(gps.dir) * n.Speed
 	return nil
 }

@@ -36,7 +36,7 @@ func (ia *AI) light() error {
 				return err
 			}
 			return ia.Send(p)
-		default:
+		case <-time.After(100 * time.Millisecond):
 			v, err := ia.sensorLight.Read()
 			if misc.CheckError(err, "reading light sensor in photoresistor.go", false) != nil {
 				return err
