@@ -100,7 +100,9 @@ func (gps *Gps) tooglePauseAPI(params map[string]interface{}) interface{} {
 func (gps *Gps) sim(params map[string]interface{}) interface{} {
 
 	n := params["mv"].(rocproto.Mouv)
-	gps.dir -= n.Angle / 180
+	if gps.dir < math.Pi-0.001 || gps.dir > math.Pi+0.001 {
+		gps.dir -= n.Angle / 180
+	}
 	if gps.dir > 2*math.Pi {
 		gps.dir = gps.dir - 2*math.Pi
 	}
