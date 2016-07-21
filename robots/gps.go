@@ -48,7 +48,7 @@ func NewGPS() *Gps {
 		m := &rocproto.Coord{
 			Lat:  tpv.Lat + gps.xoff,
 			Long: tpv.Lon + gps.yoff,
-			Ori:  gps.dir,
+			Ori:  gps.dir * 180 / math.Pi,
 		}
 		fmt.Printf("Coordianates ==> %+v\n", m)
 		p := &rocproto.Packet{
@@ -104,7 +104,7 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	n := params["mv"].(rocproto.Mouv)
 	fmt.Printf("Changing position %+v\n", n)
 	gps.dir += n.Angle / 5
-	if gps.dir > 360 {
+	if gps.dir > 2*math.Pi {
 		gps.dir = gps.dir - 360
 	}
 	if gps.dir < 0 {
