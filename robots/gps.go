@@ -102,8 +102,6 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	n := params["mv"].(rocproto.Mouv)
 	if n.Angle < math.Pi-0.0001 || n.Angle > math.Pi+0.0001 {
 		gps.dir -= n.Angle / 180
-	} else {
-		n.Speed = -n.Speed
 	}
 	if gps.dir > 2*math.Pi {
 		gps.dir = gps.dir - 2*math.Pi
