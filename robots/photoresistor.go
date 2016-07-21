@@ -38,7 +38,7 @@ func (ia *AI) light() error {
 			return ia.Send(p)
 		default:
 			v, err := ia.sensorLight.Read()
-			if misc.CheckError(err, "reading light sensor in photoresistor.go", false) {
+			if misc.CheckError(err, "reading light sensor in photoresistor.go", false) != nil {
 				return err
 			}
 			d.iter += 1
