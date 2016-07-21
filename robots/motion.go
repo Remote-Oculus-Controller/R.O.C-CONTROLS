@@ -131,8 +131,6 @@ func (m *Motion) move(p *rocproto.Packet) error {
 
 	var r int64 = 50
 
-	fmt.Println("First angle :", n.Angle)
-	n.Angle += math.Pi / 2
 	fmt.Println("Second angle :", n.Angle)
 	theta := int64(n.Angle * 180 / math.Pi)
 	theta = ((theta + 180) % 360) - 180
