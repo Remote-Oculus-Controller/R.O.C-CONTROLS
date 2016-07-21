@@ -75,7 +75,6 @@ func (m *Motion) moveCam(p *rocproto.Packet) error {
 
 	var g rocproto.Gyro
 
-	fmt.Println("Moving Camera")
 	err := rocproto.UnpackAny(p.Payload, &g)
 	if err != nil {
 		log.Println("Impossible conversion Message is not a Gyro")
@@ -131,10 +130,8 @@ func (m *Motion) move(p *rocproto.Packet) error {
 
 	var r int64 = 50
 
-	fmt.Println("Second angle :", n.Angle)
 	theta := int64(n.Angle * 180 / math.Pi)
 	theta = ((theta + 180) % 360) - 180
-	fmt.Println("theta = ", theta)
 	v_a := r * (45 - theta%90) / 45        // falloff of main motor
 	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a) // compensation of other motor
 	lR, rR := thrust(theta, v_a, v_b)
