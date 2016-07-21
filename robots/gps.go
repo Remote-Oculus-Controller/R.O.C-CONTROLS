@@ -49,6 +49,8 @@ func NewGPS() *Gps {
 			Long: tpv.Lon + gps.yoff,
 			Ori:  gps.dir * 180 / math.Pi,
 		}
+		gps.coord.Lat = m.Lat
+		gps.coord.Long = m.Long
 		p := &rocproto.Packet{
 			ID:     GPS_TAG,
 			Header: H_DCV,
@@ -67,7 +69,7 @@ func NewGPS() *Gps {
 }
 
 func (gps *Gps) getCoord() (float64, float64) {
-	return gps.coord.Lat + gps.xoff, gps.coord.Long + gps.yoff
+	return gps.coord.Lat, gps.coord.Long
 }
 
 func (gps *Gps) getCoordByte(r *rocproto.Packet) error {
