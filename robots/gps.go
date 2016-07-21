@@ -64,6 +64,7 @@ func NewGPS() *Gps {
 	gps.AddFunc(gps.tooglePause, TOOGLE, gps.tooglePauseAPI, "toogle")
 	gps.AddFunc(gps.getCoordByte, GET_COORD, gps.getCoordApi, "getCoord")
 	gps.AddFunc(nil, 0, gps.sim, "sim")
+
 	gps.AddFunc(nil, 0, gps.simL, "simL")
 	return gps
 }
