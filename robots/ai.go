@@ -11,6 +11,7 @@ import (
 type AI struct {
 	*roc.RocRobot
 	m              *Motion
+	gps            *Gps
 	buttonObstacle *gpio.ButtonDriver
 	sensorLight    *gpio.AnalogSensorDriver
 	pending        bool
@@ -29,6 +30,7 @@ func NewAI(r *roc.Roc) *AI {
 	})
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))
+	ai.gps = r.Robot("gps")
 	ai.buttonObstacle = gpio.NewButtonDriver(ai.m.arduino, "buttonObstacle", "13")
 	ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorL", "0")
 	ai.m.Robot.AddDevice(ai.buttonObstacle)
@@ -40,11 +42,6 @@ func NewAI(r *roc.Roc) *AI {
 	ai.obstacle()
 	ai.pending = false
 	ai.firstTime = true
-	ai.AddEvent("newlight")
-	gobot.On(r.Robot("ai").Event("newlight"), func(d interface{}) {
-		r.Robot("gps").Command("simL")(map[string]interface{}{"mv": d})
-	})
-
 	return ai
 }
 
