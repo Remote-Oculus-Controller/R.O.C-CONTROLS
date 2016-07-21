@@ -1,7 +1,6 @@
 package robots
 
 import (
-	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
@@ -137,7 +136,6 @@ func (m *Motion) move(p *rocproto.Packet) error {
 	lR, rR := thrust(theta, v_a, v_b)
 	lS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(lR)/100), -90, 90), 0, 180)
 	rS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(rR)/100), -90, 90), 0, 180)
-	fmt.Println(lR, rR)
 	n.Speed = float64(lR+rR) / 2
 	gobot.Publish(m.Event("move"), *n)
 	m.motorL.Move(uint8(lS))
