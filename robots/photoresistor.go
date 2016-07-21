@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
-	"github.com/hybridgroup/gobot"
 	"math"
 	"time"
 )
@@ -36,18 +35,18 @@ func (ia *AI) light() error {
 				return err
 			}
 			return ia.Send(p)
-		case <-time.After(100 * time.Millisecond):
-			v, err := ia.sensorLight.Read()
-			if misc.CheckError(err, "reading light sensor in photoresistor.go", false) != nil {
-				return err
-			}
-			d.iter += 1
-			temp := gobot.ToScale(gobot.FromScale(float64(v), 0, 1024), 0, 255)
-			fmt.Println("Sensor data", temp)
-			if diffIsCorrect(d.lux, temp) && temp > d.lux {
-				d.lux = temp
-				d.iterMaxLux = d.iter
-			}
+			/*		case <-time.After(100 * time.Millisecond):
+					v, err := ia.sensorLight.Read()
+					if misc.CheckError(err, "reading light sensor in photoresistor.go", false) != nil {
+						return err
+					}
+					d.iter += 1
+					temp := gobot.ToScale(gobot.FromScale(float64(v), 0, 1024), 0, 255)
+					fmt.Println("Sensor data", temp)
+					if diffIsCorrect(d.lux, temp) && temp > d.lux {
+						d.lux = temp
+						d.iterMaxLux = d.iter
+					}*/
 		}
 	}
 }
