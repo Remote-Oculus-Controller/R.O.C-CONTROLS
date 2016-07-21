@@ -40,7 +40,6 @@ func NewAI(r *roc.Roc) *AI {
 	ai.obstacle()
 	ai.pending = false
 	ai.firstTime = true
-	r.AddRocRobot(ai.RocRobot)
 	return ai
 }
 
