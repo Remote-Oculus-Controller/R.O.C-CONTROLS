@@ -11,12 +11,12 @@ import (
 type AI struct {
 	*roc.RocRobot
 	m              *Motion
-	gps            *Gps
 	buttonObstacle *gpio.ButtonDriver
 	sensorLight    *gpio.AnalogSensorDriver
 	pending        bool
 	firstTime      bool
 	lock           chan bool
+	getPos         func(map[string]interface{}) interface{}
 }
 
 func NewAI(r *roc.Roc) *AI {
@@ -30,7 +30,7 @@ func NewAI(r *roc.Roc) *AI {
 	})
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))
-	ai.gps = r.Robot("gps")
+	ai.getPos = r.Robot("gps").Command("getCoord")
 	ai.buttonObstacle = gpio.NewButtonDriver(ai.m.arduino, "buttonObstacle", "13")
 	ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorL", "0")
 	ai.m.Robot.AddDevice(ai.buttonObstacle)

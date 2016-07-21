@@ -33,9 +33,9 @@ func (ia *AI) light() error {
 		case <-timeout:
 			d.iterMax = d.iter
 			log.Println("Max lux is at: ", d.getAngle(), " degrees")
-			coord := ia.gps.angleDir()
+			coord := ia.getPos(nil).(rocproto.Coord)
 			p := rocproto.Prepare(uint32(rocproto.AiInfo_DLIGH), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
-			p.Payload, err = rocproto.PackAny(coord)
+			p.Payload, err = rocproto.PackAny(&coord)
 			if err != nil {
 				return err
 			}
