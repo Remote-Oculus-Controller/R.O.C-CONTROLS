@@ -105,10 +105,10 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 	fmt.Printf("Changing position %+v\n", n)
 	gps.dir += n.Angle / 5
 	if gps.dir > 2*math.Pi {
-		gps.dir = gps.dir - 360
+		gps.dir = gps.dir - 2*math.Pi
 	}
 	if gps.dir < 0 {
-		gps.dir = 360 - gps.dir
+		gps.dir = 2*math.Pi - gps.dir
 	}
 	gps.yoff += 0.000001 * math.Sin(gps.dir) * (n.Speed / 100)
 	gps.xoff += 0.000001 * math.Cos(gps.dir) * (n.Speed / 100)
