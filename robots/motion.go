@@ -135,6 +135,7 @@ func (m *Motion) move(p *rocproto.Packet) error {
 	n.Angle += math.Pi / 2
 	fmt.Println("Second angle :", n.Angle)
 	theta := int64(n.Angle * 180 / math.Pi)
+	theta = ((theta + 180) % 360) - 180
 	fmt.Println("theta = ", theta)
 	v_a := r * (45 - theta%90) / 45        // falloff of main motor
 	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a) // compensation of other motor
