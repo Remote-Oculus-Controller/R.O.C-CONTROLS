@@ -126,6 +126,6 @@ func (gps *Gps) simL(params map[string]interface{}) interface{} {
 	coord.Lat = (gps.xoff + 1) * math.Cos(a)
 	coord.Long = (gps.yoff + 1) * math.Sin(a)
 	p := rocproto.Prepare(uint32(rocproto.AiInfo_DLIGH), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
-	p.Payload, err = rocproto.PackAny(&coord)
+	p.Payload, err = rocproto.PackAny(coord)
 	return err
 }
