@@ -64,7 +64,6 @@ func NewGPS() *Gps {
 	gps.AddFunc(gps.tooglePause, TOOGLE, gps.tooglePauseAPI, "toogle")
 	gps.AddFunc(gps.getCoordByte, GET_COORD, gps.getCoordApi, "getCoord")
 	gps.AddFunc(nil, 0, gps.sim, "sim")
-
 	gps.AddFunc(nil, 0, gps.simL, "simL")
 	return gps
 }
@@ -120,7 +119,7 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 
 func (gps *Gps) simL(params map[string]interface{}) interface{} {
 
-	a := params["angle"]
+	a := params["angle"].(float64)
 	coord := &rocproto.Coord{}
 	coord.Lat = (gps.xoff + 1) * math.Cos(a)
 	coord.Long = (gps.yoff + 1) * math.Sin(a)
