@@ -30,7 +30,7 @@ func NewAI(r *roc.Roc) *AI {
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))
 	ai.buttonObstacle = gpio.NewButtonDriver(ai.m.arduino, "buttonObstacle", "13")
-	ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorL", "15")
+	ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorL", "0")
 	ai.m.Robot.AddDevice(ai.buttonObstacle)
 	ai.m.Robot.AddDevice(ai.sensorLight)
 	ai.Robot = gobot.NewRobot("ai", work)
