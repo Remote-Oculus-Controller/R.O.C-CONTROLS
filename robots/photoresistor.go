@@ -40,7 +40,7 @@ func (ia *AI) light() error {
 				}
 			*/
 			tick.Stop()
-			return
+			return nil
 		/*
 			return ia.Send(p)
 		*/
