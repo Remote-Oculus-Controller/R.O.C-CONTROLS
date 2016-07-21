@@ -27,6 +27,9 @@ func NewAI(r *roc.Roc) *AI {
 	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
 		r.Robot("gps").Command("sim")(map[string]interface{}{"mv": d})
 	})
+	gobot.On(r.Robot("ai").Event("newlight"), func(d interface{}) {
+		r.Robot("gps").Command("simL")(map[string]interface{}{"mv": d})
+	})
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))
 	ai.buttonObstacle = gpio.NewButtonDriver(ai.m.arduino, "buttonObstacle", "13")
