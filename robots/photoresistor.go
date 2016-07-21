@@ -26,7 +26,7 @@ func (ia *AI) light() error {
 
 	d := &DataLux{iter: 0, iterMax: 0, lux: -1, iterMaxLux: 0}
 	timeout := time.After(3 * time.Second)
-	tick := time.After(200 * time.Millisecond)
+	tick := time.NewTicker(100 * time.Millisecond)
 	for {
 		select {
 		case <-timeout:
@@ -37,8 +37,9 @@ func (ia *AI) light() error {
 			if err != nil {
 				return err
 			}
+			tick.Stop()
 			return ia.Send(p)
-		case <-tick:
+		case <-tick.C:
 			v, err := ia.sensorLight.Read()
 			if misc.CheckError(err, "reading light sensor in photoresistor.go", false) != nil {
 				return err
