@@ -23,12 +23,14 @@ const (
 
 func (ia *AI) light() error {
 
+	fmt.Println("LIGHT===")
 	var err error
 	d := &DataLux{iter: 0, iterMax: 0, lux: -1, iterMaxLux: 0}
 	timeout := time.After(3 * time.Second)
 	tick := time.NewTicker(100 * time.Millisecond)
 	ia.toggle(true)
 	defer ia.toggle(false)
+	fmt.Println("LIGH!!!!")
 	for {
 		select {
 		case <-timeout:
