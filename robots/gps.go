@@ -119,9 +119,13 @@ func (gps *Gps) sim(params map[string]interface{}) interface{} {
 
 func (gps *Gps) simL(params map[string]interface{}) interface{} {
 
+	var err error
+
 	a := params["angle"].(float64)
 	coord := &rocproto.Coord{}
 	coord.Lat = (gps.xoff + 1) * math.Cos(a)
 	coord.Long = (gps.yoff + 1) * math.Sin(a)
-	return nil
+	p := rocproto.Prepare(uint32(rocproto.AiInfo_DLIGH), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
+	p.Payload, err = rocproto.PackAny(&coord)
+	return err
 }

@@ -22,8 +22,6 @@ const (
 
 func (ia *AI) light() error {
 
-	var err error
-
 	d := &DataLux{iter: 0, iterMax: 0, lux: -1, iterMaxLux: 0}
 	timeout := time.After(3 * time.Second)
 	tick := time.NewTicker(100 * time.Millisecond)
@@ -34,13 +32,18 @@ func (ia *AI) light() error {
 		case <-timeout:
 			d.iterMax = d.iter
 			log.Println("Max lux is at: ", d.getAngle(), " degrees")
-			p := rocproto.Prepare(uint32(rocproto.AiInfo_DLIGH), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
-			p.Payload, err = rocproto.PackAny(&rocproto.Coord{Ori: d.getAngle()})
-			if err != nil {
-				return err
-			}
+			gobot.Publish(ia.Event("newLight"), d.getAngle())
+			/*
+				p.Payload, err = rocproto.PackAny(&rocproto.Coord{Ori: d.getAngle()})
+				if err != nil {
+					return err
+				}
+			*/
 			tick.Stop()
+			return
+		/*
 			return ia.Send(p)
+		*/
 		case <-tick.C:
 			v, err := ia.sensorLight.Read()
 			if misc.CheckError(err, "reading light sensor in photoresistor.go", false) != nil {
