@@ -105,3 +105,8 @@ func (ia *AI) startLightDetect(params map[string]interface{}) interface{} {
 
 	return ia.lightDetect(nil)
 }
+
+func (ia *AI) startLightWorkaround(p *rocproto.Packet) error {
+
+	return ia.lightDetect(nil)
+}

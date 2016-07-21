@@ -38,7 +38,7 @@ func NewAI(r *roc.Roc) *AI {
 	ai.Robot = gobot.NewRobot("ai", work)
 	ai.AddFunc(nil, 0, ai.pushButton, "pushButton")
 	ai.AddFunc(nil, 0, ai.releaseButton, "releaseButton")
-	ai.AddFunc(ai.lightDetect, uint32(rocproto.AiInfo_LIGHT), ai.startLightDetect, "pushLightButton")
+	ai.AddFunc(ai.startLightWorkaround, uint32(rocproto.AiInfo_LIGHT), ai.startLightDetect, "pushLightButton")
 	ai.obstacle()
 	ai.pending = false
 	ai.firstTime = true
