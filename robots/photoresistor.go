@@ -108,5 +108,5 @@ func (ia *AI) startLightDetect(params map[string]interface{}) interface{} {
 
 func (ia *AI) startLightWorkaround(p *rocproto.Packet) error {
 
-	return ia.startLightDetect(nil)
+	return ia.startLightDetect(nil).(error)
 }
