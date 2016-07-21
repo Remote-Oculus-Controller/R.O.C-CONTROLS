@@ -60,7 +60,7 @@ func NewGPS() *Gps {
 			log.Println("Couldn't pack Gps coor into packet: ", err.Error())
 			return
 		}
-		gps.Send(p)
+		//gps.Send(p)
 	})
 	gps.AddFunc(gps.tooglePause, TOOGLE, gps.tooglePauseAPI, "toogle")
 	gps.AddFunc(gps.getCoordByte, GET_COORD, gps.getCoordApi, "getCoord")
