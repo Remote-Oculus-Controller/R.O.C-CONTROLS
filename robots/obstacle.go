@@ -36,10 +36,10 @@ func (ia *AI) obstacle() {
 		ia.sendMessageAI(rocproto.AiInfo_OBSTACLE)
 		select {
 		case <-time.After(time.Second * 3):
-			ia.toggle(false)
+			ia.toggle(true)
 			log.Println("Ai control")
 			ia.unlockRobot()
-			log.Println("Ai eeleasing Control")
+			log.Println("Ai releasing Control")
 			ia.toggle(false)
 			break
 		case <-ch:

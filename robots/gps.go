@@ -50,7 +50,6 @@ func NewGPS() *Gps {
 			Long: tpv.Lon + gps.yoff,
 			Ori:  gps.dir,
 		}
-		log.Printf("Coordinates => %+v\n", m)
 		p := &rocproto.Packet{
 			ID:     GPS_TAG,
 			Header: H_DCV,

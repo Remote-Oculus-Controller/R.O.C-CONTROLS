@@ -20,16 +20,10 @@ func NewAI(r *roc.Roc) *AI {
 	ai := &AI{RocRobot: roc.NewRocRobot(nil)}
 	ai.lock = r.AiLock
 	work := func() {
-		/*for {
-			<-time.After(time.Second * 2)
-			ai.toggle(true)
-			<-time.After(time.Second * 2)
-			ai.toggle(false)
-		}*/
 	}
-	/*	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
+	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
 		r.Robot("gps").Command("sim")(map[string]interface{}{"mv": d})
-	})*/
+	})
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))
 	ai.button = gpio.NewButtonDriver(ai.m.arduino, "button", "13")
@@ -38,7 +32,6 @@ func NewAI(r *roc.Roc) *AI {
 	ai.AddFunc(nil, 0, ai.pushButton, "pushButton")
 	ai.AddFunc(nil, 0, ai.releaseButton, "releaseButton")
 	ai.obstacle()
-	r.AddRocRobot(ai.RocRobot)
 	return ai
 }
 
