@@ -2,9 +2,10 @@ package roc
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
-	"log"
 )
 
 type Roc struct {

@@ -2,11 +2,12 @@ package roc
 
 import (
 	"errors"
+	"log"
+	"net"
+
 	"github.com/Happykat/R.O.C-CONTROLS/misc"
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/golang/protobuf/proto"
-	"log"
-	"net"
 )
 
 type Linker struct {
