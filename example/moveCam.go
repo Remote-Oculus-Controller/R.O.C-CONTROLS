@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/Happykat/R.O.C-CONTROLS"
 	"github.com/golang/protobuf/proto"
 	"log"
 	"net"
 	"time"
+	"github.com/Remote-Oculus-Controller/proto"
+	"github.com/Remote-Oculus-Controller/proto/go"
 )
 
 func main() {
@@ -21,15 +22,16 @@ func main() {
 	}
 	defer conn.Close()
 
-	p := roc.Gyro{X: 120, Y: 30}
-	r := roc.Prepare(roc.CAM, roc.Packet_COMMAND, roc.Packet_VIDEO_CLIENT, roc.Packet_CONTROL_SERVER)
-	r.Payload, err = roc.PackAny(&p)
+	p := rocproto.Cam{X: 120, Y: 30}
+	r := goPack.Prepare(rocproto.Cam_mv, rocproto.Packet_COMMAND, rocproto.Packet_VIDEO_CLIENT, rocproto.Packet_CONTROL_SERVER)
+	r.Cam = p
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 	b, err := proto.Marshal(r)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Printf(err)
+		return
 	}
 	fmt.Println("Sending")
 	conn.Write(b)
@@ -39,16 +41,15 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	proto.Unmarshal(buff[:i], r)
+		proto.Unmarshal(buff[:i], r)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Printf("p: %+v", *r)
-	err = roc.UnpackAny(r.Payload, &p)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("pos %v - %v\n", p.X, p.Y)
+	fmt.Printf("pos %v - %v\n", r.Cam.X, r.Cam.Y)
 }

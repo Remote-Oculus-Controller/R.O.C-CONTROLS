@@ -7,11 +7,5 @@ import (
 func (roc *Roc) apiCreate() {
 
 	a := api.NewAPI(roc.Gobot)
-	a.Debug()
 	a.Start()
-}
-
-func (roc *Roc) controlBind() {
-
-	//TODO Video Server call
 }

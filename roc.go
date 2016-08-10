@@ -2,44 +2,43 @@ package roc
 
 import (
 	"fmt"
-	"github.com/hybridgroup/gobot"
 	"log"
+
+	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
+	"github.com/hybridgroup/gobot"
 )
 
 type Roc struct {
-	*gobot.Gobot                                //Gobot
-	cmap         map[uint32]func(*Packet) error //cmd func map
+	*gobot.Gobot                                         //Gobot
+	cmap         map[uint32]func(*rocproto.Packet) error //cmd func map
 	l            *Linker
-	aiLock       chan bool
-	cmd          chan *Packet
-	data         chan *Packet
-	error        chan *Packet
+	AiLock       chan bool
+	cmd          chan *rocproto.Packet
+	data         chan *rocproto.Packet
+	error        chan *rocproto.Packet
 }
 
 const (
-	MAGIC = uint32(Packet_MAGIC_Number)
+	MAGIC = uint32(rocproto.Packet_MAGIC_Number)
 
-	Mask_DST   = uint32(Packet_MASK_DEST)
-	Shift_SEND = uint32(Packet_SHIFT_SENT)
-	Mask_SEND  = uint32(Packet_MASK_DEST) << Shift_SEND
-	Shift_TYPE = uint32(Packet_SHIFT)
-	Mask_Type  = uint32(Packet_MASK_TYPE) << Shift_TYPE
+	Shift_TYPE = uint32(rocproto.Packet_SHIFT)
+	Mask_Type  = uint32(rocproto.Packet_MASK_TYPE) << Shift_TYPE
 
-	CMD   = uint32(Packet_COMMAND) << Shift_TYPE
-	DATA  = uint32(Packet_DATA) << Shift_TYPE
-	ERROR = uint32(Packet_ERROR) << Shift_TYPE
+	CMD   = uint32(rocproto.Packet_COMMAND) << Shift_TYPE
+	DATA  = uint32(rocproto.Packet_DATA) << Shift_TYPE
+	ERROR = uint32(rocproto.Packet_ERROR) << Shift_TYPE
 )
 
 func NewRoc(lS, rS string, lT, rT bool) *Roc {
 
 	roc := &Roc{
 		Gobot:  gobot.NewGobot(),
-		cmap:   make(map[uint32]func(*Packet) error),
+		cmap:   make(map[uint32]func(*rocproto.Packet) error),
 		l:      NewLinker(lS, rS, lT, rT),
-		aiLock: make(chan bool),
-		cmd:    make(chan *Packet),
-		data:   make(chan *Packet),
-		error:  make(chan *Packet),
+		AiLock: make(chan bool),
+		cmd:    make(chan *rocproto.Packet),
+		data:   make(chan *rocproto.Packet),
+		error:  make(chan *rocproto.Packet),
 	}
 	roc.apiCreate()
 	return roc
@@ -71,17 +70,17 @@ func (r *Roc) handleChannel() {
 	}
 }
 
-func (r *Roc) handleCmd(ch chan *Packet) {
+func (r *Roc) handleCmd(ch chan *rocproto.Packet) {
 
 	for {
 		select {
-		case <-r.aiLock:
+		case <-r.AiLock:
 		NoneLoop:
 			for {
 				select {
 				case p := <-ch:
 					p = p
-				case <-r.aiLock:
+				case <-r.AiLock:
 					break NoneLoop
 				}
 			}
@@ -99,12 +98,12 @@ func (r *Roc) handleCmd(ch chan *Packet) {
 	}
 }
 
-func (r *Roc) handleData(ch chan *Packet) {
+func (r *Roc) handleData(ch chan *rocproto.Packet) {
 	p := <-ch
 	log.Printf("Data ! ==> %+v", p)
 }
 
-func (r *Roc) handleError(ch chan *Packet) {
+func (r *Roc) handleError(ch chan *rocproto.Packet) {
 	p := <-ch
 	log.Printf("Error ! ==> %+v", p)
 }
@@ -112,7 +111,6 @@ func (r *Roc) handleError(ch chan *Packet) {
 func (r *Roc) Start() error {
 
 	r.l.Start()
-	//r.NewAI()
 	go func() {
 		for {
 			r.handleChannel()
@@ -149,7 +147,7 @@ func (roc *Roc) AddRocRobot(m *RocRobot) {
 }
 
 //Directly add func with code, if specified create the api entry
-func (r *Roc) AddFunc(f func(*Packet) error, code uint32, api func(map[string]interface{}) interface{}, name string) {
+func (r *Roc) AddFunc(f func(*rocproto.Packet) error, code uint32, api func(map[string]interface{}) interface{}, name string) {
 	if f != nil && code != 0 {
 		log.Println("Assigning function", name, "to code", code)
 		_, k := r.cmap[code]

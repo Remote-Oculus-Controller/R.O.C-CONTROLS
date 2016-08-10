@@ -2,10 +2,12 @@ package roc
 
 import (
 	"errors"
-	"github.com/Happykat/R.O.C-CONTROLS/misc"
-	"github.com/golang/protobuf/proto"
 	"log"
 	"net"
+
+	"github.com/Happykat/R.O.C-CONTROLS/misc"
+	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
+	"github.com/golang/protobuf/proto"
 )
 
 type Linker struct {
@@ -16,13 +18,13 @@ type Linker struct {
 
 type Link struct {
 	conn    *net.TCPConn
-	out, in chan *Packet
+	out, in chan *rocproto.Packet
 }
 
 func NewLinker(lS, rS string, lT, rT bool) *Linker {
 
-	l := Linker{local: Link{conn: nil, out: make(chan *Packet, 100), in: make(chan *Packet, 100)},
-		remote: Link{conn: nil, out: make(chan *Packet, 100), in: make(chan *Packet, 100)},
+	l := Linker{local: Link{conn: nil, out: make(chan *rocproto.Packet, 100), in: make(chan *rocproto.Packet, 100)},
+		remote: Link{conn: nil, out: make(chan *rocproto.Packet, 100), in: make(chan *rocproto.Packet, 100)},
 		lIp:    lS, lT: lT, rIp: rS, rT: rT}
 	return &l
 }
@@ -30,14 +32,14 @@ func NewLinker(lS, rS string, lT, rT bool) *Linker {
 func (l *Linker) Start() {
 	if l.lIp != "" {
 		log.Print("Staring local work")
-		go l.local.startConn(l.lIp, l.lT, &l.remote, Packet_CONTROL_SERVER|Packet_VIDEO_SERVER)
+		go l.local.startConn(l.lIp, l.lT, &l.remote, rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_SERVER)
 	}
 	log.Println("Starting remote work")
-	go l.remote.startConn(l.rIp, l.rT, &l.local, Packet_CONTROL_SERVER|Packet_VIDEO_CLIENT)
+	go l.remote.startConn(l.rIp, l.rT, &l.local, rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_CLIENT)
 }
 
 //TODO timeout connection and try
-func (l *Link) startConn(s string, m bool, o *Link, t Packet_Section) {
+func (l *Link) startConn(s string, m bool, o *Link, t rocproto.Packet_Section) {
 
 	defer close(l.in)
 	defer close(l.out)
@@ -70,12 +72,12 @@ func (l *Link) startConn(s string, m bool, o *Link, t Packet_Section) {
 	}
 }
 
-func (l *Linker) Send(p *Packet) error {
+func (l *Linker) Send(p *rocproto.Packet) error {
 
-	if (p.Header&uint32(Packet_VIDEO_CLIENT)) != 0 && l.remote.conn != nil {
+	if (p.Header&uint32(rocproto.Packet_VIDEO_CLIENT)) != 0 && l.remote.conn != nil {
 		l.remote.out <- p
 	}
-	if (p.Header&uint32(Packet_VIDEO_SERVER)) != 0 && l.local.conn != nil {
+	if (p.Header&uint32(rocproto.Packet_VIDEO_SERVER)) != 0 && l.local.conn != nil {
 		if l.local.conn != nil {
 			l.local.out <- p
 		} else {
@@ -85,7 +87,7 @@ func (l *Linker) Send(p *Packet) error {
 	return nil
 }
 
-func (l *Linker) RegisterChannel(r bool) chan *Packet {
+func (l *Linker) RegisterChannel(r bool) chan *rocproto.Packet {
 
 	if r {
 		return l.remote.in
@@ -93,7 +95,7 @@ func (l *Linker) RegisterChannel(r bool) chan *Packet {
 	return l.local.in
 }
 
-func (l *Link) handleConn(o *Link, t Packet_Section) {
+func (l *Link) handleConn(o *Link, t rocproto.Packet_Section) {
 
 	buff := make([]byte, 128)
 	quit := make(chan bool)
@@ -101,7 +103,7 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 
 		defer func() { quit <- true }()
 
-		m := new(Packet)
+		m := new(rocproto.Packet)
 		for {
 			r, err := l.conn.Read(buff[0:])
 			if misc.CheckError(err, "Receiving data from conn", false) != nil {
@@ -121,7 +123,7 @@ func (l *Link) handleConn(o *Link, t Packet_Section) {
 			if m.Header&uint32(t) != 0 {
 				l.in <- m
 			}
-			if (m.Header&uint32(Packet_MASK_DEST))&^uint32(t) != 0 && o.conn != nil {
+			if (m.Header&uint32(rocproto.Packet_MASK_DEST))&^uint32(t) != 0 && o.conn != nil {
 				o.out <- m
 			}
 		}
