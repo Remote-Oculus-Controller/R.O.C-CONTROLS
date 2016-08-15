@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/golang/protobuf/proto"
 	"log"
 	"net"
 	"time"
+
 	"github.com/Remote-Oculus-Controller/proto"
 	"github.com/Remote-Oculus-Controller/proto/go"
+	"github.com/golang/protobuf/proto"
 )
 
 func main() {
@@ -41,7 +42,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-		proto.Unmarshal(buff[:i], r)
+	proto.Unmarshal(buff[:i], r)
 	if err != nil {
 		fmt.Println(err)
 		return
