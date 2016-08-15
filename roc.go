@@ -2,9 +2,10 @@ package roc
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
 	"github.com/hybridgroup/gobot"
-	"log"
 )
 
 type Roc struct {
@@ -44,17 +45,18 @@ func NewRoc(lS, rS string, lT, rT bool) *Roc {
 }
 
 func (r *Roc) handleChannel() {
-	defer func() {
+	/*	defer func() {
 		if r := recover(); r != nil {
 			log.Println(r, "-> Recovered !!")
 		}
-	}()
+	}()*/
 	go r.handleCmd(r.cmd)
 	go r.handleData(r.data)
 	go r.handleError(r.error)
 	for {
 		select {
 		case b := <-r.l.remote.in:
+			log.Printf("Packet ==>	%v", b)
 			switch b.Header & Mask_Type {
 			case CMD:
 				r.cmd <- b
@@ -77,8 +79,8 @@ func (r *Roc) handleCmd(ch chan *rocproto.Packet) {
 		NoneLoop:
 			for {
 				select {
-				case p := <-ch:
-					p = p
+				case _ = <-ch:
+					continue
 				case <-r.AiLock:
 					break NoneLoop
 				}

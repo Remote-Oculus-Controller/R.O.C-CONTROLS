@@ -3,10 +3,11 @@ package roc
 import (
 	"errors"
 	"fmt"
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
-	"github.com/hybridgroup/gobot"
 	"go/types"
 	"log"
+
+	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
+	"github.com/hybridgroup/gobot"
 )
 
 type RocRobot struct {

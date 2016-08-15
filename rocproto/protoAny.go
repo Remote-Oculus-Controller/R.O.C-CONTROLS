@@ -2,6 +2,7 @@ package rocproto
 
 import (
 	"fmt"
+
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/ptypes/any"
 )

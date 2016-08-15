@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
-	"github.com/Happykat/R.O.C-CONTROLS"
-	"github.com/golang/protobuf/proto"
 	"log"
 	"net"
 	"time"
+
+	"github.com/Happykat/R.O.C-CONTROLS"
+	"github.com/golang/protobuf/proto"
 )
 
 func main() {
