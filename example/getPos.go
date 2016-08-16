@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/Happykat/R.O.C-CONTROLS"
-	"github.com/Happykat/R.O.C-CONTROLS/robots"
-	"github.com/golang/protobuf/proto"
 	"net"
+
+	"github.com/Remote-Oculus-Controller/proto"
+	"github.com/golang/protobuf/proto"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 		return
 	}
 	defer conn.Close()
-	p := &roc.Packet{}
+	p := &rocproto.Packet{}
 	for i := 0; i < 5; i++ {
 		r, err := conn.Read(buff)
 		if err != nil {
@@ -30,13 +30,7 @@ func main() {
 			return
 		}
 
-		c := robots.Coord{}
-		err = roc.UnpackAny(p.GetPayload(), &c)
-		if err != nil {
-			fmt.Println(err.Error())
-			return
-		}
-		fmt.Printf("Gps Coordinates : %+v", c)
+		fmt.Printf("Gps Coordinates : %+v\n", p.Coord)
 	}
 
 }

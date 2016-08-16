@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 
-	"github.com/Happykat/R.O.C-CONTROLS"
-	"github.com/Happykat/R.O.C-CONTROLS/robots"
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS"
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/robots"
 )
 
 var remote string
@@ -17,7 +17,7 @@ func main() {
 	r := roc.NewRoc(local, remote, local_t, remote_t)
 	r.AddRocRobot(robots.NewGPS().RocRobot)
 	r.AddRocRobot(robots.NewMotion().RocRobot)
-	r.AddRocRobot(robots.NewAI(r).RocRobot)
+	//r.AddRocRobot(robots.NewAI(r).RocRobot)
 	r.Start()
 }
 

@@ -6,7 +6,7 @@ import (
 	"go/types"
 	"log"
 
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
+	"github.com/Remote-Oculus-Controller/proto"
 	"github.com/hybridgroup/gobot"
 )
 

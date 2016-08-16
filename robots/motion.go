@@ -1,14 +1,20 @@
 package robots
 
 import (
-	"github.com/Happykat/R.O.C-CONTROLS"
-	"github.com/Happykat/R.O.C-CONTROLS/misc"
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
+	"log"
+	"math"
+
+	"errors"
+
+	"fmt"
+
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS"
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
+	"github.com/Remote-Oculus-Controller/proto"
+	"github.com/Remote-Oculus-Controller/proto/go"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/firmata"
 	"github.com/hybridgroup/gobot/platforms/gpio"
-	"log"
-	"math"
 )
 
 type Motion struct {
@@ -16,7 +22,7 @@ type Motion struct {
 	arduino        *firmata.FirmataAdaptor
 	servoX, servoY *gpio.ServoDriver
 	motorL, motorR *gpio.ServoDriver
-	rocproto.Gyro
+	rocproto.Cam
 	dir float64
 }
 
@@ -64,7 +70,7 @@ func NewMotion() *Motion {
 }
 
 func (m *Motion) Stop() {
-	log.Println("Motion : reset cam pos and stopping motors")
+	log.Println("Motion : resseting camera position and stopping motors")
 	m.resetCam(nil)
 	m.motorR.Move(90)
 	m.motorL.Move(90)
@@ -72,37 +78,27 @@ func (m *Motion) Stop() {
 
 func (m *Motion) moveCam(p *rocproto.Packet) error {
 
-	var g rocproto.Gyro
-
-	err := rocproto.UnpackAny(p.Payload, &g)
-	if err != nil {
-		log.Println("Impossible conversion Message is not a Gyro")
-		return err
+	if p.Cam == nil {
+		return errors.New(fmt.Sprintf("Mouvement error: moving camera ==>	%v", p))
 	}
-	x := uint8(gobot.ToScale(gobot.FromScale(g.X, -90, 90), 0, 180))
-	y := uint8(gobot.ToScale(gobot.FromScale(g.Y, -35, 35), 90, 180))
+	x := uint8(gobot.ToScale(gobot.FromScale(p.Cam.X, -90, 90), 0, 180))
+	y := uint8(gobot.ToScale(gobot.FromScale(p.Cam.Y, -35, 35), 90, 180))
 	m.X = float64(x)
 	m.Y = float64(y)
 	m.servoX.Move(x)
 	m.servoY.Move(y)
-	return nil
+	return m.getCamPos(p)
 }
 
 func (m *Motion) getCamPos(p *rocproto.Packet) error {
 
-	var err error
-
-	rocproto.ReverseTo(p, rocproto.Packet_DATA)
-	g := rocproto.Gyro{m.X - DEFAULT_CAM_X, m.Y - DEFAULT_CAM_Y}
-	p.Payload, err = rocproto.PackAny(&g)
-	if err != nil {
-		return err
-	}
+	goPack.ReverseTo(p, rocproto.Packet_DATA)
+	p.Cam = &rocproto.Cam{X: m.X - DEFAULT_CAM_X, Y: m.Y - DEFAULT_CAM_Y}
 	return m.Send(p)
 }
 
 func (m *Motion) getCamPosApi(params map[string]interface{}) interface{} {
-	return m.Gyro
+	return rocproto.Cam{X: m.X - DEFAULT_CAM_X, Y: m.Y - DEFAULT_CAM_Y}
 }
 
 func (m *Motion) resetCam(p *rocproto.Packet) error {
@@ -120,24 +116,20 @@ func (m *Motion) resetCamAPI(params map[string]interface{}) interface{} {
 
 func (m *Motion) move(p *rocproto.Packet) error {
 
-	n := &rocproto.Mouv{}
-	err := rocproto.UnpackAny(p.Payload, n)
-	if err != nil {
-		log.Println("Impossible conversion Message is not a Mouv")
-		return err
-	}
-
 	var r int64 = 50
 
-	theta := int64(n.Angle * 180 / math.Pi)
+	if p.Mv == nil {
+		return errors.New(fmt.Sprintf("Mouvement error, using motors ==>	%v", p))
+	}
+	theta := int64(p.Mv.Angle * 180 / math.Pi)
 	theta = ((theta + 180) % 360) - 180
 	v_a := r * (45 - theta%90) / 45        // falloff of main motor
 	v_b := misc.Min(100, 2*r+v_a, 2*r-v_a) // compensation of other motor
 	lR, rR := thrust(theta, v_a, v_b)
 	lS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(lR)/100), -90, 90), 0, 180)
 	rS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(rR)/100), -90, 90), 0, 180)
-	n.Speed = float64(lR+rR) / 2
-	gobot.Publish(m.Event("move"), *n)
+	p.Mv.Speed = float64(lR+rR) / 2
+	gobot.Publish(m.Event("move"), *p.Mv)
 	m.motorL.Move(uint8(lS))
 	m.motorR.Move(uint8(rS))
 	return nil

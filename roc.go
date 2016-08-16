@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
+	"github.com/Remote-Oculus-Controller/proto"
 	"github.com/hybridgroup/gobot"
 )
 
@@ -21,7 +21,7 @@ type Roc struct {
 const (
 	MAGIC = uint32(rocproto.Packet_MAGIC_Number)
 
-	Shift_TYPE = uint32(rocproto.Packet_SHIFT)
+	Shift_TYPE = uint32(rocproto.Packet_SHIFT_TYPE)
 	Mask_Type  = uint32(rocproto.Packet_MASK_TYPE) << Shift_TYPE
 
 	CMD   = uint32(rocproto.Packet_COMMAND) << Shift_TYPE
@@ -45,18 +45,18 @@ func NewRoc(lS, rS string, lT, rT bool) *Roc {
 }
 
 func (r *Roc) handleChannel() {
-	/*	defer func() {
+	defer func() {
 		if r := recover(); r != nil {
 			log.Println(r, "-> Recovered !!")
 		}
-	}()*/
+	}()
 	go r.handleCmd(r.cmd)
 	go r.handleData(r.data)
 	go r.handleError(r.error)
 	for {
 		select {
 		case b := <-r.l.remote.in:
-			log.Printf("Packet ==>	%v", b)
+			log.Printf("Packet ==>	%v\n", b)
 			switch b.Header & Mask_Type {
 			case CMD:
 				r.cmd <- b
@@ -101,12 +101,12 @@ func (r *Roc) handleCmd(ch chan *rocproto.Packet) {
 
 func (r *Roc) handleData(ch chan *rocproto.Packet) {
 	p := <-ch
-	log.Printf("Data ! ==> %+v", p)
+	log.Printf("Data ! ==> %+v\n", p)
 }
 
 func (r *Roc) handleError(ch chan *rocproto.Packet) {
 	p := <-ch
-	log.Printf("Error ! ==> %+v", p)
+	log.Printf("Error ! ==> %+v\n", p)
 }
 
 func (r *Roc) Start() error {

@@ -2,10 +2,11 @@ package robots
 
 import (
 	"fmt"
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
-	"github.com/hybridgroup/gobot"
 	"log"
 	"time"
+
+	"github.com/Remote-Oculus-Controller/proto"
+	"github.com/hybridgroup/gobot"
 )
 
 type Data struct {
@@ -33,7 +34,7 @@ func (ia *AI) obstacle() {
 	gobot.On(ia.buttonObstacle.Event("push"), func(data interface{}) {
 		d.startPushingTime = time.Now()
 		log.Println("Le bouton poussoir est enfonce")
-		ia.sendMessageAI(rocproto.AiInfo_OBSTACLE)
+		ia.sendMessageAI(rocproto.AiCodes_OBSTACLE)
 		select {
 		case <-time.After(time.Second * 3):
 			ia.toggle(true)
@@ -50,7 +51,7 @@ func (ia *AI) obstacle() {
 
 	gobot.On(ia.buttonObstacle.Event("release"), func(data interface{}) {
 		log.Println("Button poussoir est relache")
-		ia.sendMessageAI(rocproto.AiInfo_N_OBSTACLE)
+		ia.sendMessageAI(rocproto.AiCodes_N_OBSTACLE)
 		ch <- true
 	})
 

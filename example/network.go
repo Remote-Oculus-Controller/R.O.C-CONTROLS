@@ -6,6 +6,11 @@ import (
 	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS"
 )
 
+var remote string
+var local string
+var remote_t bool
+var local_t bool
+
 func main() {
 	flag.Parse()
 	r := roc.NewRoc(local, remote, local_t, remote_t)

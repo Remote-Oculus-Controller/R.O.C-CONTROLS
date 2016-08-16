@@ -31,7 +31,7 @@ func main() {
 	}
 	b, err := proto.Marshal(r)
 	if err != nil {
-		fmt.Printf(err)
+		fmt.Println(err)
 		return
 	}
 	fmt.Println("Sending")
@@ -47,7 +47,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("p: %+v", *r)
+	fmt.Printf("p: %+v\n", *r)
 	if err != nil {
 		fmt.Println(err)
 		return
