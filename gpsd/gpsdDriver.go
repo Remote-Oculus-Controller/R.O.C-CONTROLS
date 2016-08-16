@@ -2,10 +2,11 @@ package gpsd
 
 import (
 	"encoding/json"
-	"github.com/hybridgroup/gobot"
-	"github.com/larsth/go-gpsdjson"
 	"log"
 	"time"
+
+	"github.com/hybridgroup/gobot"
+	"github.com/larsth/go-gpsdjson"
 )
 
 type GpsdDriver struct {
@@ -39,6 +40,7 @@ func NewGpsdDriver(adaptor *GpsdAdaptor, name string, t ...time.Duration) *GpsdD
 	return gpsd
 }
 
+// TODO better pause and toogle handling
 func (gpsd *GpsdDriver) Start() (errs []error) {
 
 	gpsd.w.GpsdWrite(START)

@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
+	"github.com/Remote-Oculus-Controller/proto"
 	"github.com/hybridgroup/gobot"
 )
 
+//Roc super control super of robots
 type Roc struct {
 	*gobot.Gobot                                         //Gobot
 	cmap         map[uint32]func(*rocproto.Packet) error //cmd func map
@@ -19,16 +20,18 @@ type Roc struct {
 }
 
 const (
-	MAGIC = uint32(rocproto.Packet_MAGIC_Number)
+	Magic = uint32(rocproto.Packet_MAGIC_Number)
 
-	Shift_TYPE = uint32(rocproto.Packet_SHIFT)
-	Mask_Type  = uint32(rocproto.Packet_MASK_TYPE) << Shift_TYPE
+	ShiftType = uint32(rocproto.Packet_SHIFT_TYPE)
+	MaskType  = uint32(rocproto.Packet_MASK_TYPE) << ShiftType
+	MaskSend  = uint32(rocproto.Packet_MASK_SEND)
 
-	CMD   = uint32(rocproto.Packet_COMMAND) << Shift_TYPE
-	DATA  = uint32(rocproto.Packet_DATA) << Shift_TYPE
-	ERROR = uint32(rocproto.Packet_ERROR) << Shift_TYPE
+	Cmd   = uint32(rocproto.Packet_COMMAND) << ShiftType
+	Data  = uint32(rocproto.Packet_DATA) << ShiftType
+	Error = uint32(rocproto.Packet_ERROR) << ShiftType
 )
 
+//NewRoc create
 func NewRoc(lS, rS string, lT, rT bool) *Roc {
 
 	roc := &Roc{
@@ -36,36 +39,40 @@ func NewRoc(lS, rS string, lT, rT bool) *Roc {
 		cmap:   make(map[uint32]func(*rocproto.Packet) error),
 		l:      NewLinker(lS, rS, lT, rT),
 		AiLock: make(chan bool),
-		cmd:    make(chan *rocproto.Packet),
-		data:   make(chan *rocproto.Packet),
-		error:  make(chan *rocproto.Packet),
+		cmd:    make(chan *rocproto.Packet, 512),
+		data:   make(chan *rocproto.Packet, 512),
+		error:  make(chan *rocproto.Packet, 10),
 	}
 	roc.apiCreate()
 	return roc
 }
 
 func (r *Roc) handleChannel() {
-	/*	defer func() {
+	defer func() {
 		if r := recover(); r != nil {
 			log.Println(r, "-> Recovered !!")
 		}
-	}()*/
+	}()
 	go r.handleCmd(r.cmd)
 	go r.handleData(r.data)
 	go r.handleError(r.error)
 	for {
 		select {
 		case b := <-r.l.remote.in:
-			log.Printf("Packet ==>	%v", b)
-			switch b.Header & Mask_Type {
-			case CMD:
+			log.Printf("Packet ==>	%v\n", b)
+			switch b.Header & MaskType {
+			case Cmd:
 				r.cmd <- b
-			case DATA:
+			case Data:
 				r.data <- b
-			case ERROR:
+			case Error:
 				r.error <- b
 			default:
-				log.Println("Unknown Type", b.Header&Mask_Type)
+				e := NewError(rocproto.Error_Packet,
+					"Unknown packet Type :	"+fmt.Sprintf("%b", b.Header&MaskType),
+					int32(b.Header&MaskSend))
+				log.Println(e.Err)
+				r.l.Send(e)
 			}
 		}
 	}
@@ -90,10 +97,14 @@ func (r *Roc) handleCmd(ch chan *rocproto.Packet) {
 			if k {
 				err := f(p)
 				if err != nil {
+					e := NewError(rocproto.Error_CMDEX, err.Error(), int32(p.Header&MaskSend))
 					log.Println(err.Error())
+					r.l.Send(e)
 				}
 			} else {
-				log.Println("Unknow code", p.ID)
+				e := NewError(rocproto.Error_Packet, "Unknown packet CMD ID :	"+fmt.Sprint(p.ID), int32(p.Header&MaskSend))
+				log.Println(e.Err)
+				r.l.Send(e)
 			}
 		}
 	}
@@ -101,14 +112,15 @@ func (r *Roc) handleCmd(ch chan *rocproto.Packet) {
 
 func (r *Roc) handleData(ch chan *rocproto.Packet) {
 	p := <-ch
-	log.Printf("Data ! ==> %+v", p)
+	log.Printf("Data ! ==> %+v\n", p)
 }
 
 func (r *Roc) handleError(ch chan *rocproto.Packet) {
 	p := <-ch
-	log.Printf("Error ! ==> %+v", p)
+	log.Printf("Error ! ==> %+v\n", p)
 }
 
+//Start all component
 func (r *Roc) Start() error {
 
 	r.l.Start()
@@ -127,24 +139,26 @@ func (r *Roc) Start() error {
 	return nil
 }
 
-func (roc *Roc) Stop() []error {
-	return roc.Gobot.Stop()
+//Stop you know what
+func (r *Roc) Stop() []error {
+	return r.Gobot.Stop()
 }
 
-func (roc *Roc) AddRocRobot(m *RocRobot) {
-	if roc.Robot(m.Name) != nil {
-		log.Println("Warning !", m.Name, "bot overwritten")
+//AddRocRobot add one Robot to the collection
+func (r *Roc) AddRocRobot(m *Robot) {
+	if r.Robot(m.Name) != nil {
+		log.Println("Warning ==>", m.Name, "bot overwritten")
 	}
-	m.l = roc.l
+	m.l = r.l
 	for k, v := range m.cmap {
-		_, ok := roc.cmap[k]
+		_, ok := r.cmap[k]
 		if ok {
-			log.Println("command code", k, "already exist skipping")
+			log.Println("Warning ==> command code", k, "already exist skipping")
 			continue
 		}
-		roc.cmap[k] = v
+		r.cmap[k] = v
 	}
-	roc.Gobot.AddRobot(m.Robot)
+	r.Gobot.AddRobot(m.Robot)
 }
 
 //Directly add func with code, if specified create the api entry

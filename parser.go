@@ -1,27 +1,27 @@
 package roc
 
 import (
-	"io/ioutil"
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 )
 
-type Cmd struct {
+type cmd struct {
 	Name              string
 	Code              byte
 	Min, Max, Default int
 }
 
-type Cmds struct {
-	Commands []Cmd
+type cmds struct {
+	Commands []cmd
 }
 
-func ParseCommands(f_path string) (map[string]Cmd, error) {
+func parseCommands(fPath string) (map[string]cmd, error) {
 
-	var cmds Cmds
+	var cmds cmds
 
-	c := make(map[string]Cmd)
-	data, err := ioutil.ReadFile(f_path)
+	c := make(map[string]cmd)
+	data, err := ioutil.ReadFile(fPath)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
@@ -37,7 +37,7 @@ func ParseCommands(f_path string) (map[string]Cmd, error) {
 	return c, nil
 }
 
-func DecodeJsonFile(fp string) (map[string]interface{}, error) {
+func decodeJSONFile(fp string) (map[string]interface{}, error) {
 
 	var c interface{}
 
@@ -51,4 +51,3 @@ func DecodeJsonFile(fp string) (map[string]interface{}, error) {
 	}
 	return c.(map[string]interface{}), nil
 }
-

@@ -1,12 +1,14 @@
 package robots
 
 import (
-	"github.com/Happykat/R.O.C-CONTROLS/misc"
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
-	"github.com/hybridgroup/gobot"
 	"log"
 	"math"
 	"time"
+
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
+	"github.com/Remote-Oculus-Controller/proto"
+	"github.com/Remote-Oculus-Controller/proto/go"
+	"github.com/hybridgroup/gobot"
 )
 
 type DataLux struct {
@@ -36,8 +38,8 @@ func (ia *AI) light() error {
 			coord := ia.getPos(nil).(rocproto.Coord)
 			coord.Lat = coord.Lat + math.Cos(d.getAngle())
 			coord.Long = coord.Long + math.Sin(d.getAngle())
-			p := rocproto.Prepare(uint32(rocproto.AiInfo_DLIGH), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
-			p.Payload, err = rocproto.PackAny(&coord)
+			p := goPack.Prepare(uint32(rocproto.AiCodes_DLIGHT), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
+			p.Coord = &coord
 			if err != nil {
 				return err
 			}
@@ -78,8 +80,7 @@ func (ia *AI) lightDetect(p *rocproto.Packet) error {
 
 	var err error
 
-	p = &rocproto.Packet{}
-	p.Payload, err = rocproto.PackAny(&rocproto.Mouv{Speed: 0, Angle: math.Pi / 2})
+	p = &rocproto.Packet{Mv: &rocproto.Mv{Speed: 0, Angle: math.Pi / 2}}
 	if misc.CheckError(err, "Packing in lightDetect", false) != nil {
 		return err
 	}

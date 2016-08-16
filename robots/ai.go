@@ -1,15 +1,16 @@
 package robots
 
 import (
-	"github.com/Happykat/R.O.C-CONTROLS"
-	"github.com/Happykat/R.O.C-CONTROLS/misc"
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS"
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
+	"github.com/Remote-Oculus-Controller/proto"
+	"github.com/Remote-Oculus-Controller/proto/go"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/gpio"
 )
 
 type AI struct {
-	*roc.RocRobot
+	*roc.Robot
 	m              *Motion
 	buttonObstacle *gpio.ButtonDriver
 	sensorLight    *gpio.AnalogSensorDriver
@@ -21,7 +22,7 @@ type AI struct {
 
 func NewAI(r *roc.Roc) *AI {
 
-	ai := &AI{RocRobot: roc.NewRocRobot(nil)}
+	ai := &AI{Robot: roc.NewRocRobot(nil)}
 	ai.lock = r.AiLock
 	work := func() {
 	}
@@ -35,10 +36,10 @@ func NewAI(r *roc.Roc) *AI {
 	ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorL", "0")
 	ai.m.Robot.AddDevice(ai.buttonObstacle)
 	ai.m.Robot.AddDevice(ai.sensorLight)
-	ai.Robot = gobot.NewRobot("ai", work)
+	ai.Robot.Robot = gobot.NewRobot("ai", work)
 	ai.AddFunc(nil, 0, ai.pushButton, "pushButton")
 	ai.AddFunc(nil, 0, ai.releaseButton, "releaseButton")
-	ai.AddFunc(ai.startLightWorkaround, uint32(rocproto.AiInfo_LIGHT), ai.startLightDetect, "pushLightButton")
+	ai.AddFunc(ai.startLightWorkaround, uint32(rocproto.AiCodes_LIGHT), ai.startLightDetect, "pushLightButton")
 	ai.obstacle()
 	ai.pending = false
 	ai.firstTime = true
@@ -49,18 +50,18 @@ func (ai *AI) toggle(b bool) error {
 
 	ai.lock <- b
 	if b {
-		return ai.sendMessageAI(rocproto.AiInfo_LOCK)
+		return ai.sendMessageAI(rocproto.AiCodes_LOCK)
 	} else {
-		return ai.sendMessageAI(rocproto.AiInfo_UNLOCK)
+		return ai.sendMessageAI(rocproto.AiCodes_UNLOCK)
 	}
 
 }
 
-func (ia *AI) sendMessageAI(id rocproto.AiInfo_Codes) error {
+func (ia *AI) sendMessageAI(id rocproto.AiCodes_Codes) error {
 
 	var err error
 
-	p := rocproto.Prepare(uint32(id), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
+	p := goPack.Prepare(uint32(id), rocproto.Packet_DATA, rocproto.Packet_CONTROL_SERVER, rocproto.Packet_VIDEO_CLIENT)
 	if misc.CheckError(err, "Sending Ai message", false) != nil {
 		return err
 	}

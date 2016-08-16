@@ -2,31 +2,32 @@ package roc
 
 import (
 	"errors"
-	"fmt"
-	"go/types"
 	"log"
 
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
+	"github.com/Remote-Oculus-Controller/proto"
 	"github.com/hybridgroup/gobot"
 )
 
-type RocRobot struct {
+//RocRobot defined all element needed to correctly create a robot compatible with the architecture.
+type Robot struct {
 	*gobot.Robot
 	l    *Linker
 	cmap map[uint32]func(*rocproto.Packet) error
 }
 
-const PARAM_ERR = "MISSING %s in parameters"
+const ParamErr = "MISSING %s in parameters"
 
-func NewRocRobot(l *Linker) *RocRobot {
+//NewRocRobot create a new shell for a "robots" to be include
+func NewRocRobot(l *Linker) *Robot {
 
-	r := new(RocRobot)
+	r := new(Robot)
 	r.l = l
 	r.cmap = make(map[uint32]func(*rocproto.Packet) error)
 	return r
 }
 
-func (r *RocRobot) Send(p *rocproto.Packet) error {
+//Send force header sender section and check if packet can be and was sent.
+func (r *Robot) Send(p *rocproto.Packet) error {
 
 	p.Header = p.Header | (uint32(rocproto.Packet_CONTROL_SERVER) << uint32(rocproto.Packet_SHIFT_SEND))
 	if r.l == nil {
@@ -40,7 +41,11 @@ func (r *RocRobot) Send(p *rocproto.Packet) error {
 	return nil
 }
 
-func (r *RocRobot) AddFunc(f func(*rocproto.Packet) error, code uint32, api func(map[string]interface{}) interface{}, name string) {
+//AddFunc can add a function to the command method slice (r.cmap[]) and/or to the api.
+//
+//A code is necessary in case of a normal function, used as the command ID.
+//Giving a name is not mandatory put highly advised, Mandatory for api entry.
+func (r *Robot) AddFunc(f func(*rocproto.Packet) error, code uint32, api func(map[string]interface{}) interface{}, name string) {
 	if f != nil && code != 0 {
 		log.Println("Assigning function", name, "to code", code)
 		_, k := r.cmap[code]
@@ -53,19 +58,4 @@ func (r *RocRobot) AddFunc(f func(*rocproto.Packet) error, code uint32, api func
 		log.Println("Creating api entry", name)
 		r.AddCommand(name, api)
 	}
-}
-
-func (r *RocRobot) CheckAPIParams(m map[string]interface{}, t []types.BasicKind, params ...string) error {
-
-	if len(t) != len(params) {
-		return errors.New("Bad formating, expecting same number of type and parameters to create api function")
-	}
-	for _, v := range params {
-		_, ok := m[v]
-		assert := true
-		if !ok || !assert {
-			return errors.New(fmt.Sprintf(PARAM_ERR, v))
-		}
-	}
-	return nil
 }

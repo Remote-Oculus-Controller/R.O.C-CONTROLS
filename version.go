@@ -8,14 +8,15 @@ type version struct {
 	Name                string
 }
 
-var Version = version{1, 0, 2, "Beta", "Beta"}
+//Version
+var Version = version{1, 0, 0, "dev", "Beta ws v1"}
 
+//Build
 var Build string
 
 func (v version) String() string {
 	if v.Label != "" {
 		return fmt.Sprintf("Roll version %d.%d.%d-%s \"%s\"\nGit commit hash: %s", v.Major, v.Minor, v.Patch, v.Label, v.Name, Build)
-	} else {
-		return fmt.Sprintf("Roll version %d.%d.%d \"%s\"\nGit commit hash: %s", v.Major, v.Minor, v.Patch, v.Name, Build)
 	}
+	return fmt.Sprintf("Roll version %d.%d.%d \"%s\"\nGit commit hash: %s", v.Major, v.Minor, v.Patch, v.Name, Build)
 }
