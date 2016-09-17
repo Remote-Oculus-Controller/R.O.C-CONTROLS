@@ -1,0 +1,18 @@
+[
+  {"Direction": "forward",    "Duration": 5000},
+  {"Direction": "right",      "Duration": 750},
+  {"Direction": "forward",    "Duration": 5000},
+  {"Direction": "left",       "Duration": 750},
+  {"Direction": "forward",    "Duration": 5000},
+  {"Direction": "right",      "Duration": 750},
+  {"Direction": "forward",    "Duration": 5000},
+  {"Direction": "left",       "Duration": 750},
+  {"Direction": "forward",    "Duration": 5000},
+  {"Direction": "right",      "Duration": 750},
+  {"Direction": "forward",    "Duration": 5000},
+  {"Direction": "right",      "Duration": 750},
+  {"Direction": "forward",    "Duration": 15000},
+  {"Direction": "right",      "Duration": 750},
+  {"Direction": "forward",    "Duration": 15000},
+  {"Direction": "right",      "Duration": 750}
+]

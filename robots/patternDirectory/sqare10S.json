@@ -1,0 +1,10 @@
+[
+  {"Direction": "forward", "Duration": 10000},
+  {"Direction": "left", "Duration": 750},
+  {"Direction": "forward", "Dration": 10000},
+  {"Direction": "left", "Duration": 750},
+  {"Direction": "forward", "Duration": 10000},
+  {"Direction": "left", "Duration": 750},
+  {"Direction": "forward", "Duration": 10000},
+  {"Direction": "left", "Duration": 750}
+]
