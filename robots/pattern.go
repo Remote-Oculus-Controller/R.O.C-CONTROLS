@@ -1,26 +1,21 @@
 package robots
 
 import (
-	"fmt"
-	"github.com/Happykat/R.O.C-CONTROLS/rocproto"
-	"github.com/hybridgroup/gobot"
-	"log"
-	"time"
-	"crypto/x509/pkix"
-	"io"
-	"io/ioutil"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"os"
+	"time"
 )
 
 type Movement struct {
 	Direction string // forward/backward/left/right
-	Duration int
+	Duration  int
 }
 
 type Data struct {
-	fileData string
-	filePath string
+	fileData  string
+	filePath  string
 	patternOn bool
 	movements []Movement
 }
@@ -44,9 +39,8 @@ func (ia *AI) startPattern() {
 	if err != nil {
 		fmt.Println("error : " + err)
 	}
-	for
-	{
-		if (data.patternOn == false){
+	for {
+		if data.patternOn == false {
 			return
 		}
 		for _, mov := range data.movements {
@@ -84,5 +78,3 @@ func (ia *AI) startPattern() {
 		}
 	}
 }
-
-
