@@ -101,13 +101,17 @@ func (l *Link) handleConn(o *Link, t rocproto.Packet_Section) {
 
 		m := new(rocproto.Packet)
 		for {
-			r, err := l.conn.Read(buff[0:])
+			i, err := l.conn.Read(buff[0:])
 			if misc.CheckError(err, "Receiving data from conn", false) != nil {
 				return
 			}
-			if err = checkBuffer(r, buff, m); err != nil {
+			if err = checkBuffer(i, buff, m); err != nil {
+				e := NewError(rocproto.Error_Packet, err.Error(), int32(t&^rocproto.Packet_CONTROL_SERVER))
+				log.Println("Error : ", e)
+				l.out <- e
 				continue
 			}
+			log.Println("Received ==>	", m)
 			routPacket(m, l, o, t)
 		}
 	}()
@@ -262,7 +266,8 @@ func routPacket(m *rocproto.Packet, l, o *Link, t rocproto.Packet_Section) {
 		fmt.Println("Accepted", m)
 		l.in <- m
 	}
-	if (m.Header&uint32(rocproto.Packet_MASK_DEST))&^uint32(t) != 0 && o.conn != nil {
+	if (m.Header&uint32(rocproto.Packet_MASK_DEST))&^uint32(t) != 0 && (o.conn != nil || o.ws != nil) {
+		log.Println("Packet routed")
 		o.out <- m
 	}
 }

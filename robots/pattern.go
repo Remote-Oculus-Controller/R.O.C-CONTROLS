@@ -4,77 +4,101 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"time"
 )
 
 type Movement struct {
 	Direction string // forward/backward/left/right
-	Duration  int
+	Duration  time.Duration
 }
 
-type Data struct {
-	fileData  string
+type Data_new struct {
+	fileData  []byte
 	filePath  string
 	patternOn bool
 	movements []Movement
 }
 
-func (ia *AI) stopPattern() {
+func (ia *AI) stopPattern(map[string]interface{}) interface{} {
+
 	//find a way to stop pattern
+	ia.pattern <- true
+	return fmt.Sprintf("Pattern stopped at %v", time.Now())
 }
 
-func (ia *AI) startPattern() {
+func (ia *AI) startPattern(map[string]interface{}) interface{} {
 
-	var data = new(Data)
-	data.movements = new([]Movement)
+	var data = new(Data_new)
+	var err error
+
+	data.fileData = make([]byte, 1024)
+	data.movements = []Movement{}
 	data.patternOn = true
 	data.filePath = "./patternDirectory/default.json"
 
 	if _, err := os.Stat(data.filePath); os.IsNotExist(err) {
 		fmt.Println("Error default.json does not exist")
 	}
-	data.fileData = ioutil.ReadFile(data.filePath)
-	err := json.Unmarshal([]byte(data.fileData), &data.movements)
+	data.fileData, err = ioutil.ReadFile(data.filePath)
 	if err != nil {
-		fmt.Println("error : " + err)
+		log.Println(err)
+		return fmt.Sprintf("Cannot start pattern %v: %v", data.filePath, err.Error())
 	}
-	for {
-		if data.patternOn == false {
-			return
-		}
+	err = json.Unmarshal([]byte(data.fileData), &data.movements)
+	if err != nil {
+		log.Println("error : " + err.Error())
+		return fmt.Sprintf("Cannot start pattern %v: %v", data.filePath, err.Error())
+	}
+
+	var it bool = true
+
+	defer ia.m.stopMoving()
+	for it {
 		for _, mov := range data.movements {
-			fmt.Println("Prise en chage d'une nouvelle ligne json: [" + mov.Direction + "," + mov.Duration + "]")
+			fmt.Println("Prise en chage d'une nouvelle ligne json: [", mov.Direction, ",", mov.Duration, "]")
 			switch mov.Direction {
 			case "forward":
-				fmt.Println("Avancer pendant " + mov.Duration + " ms")
+				fmt.Println("Avancer pendant ", time.Millisecond*mov.Duration)
 				ia.m.moveForward()
-				<-time.After(time.Millisecond * mov.Duration)
-				ia.m.stopMoving()
+				it = ia.interruptTimer(time.Millisecond * mov.Duration)
 				break
 			case "backward":
-				fmt.Println("Avancer pendant " + mov.Duration + " ms")
+				fmt.Println("Recule pendant ", time.Millisecond*mov.Duration)
 				ia.m.moveBackward()
-				<-time.After(time.Millisecond * mov.Duration)
-				ia.m.stopMoving()
+				it = ia.interruptTimer(time.Millisecond * mov.Duration)
 				break
 			case "right":
-				fmt.Println("Avancer pendant " + mov.Duration + " ms")
+				fmt.Println("Tourner droite pendant ", time.Millisecond*mov.Duration)
 				ia.m.turnRight()
-				<-time.After(time.Millisecond * mov.Duration)
-				ia.m.stopMoving()
+				it = ia.interruptTimer(time.Millisecond * mov.Duration)
 				break
 			case "left":
-				fmt.Println("Avancer pendant " + mov.Duration + " ms")
+				fmt.Println("Tourner gauche pendant ", time.Millisecond*mov.Duration)
 				ia.m.turnLeft()
-				<-time.After(time.Millisecond * mov.Duration)
-				ia.m.stopMoving()
+				it = ia.interruptTimer(time.Millisecond * mov.Duration)
 				break
 			default:
-				fmt.Println("Unknown comand in this pattern : [" + mov.Direction + "]")
-				return
-				break
+				fmt.Println("Unknown comand in this pattern : [", mov.Direction, "]")
+				return fmt.Sprintf("Unknown comand in %v : [%v]", data.filePath, mov.Direction)
+			}
+			ia.m.stopMoving()
+			if !it {
+				return fmt.Sprintf("Pattern interrupted %v", data.filePath)
 			}
 		}
+	}
+	return fmt.Sprintf("Pattern finished")
+}
+
+func (ia *AI) interruptTimer(t time.Duration) bool {
+	select {
+	case <-time.After(t):
+		fmt.Println(t)
+		return true
+	case <-ia.pattern:
+		fmt.Println("interrupted")
+		return false
 	}
 }

@@ -131,7 +131,15 @@ func (m *Motion) move(p *rocproto.Packet) error {
 	p.Mv.Speed = float64(lR+rR) / 2
 	gobot.Publish(m.Event("move"), *p.Mv)
 	m.motorL.Move(uint8(lS))
-	m.motorR.Move(uint8(rS))
+	m.motorR.Move((func() uint8 {
+		x := math.Abs(rS) - 90
+		if rS >= 90 {
+			return uint8(90 - x)
+		} else {
+			return uint8(90 + x)
+		}
+		return 90
+	})())
 	return nil
 }
 
@@ -173,6 +181,7 @@ func (m *Motion) moveBackward() {
 
 func (m *Motion) stopMoving() {
 
+	fmt.Println("Stopping motors")
 	m.motorL.Move(STOPSPEED)
 	m.motorR.Move(STOPSPEED)
 }

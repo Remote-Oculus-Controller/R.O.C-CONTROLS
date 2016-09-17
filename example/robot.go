@@ -22,10 +22,10 @@ func main() {
 }
 
 func init() {
-	flag.StringVar(&remote, "r", ":8001", "ip:port parameter, ip:port")
-	flag.StringVar(&local, "l", "", "ip:port parameter, ip:port")
+	flag.StringVar(&remote, "r", ":8001", "CLIENT ip:port parameter, ip:port")
 	flag.BoolVar(&remote_t, "rT", true,
 		"Set this side of connection as a server(true)or client(false)")
+	flag.StringVar(&local, "l", "", "VIDEO SERVER ip:port parameter, ip:port")
 	flag.BoolVar(&local_t, "lT", false,
 		"Set this side of connection as a server(true)or client(false)")
 }
