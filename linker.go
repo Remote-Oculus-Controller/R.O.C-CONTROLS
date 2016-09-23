@@ -31,9 +31,9 @@ type Link struct {
 	out, in chan *rocproto.Packet
 }
 
-//NewLinker Create a new Linker.
+//newLinker Create a new Linker.
 //The Link channel are buffered to contains a maximum of a 100 packet
-func NewLinker(lS, rS string, lT, rT bool) *Linker {
+func newLinker(lS, rS string, lT, rT bool) *Linker {
 
 	l := Linker{local: Link{conn: nil, ws: nil, out: make(chan *rocproto.Packet, 100), in: make(chan *rocproto.Packet, 100)},
 		remote: Link{conn: nil, ws: nil, out: make(chan *rocproto.Packet, 1024), in: make(chan *rocproto.Packet, 1024)},
@@ -44,7 +44,7 @@ func NewLinker(lS, rS string, lT, rT bool) *Linker {
 //Start a Linker connection.
 //
 //If an local ip is specified a TCP connection will be setup. In all case a remote connection is attempted.
-func (l *Linker) Start() {
+func (l *Linker) start() {
 	if l.lIP != "" {
 		log.Print("Staring local work")
 		go l.local.startConnTCP(l.lIP, l.lT, &l.remote, rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_SERVER)
@@ -55,9 +55,6 @@ func (l *Linker) Start() {
 
 //TODO timeout connection and try
 func (l *Link) startConnTCP(s string, m bool, o *Link, t rocproto.Packet_Section) {
-
-	defer close(l.in)
-	defer close(l.out)
 
 	var listener *net.TCPListener
 
@@ -202,6 +199,7 @@ func (l *Link) handleWS(o *Link, t rocproto.Packet_Section) {
 	defer func() { l.ws = nil }()
 
 	quit := make(chan bool)
+
 	go func() {
 
 		defer func() { quit <- true }()
@@ -231,6 +229,9 @@ func (l *Link) handleWS(o *Link, t rocproto.Packet_Section) {
 			log.Printf("Sending ==>	%v\n", m)
 			b, err := proto.Marshal(m)
 			if misc.CheckError(err, "linker.go/handleWS", false) != nil {
+				if m == nil {
+					return
+				}
 				continue
 			}
 			err = l.ws.WriteMessage(websocket.BinaryMessage, b)
@@ -273,31 +274,34 @@ func routPacket(m *rocproto.Packet, l, o *Link, t rocproto.Packet_Section) {
 }
 
 //Stop and close all resources and connections associated with the linker
-func (l *Linker) Stop() {
+func (l *Linker) stop() {
+	log.Println("Linker stopping")
 	if l.remote.conn != nil {
 		l.remote.conn.Close()
+	}
+	if l.remote.ws != nil {
+		l.remote.ws.Close()
 	}
 	close(l.remote.in)
 	close(l.remote.out)
 	if l.local.conn != nil {
 		l.local.conn.Close()
 	}
+	if l.local.ws != nil {
+		l.local.ws.Close()
+	}
 	close(l.local.in)
 	close(l.local.out)
 }
 
 //Send packet on either remote or local outer channel
-func (l *Linker) Send(p *rocproto.Packet) error {
+func (l *Linker) send(p *rocproto.Packet) error {
 
 	if (p.Header&uint32(rocproto.Packet_VIDEO_CLIENT)) != 0 && (l.remote.conn != nil || l.remote.ws != nil) {
 		l.remote.out <- p
 	}
 	if (p.Header&uint32(rocproto.Packet_VIDEO_SERVER)) != 0 && (l.local.conn != nil || l.local.ws != nil) {
-		if l.local.conn != nil {
-			l.local.out <- p
-		} else {
-			return errors.New("Local connection not established could not send message")
-		}
+		l.local.out <- p
 	}
 	return nil
 }

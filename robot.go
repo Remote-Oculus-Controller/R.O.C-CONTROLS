@@ -34,7 +34,7 @@ func (r *Robot) Send(p *rocproto.Packet) error {
 		log.Println("Linker not set, cannot send rocproto.Packet")
 		return nil
 	}
-	err := r.l.Send(p)
+	err := r.l.send(p)
 	if err != nil {
 		return errors.New("Could not sent message. " + err.Error())
 	}

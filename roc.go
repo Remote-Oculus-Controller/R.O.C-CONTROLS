@@ -37,7 +37,7 @@ func NewRoc(lS, rS string, lT, rT bool) *Roc {
 	roc := &Roc{
 		Gobot:  gobot.NewGobot(),
 		cmap:   make(map[uint32]func(*rocproto.Packet) error),
-		l:      NewLinker(lS, rS, lT, rT),
+		l:      newLinker(lS, rS, lT, rT),
 		AiLock: make(chan bool),
 		cmd:    make(chan *rocproto.Packet, 512),
 		data:   make(chan *rocproto.Packet, 512),
@@ -72,7 +72,7 @@ func (r *Roc) handleChannel() {
 					"Unknown packet Type :	"+fmt.Sprintf("%b", b.Header&MaskType),
 					int32(b.Header&MaskSend))
 				log.Println(e.Err)
-				r.l.Send(e)
+				r.l.send(e)
 			}
 		}
 	}
@@ -99,12 +99,12 @@ func (r *Roc) handleCmd(ch chan *rocproto.Packet) {
 				if err != nil {
 					e := NewError(rocproto.Error_CMDEX, err.Error(), int32(p.Header&MaskSend))
 					log.Println(err.Error())
-					r.l.Send(e)
+					r.l.send(e)
 				}
 			} else {
 				e := NewError(rocproto.Error_Packet, "Unknown packet CMD ID :	"+fmt.Sprint(p.ID), int32(p.Header&MaskSend))
 				log.Println(e.Err)
-				r.l.Send(e)
+				r.l.send(e)
 			}
 		}
 	}
@@ -123,7 +123,7 @@ func (r *Roc) handleError(ch chan *rocproto.Packet) {
 //Start all component
 func (r *Roc) Start() error {
 
-	r.l.Start()
+	r.l.start()
 	go func() {
 		for {
 			r.handleChannel()
