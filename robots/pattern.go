@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"strings"
 )
 
 type Movement struct {
@@ -18,6 +19,8 @@ type Data_new struct {
 	fileData  []byte
 	filePath  string
 	patternOn bool
+	repeat    bool
+	customFile bool
 	movements []Movement
 }
 
@@ -28,7 +31,7 @@ func (ia *AI) stopPattern(map[string]interface{}) interface{} {
 	return fmt.Sprintf("Pattern stopped at %v", time.Now())
 }
 
-func (ia *AI) startPattern(map[string]interface{}) interface{} {
+func (ia *AI) startPattern(m map[string]interface{}) interface{} {
 
 	var data = new(Data_new)
 	var err error
@@ -36,20 +39,58 @@ func (ia *AI) startPattern(map[string]interface{}) interface{} {
 	data.fileData = make([]byte, 1024)
 	data.movements = []Movement{}
 	data.patternOn = true
-	data.filePath = "./patternDirectory/default.json"
+	data.repeat = false
+	data.customFile = false
 
-	if _, err := os.Stat(data.filePath); os.IsNotExist(err) {
-		fmt.Println("Error default.json does not exist")
+	if (m["path"] != 0) {
+		data.filePath = m["path"]
+	}else{
+		data.filePath = "./patternDirectory/default.json"
 	}
-	data.fileData, err = ioutil.ReadFile(data.filePath)
-	if err != nil {
-		log.Println(err)
-		return fmt.Sprintf("Cannot start pattern %v: %v", data.filePath, err.Error())
+
+	if (m["repeat"] != 0) {
+		data.repeat = m["repeat"]
+	}
+
+	if (m["custom"] != 0) {
+		data.customFile = true;
+		data.fileData = m["custom"];
+		data.filePath = "CustomFile"
+	}
+
+	if (data.customFile == true) {
+
+		if _, err := os.Stat(data.filePath); os.IsNotExist(err) {
+			fmt.Println("Error default.json does not exist")
+		}
+		data.fileData, err = ioutil.ReadFile(data.filePath)
+		if err != nil {
+			log.Println(err)
+			return fmt.Sprintf("Cannot start pattern %v: %v", data.filePath, err.Error())
+		}
+
 	}
 	err = json.Unmarshal([]byte(data.fileData), &data.movements)
 	if err != nil {
 		log.Println("error : " + err.Error())
 		return fmt.Sprintf("Cannot start pattern %v: %v", data.filePath, err.Error())
+	} else if (data.customFile == true) {
+		files, err := ioutil.ReadDir("./patternDirectory")
+		if err != nil {
+			log.Fatal(err)
+			return fmt.Sprintf("ERROR DURING READFILE");
+		}
+		var count = 0;
+		for _, file := range files {
+			if (strings.ContainsAny(file.Name(), "custom") == true) {
+				count += 1;
+			}
+			fmt.Println(fmt.Sprintf("Found %d custom files", count))
+		}
+		error := ioutil.WriteFile(fmt.Sprintf("./patternDirectory/customFile%d.json", count + 1), data.fileData, 0644)
+		if error != nil {
+			fmt.Println("Cannot create customFile")
+		}
 	}
 
 	var it bool = true
@@ -88,6 +129,7 @@ func (ia *AI) startPattern(map[string]interface{}) interface{} {
 				return fmt.Sprintf("Pattern interrupted %v", data.filePath)
 			}
 		}
+
 	}
 	return fmt.Sprintf("Pattern finished")
 }
