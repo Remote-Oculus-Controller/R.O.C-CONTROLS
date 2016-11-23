@@ -8,10 +8,14 @@ import (
 
 	"fmt"
 
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS"
 	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
+	"github.com/Remote-Oculus-Controller/proto"
+	"github.com/Remote-Oculus-Controller/proto/go"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/firmata"
 	"github.com/hybridgroup/gobot/platforms/gpio"
+	"time"
 )
 
 type Motion struct {
@@ -20,7 +24,8 @@ type Motion struct {
 	servoX, servoY *gpio.ServoDriver
 	motorL, motorR *gpio.ServoDriver
 	rocproto.Cam
-	dir float64
+	dir       float64
+	resetTime chan bool
 }
 
 const (
@@ -63,9 +68,23 @@ func NewMotion() *Motion {
 	m.AddFunc(m.resetCam, RCAM, m.resetCamAPI, "resetCam")
 	m.AddFunc(m.move, MOUV, nil, "mv")
 	m.AddEvent("move")
+	m.resetTime = make(chan bool)
+	go func() {
+		t := time.NewTimer(time.Second)
+		t.Stop()
+		for {
+			select {
+			case <-t.C:
+				m.stopMoving()
+			case <-m.resetTime:
+				t.Reset(time.Second)
+			}
+		}
+	}()
 	return m
 }
 
+//TODO add to normal stop procedure
 func (m *Motion) Stop() {
 	log.Println("Motion : resseting camera position and stopping motors")
 	m.resetCam(nil)
@@ -127,8 +146,10 @@ func (m *Motion) move(p *rocproto.Packet) error {
 	rS := gobot.ToScale(gobot.FromScale(CALCSPEED*(float64(rR)/100), -90, 90), 0, 180)
 	p.Mv.Speed = float64(lR+rR) / 2
 	gobot.Publish(m.Event("move"), *p.Mv)
+	m.resetTime <- true
 	m.motorL.Move(uint8(lS))
-	m.motorR.Move(90 - (rS - 90))
+	m.motorR.Move(uint8(90 - (rS - 90)))
+	fmt.Println(lS, 90-(rS-90))
 	return nil
 }
 

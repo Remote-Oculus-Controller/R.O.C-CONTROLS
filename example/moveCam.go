@@ -11,13 +11,14 @@ import (
 	"github.com/golang/protobuf/proto"
 	"github.com/googollee/go-engine.io/message"
 	"github.com/gorilla/websocket"
+	"math"
 )
 
 func main() {
 
 	var err error
 
-	u := url.URL{Scheme: "ws", Host: "192.168.0.9:8001", Path: "/controls"}
+	u := url.URL{Scheme: "ws", Host: "127.0.0.1:8001", Path: "/controls"}
 	log.Printf("connecting to %s\n", u.String())
 
 	conn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
@@ -27,19 +28,17 @@ func main() {
 	defer conn.Close()
 
 	go func() {
-		for i := float64(0.000); i > -1000; i-- {
-			p := rocproto.Cam{X: float64(i), Y: 0}
-			r := goPack.Prepare(uint32(rocproto.Cam_mv), rocproto.Packet_COMMAND, rocproto.Packet_VIDEO_CLIENT, rocproto.Packet_CONTROL_SERVER)
-			r.Cam = &p
-			if err != nil {
-				log.Fatal(err.Error())
-			}
+		for i := float64(0); i < 2*math.Pi; i += math.Pi / 4 {
+			log.Println("Hello")
+			p := rocproto.Mv{Angle: float64(i)}
+			r := goPack.Prepare(uint32(rocproto.Mv_move), rocproto.Packet_COMMAND, rocproto.Packet_VIDEO_CLIENT, rocproto.Packet_CONTROL_SERVER)
+			r.Mv = &p
 			b, err := proto.Marshal(r)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 				return
 			}
-			fmt.Println("Sending\n", r)
+			log.Println("Sending\n", r)
 			conn.WriteMessage(int(message.MessageBinary), b)
 		}
 	}()
