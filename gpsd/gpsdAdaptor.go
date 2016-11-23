@@ -3,9 +3,10 @@ package gpsd
 import (
 	"bufio"
 	"fmt"
-	"github.com/hybridgroup/gobot"
 	"log"
 	"net"
+
+	"github.com/hybridgroup/gobot"
 )
 
 var _ gobot.Adaptor = (*GpsdAdaptor)(nil)

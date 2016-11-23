@@ -8,10 +8,7 @@ import (
 
 	"fmt"
 
-	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS"
 	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
-	"github.com/Remote-Oculus-Controller/proto"
-	"github.com/Remote-Oculus-Controller/proto/go"
 	"github.com/hybridgroup/gobot"
 	"github.com/hybridgroup/gobot/platforms/firmata"
 	"github.com/hybridgroup/gobot/platforms/gpio"
@@ -131,15 +128,7 @@ func (m *Motion) move(p *rocproto.Packet) error {
 	p.Mv.Speed = float64(lR+rR) / 2
 	gobot.Publish(m.Event("move"), *p.Mv)
 	m.motorL.Move(uint8(lS))
-	m.motorR.Move((func() uint8 {
-		x := math.Abs(rS) - 90
-		if rS >= 90 {
-			return uint8(90 - x)
-		} else {
-			return uint8(90 + x)
-		}
-		return 90
-	})())
+	m.motorR.Move(90 - (rS - 90))
 	return nil
 }
 
