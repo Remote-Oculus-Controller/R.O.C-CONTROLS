@@ -13,9 +13,9 @@ import (
 type RocNetI interface {
 	Start()
 	Stop()
-	//Send(*rocproto.Packet)
-	//Next() RocNetI
-	//Connected() bool
+	Send(*rocproto.Packet)
+	Type() rocproto.Packet_Section
+	Connected() bool
 }
 
 type RocNet struct{
@@ -59,6 +59,14 @@ func (c *RocNet) Connected() bool {
 	return c.open
 }
 
+func (c *RocNet) Type() rocproto.Packet_Section {
+	return c.t
+}
+
+func (c *RocNet) Send(m *rocproto.Packet) {
+	c.out <- m
+}
+
 func (c *RocNet) orderPacket(buff []byte) {
 
 	m, err := checkBuffer(buff)
@@ -90,7 +98,7 @@ func checkBuffer(buff []byte) (m *rocproto.Packet, err error) {
 
 func (l *RocNet)route(m *rocproto.Packet) {
 	if m.Header & uint32(l.t) != 0 {
-		fmt.Println("Accepted", m)
+		log.Println("Accepted", m)
 		l.in <- m
 	}
 	go func() {
@@ -107,10 +115,8 @@ func (l *RocNet)route(m *rocproto.Packet) {
 
 func (l *LRocNet)Send(m *rocproto.Packet) {
 	for _, v := range *l {
-		n := v.(*RocNet)
-		if m.Header & uint32(n.t) != 0 && n != nil && n.Connected() == true {
-			log.Println("Packet routed")
-			n.out <- m
+		if m.Header & uint32(v.Type()) != 0 && v.Connected() == true {
+			v.Send(m)
 		}
 	}
 }

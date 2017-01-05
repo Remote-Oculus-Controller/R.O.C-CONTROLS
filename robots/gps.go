@@ -24,6 +24,7 @@ const (
 type Gps struct {
 	*roc.Robot
 	*gpsd.GpsdDriver
+	adaptor *gpsd.GpsdAdaptor
 	coord rocproto.Coord
 
 	xoff, yoff, orioff, dir float64
@@ -33,11 +34,11 @@ func NewGPS() *Gps {
 
 	gps := new(Gps)
 	gps.Robot = roc.NewRocRobot(nil)
-	gpsdA := gpsd.NewGpsdAdaptor("gpsd", "")
-	gps.GpsdDriver = gpsd.NewGpsdDriver(gpsdA, "gpsd_driver")
+	gps.adaptor = gpsd.NewGpsdAdaptor("gpsd", gpsd.GPSD_PORT)
+	gps.GpsdDriver = gpsd.NewGpsdDriver(gps.adaptor, "gpsd_driver")
 
 	gps.Robot.Robot = gobot.NewRobot("gps",
-		[]gobot.Connection{gpsdA},
+		[]gobot.Connection{gps.adaptor},
 		[]gobot.Device{gps.GpsdDriver},
 	)
 
@@ -67,6 +68,7 @@ func NewGPS() *Gps {
 		}
 		gps.Send(p)
 	})
+
 	gps.AddFunc(gps.tooglePause, TOOGLE, gps.tooglePauseAPI, "toogle")
 	gps.AddFunc(gps.getCoordByte, GET_COORD, gps.getCoordApi, "getCoord")
 	gps.AddFunc(nil, 0, gps.sim, "sim")

@@ -28,9 +28,10 @@ func NewAI(r *roc.Roc) *AI {
 	ai.pattern = make(chan bool, 2)
 	work := func() {
 	}
-	/*gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
+	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
 		r.Robot("gps").Command("sim")(map[string]interface{}{"mv": d})
-	})*/
+	})
+
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))
 	//ai.getPos = r.Robot("gps").Command("getCoord")

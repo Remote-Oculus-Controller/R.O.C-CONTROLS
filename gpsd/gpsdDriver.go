@@ -87,3 +87,8 @@ func (gpsd *GpsdDriver) TooglePause() {
 	gpsd.pause <- true
 	return
 }
+
+func (gpsd *GpsdDriver) Stop() {
+
+	gpsd.w.GpsdWrite(STOP)
+}

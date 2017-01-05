@@ -12,13 +12,14 @@ import (
 	"github.com/googollee/go-engine.io/message"
 	"github.com/gorilla/websocket"
 	"math"
+	"time"
 )
 
 func main() {
 
 	var err error
 
-	u := url.URL{Scheme: "ws", Host: "127.0.0.1:8001", Path: "/controls"}
+	u := url.URL{Scheme: "ws", Host: "192.168.0.9:8001", Path: "/controls"}
 	log.Printf("connecting to %s\n", u.String())
 
 	conn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
@@ -31,7 +32,7 @@ func main() {
 		for i := float64(0); i < 2*math.Pi; i += math.Pi / 4 {
 			log.Println("Hello")
 			p := rocproto.Mv{Angle: float64(i)}
-			r := goPack.Prepare(uint32(rocproto.Mv_move), rocproto.Packet_COMMAND, rocproto.Packet_VIDEO_CLIENT, rocproto.Packet_VIDEO_SERVER)
+			r := goPack.Prepare(uint32(rocproto.Mv_move), rocproto.Packet_COMMAND, rocproto.Packet_VIDEO_CLIENT, rocproto.Packet_CONTROL_SERVER)
 			r.Mv = &p
 			b, err := proto.Marshal(r)
 			if err != nil {
@@ -39,7 +40,8 @@ func main() {
 				return
 			}
 			log.Println("Sending\n", r)
-			conn.WriteMessage(int(message.MessageBinary), b)
+			//conn.WriteMessage(int(message.MessageBinary), b)
+			time.After(200*time.Millisecond)
 		}
 	}()
 	for {
