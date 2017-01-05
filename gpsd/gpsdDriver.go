@@ -24,7 +24,7 @@ func NewGpsdDriver(adaptor *GpsdAdaptor, name string, t ...time.Duration) *GpsdD
 
 	gpsd := &GpsdDriver{
 		name:      name,
-		halt:      make(chan bool),
+		halt:      make(chan bool, 1),
 		pause:     make(chan bool),
 		interval:  time.Second,
 		r:         adaptor,
@@ -55,11 +55,12 @@ func (gpsd *GpsdDriver) Start() (errs []error) {
 				}
 			} else {
 				log.Println("Error reading on gpsd socket", err.Error())
-				gobot.Publish(gpsd.Event(ERROR), err)
+				//gobot.Publish(gpsd.Event(ERROR), err)
 				return
 			}
 			select {
 			case <-time.After(gpsd.interval):
+				continue
 			case <-gpsd.halt:
 				return
 			}

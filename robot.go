@@ -15,8 +15,6 @@ type Robot struct {
 	cmap map[uint32]func(*rocproto.Packet) error
 }
 
-const ParamErr = "MISSING %s in parameters"
-
 //NewRocRobot create a new shell for a "robots" to be include
 func NewRocRobot(l *Linker) *Robot {
 

@@ -18,7 +18,7 @@ func main() {
 
 	var err error
 
-	u := url.URL{Scheme: "ws", Host: "127.0.0.1:8001", Path: "/controls"}
+	u := url.URL{Scheme: "ws", Host: "192.168.0.9:8001", Path: "/controls"}
 	log.Printf("connecting to %s\n", u.String())
 
 	conn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
