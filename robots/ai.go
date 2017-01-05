@@ -28,18 +28,12 @@ func NewAI(r *roc.Roc) *AI {
 	ai.pattern = make(chan bool, 2)
 	work := func() {
 	}
-	/*gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
+	gobot.On(r.Robot("motion").Event("move"), func(d interface{}) {
 		r.Robot("gps").Command("sim")(map[string]interface{}{"mv": d})
-	})*/
+	})
 	ai.m = NewMotion()
 	ai.m.Equal(r.Robot("motion"))
-	//ai.getPos = r.Robot("gps").Command("getCoord")
-	//ai.buttonObstacle = gpio.NewButtonDriver(ai.m.arduino, "buttonObstacle", "13")
-	//ai.sensorLight = gpio.NewAnalogSensorDriver(ai.m.arduino, "sensorL", "0")
-	//ai.m.Robot.AddDevice(ai.buttonObstacle)
-	/*
-		ai.m.Robot.AddDevice(ai.sensorLight)
-	*/
+
 
 	ai.Robot.Robot = gobot.NewRobot("ai", work)
 	ai.AddFunc(nil, 0, ai.pushButton, "pushButton")
@@ -48,7 +42,6 @@ func NewAI(r *roc.Roc) *AI {
 	ai.AddFunc(nil, 0, ai.releaseButton, "releaseButton")
 	ai.AddEvent("push")
 	ai.AddEvent("release")
-	//ai.AddFunc(ai.startLightWorkaround, uint32(rocproto.AiCodes_LIGHT), ai.startLightDetect, "pushLightButton")
 	ai.obstacle()
 	ai.pending = false
 	ai.firstTime = true
