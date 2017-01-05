@@ -40,7 +40,6 @@ func NewGpsdDriver(adaptor *GpsdAdaptor, name string, t ...time.Duration) *GpsdD
 	return gpsd
 }
 
-// TODO better pause and toogle handling
 func (gpsd *GpsdDriver) Start() (errs []error) {
 
 	gpsd.w.GpsdWrite(START)
@@ -53,6 +52,7 @@ func (gpsd *GpsdDriver) Start() (errs []error) {
 				if tpv.Class == TPV {
 					gobot.Publish(gpsd.Event(TPV), tpv)
 				}
+				//TODO add more gps filter
 			} else {
 				log.Println("Error reading on gpsd socket", err.Error())
 				gobot.Publish(gpsd.Event(ERROR), err)
@@ -62,6 +62,8 @@ func (gpsd *GpsdDriver) Start() (errs []error) {
 			case <-time.After(gpsd.interval):
 			case <-gpsd.halt:
 				return
+			case <-gpsd.pause:
+				<-gpsd.pause
 			}
 		}
 	}()
@@ -72,12 +74,10 @@ func (gpsd *GpsdDriver) Name() string {
 	return gpsd.name
 }
 
-// Connection returns the AnalogSensorDrivers Connection
 func (gpsd *GpsdDriver) Connection() gobot.Connection {
 	return gpsd.r.(gobot.Connection)
 }
 
-// Halt stops polling the analog sensor for new information
 func (gpsd *GpsdDriver) Halt() (errs []error) {
 	gpsd.halt <- true
 	return nil

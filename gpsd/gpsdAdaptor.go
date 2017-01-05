@@ -60,7 +60,7 @@ func (gpsd *GpsdAdaptor) Connect() (errs []error) {
 
 	var err error
 
-	gpsd.conn, err = net.Dial("tcp", GPSD_PORT)
+	gpsd.conn, err = net.Dial("tcp", gpsd.ip)
 	if err != nil {
 		log.Println("Cannot connect to gpsd", err.Error())
 		return []error{err}
@@ -70,10 +70,11 @@ func (gpsd *GpsdAdaptor) Connect() (errs []error) {
 	return nil
 }
 
-// Disconnect closes the io connection to the board
+// Stop gpsd raw and watcher modes
+// Closes the connection to the gpsd service
 func (gpsd *GpsdAdaptor) Disconnect() (err error) {
 	log.Printf("Terminating gpsd connection\n")
-	fmt.Fprintf(gpsd.conn, "?WATCH={\"enable\":false}")
+	fmt.Fprintf(gpsd.conn, STOP)
 	gpsd.conn.Close()
 	return nil
 }

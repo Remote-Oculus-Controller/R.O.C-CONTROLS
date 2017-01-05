@@ -6,19 +6,18 @@ import (
 
 	"github.com/Remote-Oculus-Controller/proto"
 	"github.com/hybridgroup/gobot"
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/network"
 )
 
 //RocRobot defined all element needed to correctly create a robot compatible with the architecture.
 type Robot struct {
 	*gobot.Robot
-	l    *Linker
+	l    *network.LRocNet
 	cmap map[uint32]func(*rocproto.Packet) error
 }
 
-const ParamErr = "MISSING %s in parameters"
-
 //NewRocRobot create a new shell for a "robots" to be include
-func NewRocRobot(l *Linker) *Robot {
+func NewRocRobot(l *network.LRocNet) *Robot {
 
 	r := new(Robot)
 	r.l = l
@@ -31,13 +30,11 @@ func (r *Robot) Send(p *rocproto.Packet) error {
 
 	p.Header = p.Header | (uint32(rocproto.Packet_CONTROL_SERVER) << uint32(rocproto.Packet_SHIFT_SEND))
 	if r.l == nil {
-		log.Println("Linker not set, cannot send rocproto.Packet")
-		return nil
+		e := errors.New("Linker not set, cannot send rocproto.Packet")
+		log.Println(e)
+		return e
 	}
-	err := r.l.send(p)
-	if err != nil {
-		return errors.New("Could not sent message. " + err.Error())
-	}
+	r.l.Send(p)
 	return nil
 }
 

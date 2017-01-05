@@ -6,30 +6,22 @@ import (
 
 	"github.com/Remote-Oculus-Controller/proto"
 	"github.com/hybridgroup/gobot"
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/network"
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/pkt"
+	"github.com/Remote-Oculus-Controller/proto/go"
 )
 
 //Roc super control super of robots
 type Roc struct {
 	*gobot.Gobot                                         //Gobot
 	cmap         map[uint32]func(*rocproto.Packet) error //cmd func map
-	l            *Linker
+	l	     network.LRocNet
 	AiLock       chan bool
+	in	     chan *rocproto.Packet
 	cmd          chan *rocproto.Packet
 	data         chan *rocproto.Packet
 	error        chan *rocproto.Packet
 }
-
-const (
-	Magic = uint32(rocproto.Packet_MAGIC_Number)
-
-	ShiftType = uint32(rocproto.Packet_SHIFT_TYPE)
-	MaskType  = uint32(rocproto.Packet_MASK_TYPE) << ShiftType
-	MaskSend  = uint32(rocproto.Packet_MASK_SEND)
-
-	Cmd   = uint32(rocproto.Packet_COMMAND) << ShiftType
-	Data  = uint32(rocproto.Packet_DATA) << ShiftType
-	Error = uint32(rocproto.Packet_ERROR) << ShiftType
-)
 
 //NewRoc create
 func NewRoc(lS, rS string, lT, rT bool) *Roc {
@@ -37,12 +29,20 @@ func NewRoc(lS, rS string, lT, rT bool) *Roc {
 	roc := &Roc{
 		Gobot:  gobot.NewGobot(),
 		cmap:   make(map[uint32]func(*rocproto.Packet) error),
-		l:      newLinker(lS, rS, lT, rT),
 		AiLock: make(chan bool),
+		l:	make([]network.RocNetI, 0),
+		in:    make(chan *rocproto.Packet, 1024),
 		cmd:    make(chan *rocproto.Packet, 512),
 		data:   make(chan *rocproto.Packet, 512),
 		error:  make(chan *rocproto.Packet, 10),
 	}
+	ws := network.NewWsSrv(network.NewRocNet(rS, rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_CLIENT, rT))
+	ws.SetInChan(roc.in)
+	loc := network.NewTcpClient(network.NewRocNet(lS, rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_SERVER, lT))
+	loc.SetInChan(roc.in)
+	ws.Append(loc.RocNet)
+	loc.Append(ws.RocNet)
+	roc.l = append(roc.l, ws, loc)
 	roc.apiCreate()
 	return roc
 }
@@ -58,21 +58,21 @@ func (r *Roc) handleChannel() {
 	go r.handleError(r.error)
 	for {
 		select {
-		case b := <-r.l.remote.in:
+		case b := <-r.in:
 			log.Printf("Packet ==>	%v\n", b)
-			switch b.Header & MaskType {
-			case Cmd:
+			switch b.Header & goPack.MASK_TYPE {
+			case goPack.CMD:
 				r.cmd <- b
-			case Data:
+			case goPack.DATA:
 				r.data <- b
-			case Error:
+			case goPack.ERROR:
 				r.error <- b
 			default:
-				e := NewError(rocproto.Error_Packet,
-					"Unknown packet Type :	"+fmt.Sprintf("%b", b.Header&MaskType),
-					int32(b.Header&MaskSend))
+				e := pkt.Error(rocproto.Error_Packet,
+					"Unknown packet Type :	"+fmt.Sprintf("%b", b.Header&goPack.MASK_TYPE),
+					int32(b.Header&goPack.MASK_SEND))
 				log.Println(e.Err)
-				r.l.send(e)
+				r.l.Send(e)
 			}
 		}
 	}
@@ -97,14 +97,14 @@ func (r *Roc) handleCmd(ch chan *rocproto.Packet) {
 			if k {
 				err := f(p)
 				if err != nil {
-					e := NewError(rocproto.Error_CMDEX, err.Error(), int32(p.Header&MaskSend))
+					e := pkt.Error(rocproto.Error_CMDEX, err.Error(), int32(p.Header&goPack.MASK_SEND))
 					log.Println(err.Error())
-					r.l.send(e)
+					r.l.Send(e)
 				}
 			} else {
-				e := NewError(rocproto.Error_Packet, "Unknown packet CMD ID :	"+fmt.Sprint(p.ID), int32(p.Header&MaskSend))
+				e := pkt.Error(rocproto.Error_Packet, "Unknown packet CMD ID :	"+fmt.Sprint(p.ID), int32(p.Header&goPack.MASK_SEND))
 				log.Println(e.Err)
-				r.l.send(e)
+				r.l.Send(e)
 			}
 		}
 	}
@@ -123,12 +123,9 @@ func (r *Roc) handleError(ch chan *rocproto.Packet) {
 //Start all component
 func (r *Roc) Start() error {
 
-	r.l.start()
-	go func() {
-		for {
-			r.handleChannel()
-		}
-	}()
+	log.Println(r.l)
+	r.l.Start()
+	go r.handleChannel()
 	errs := r.Gobot.Start()
 	if errs != nil {
 		for _, err := range errs {
@@ -149,7 +146,7 @@ func (r *Roc) AddRocRobot(m *Robot) {
 	if r.Robot(m.Name) != nil {
 		log.Println("Warning ==>", m.Name, "bot overwritten")
 	}
-	m.l = r.l
+	m.l = &r.l
 	for k, v := range m.cmap {
 		_, ok := r.cmap[k]
 		if ok {

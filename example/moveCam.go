@@ -31,7 +31,7 @@ func main() {
 		for i := float64(0); i < 2*math.Pi; i += math.Pi / 4 {
 			log.Println("Hello")
 			p := rocproto.Mv{Angle: float64(i)}
-			r := goPack.Prepare(uint32(rocproto.Mv_move), rocproto.Packet_COMMAND, rocproto.Packet_VIDEO_CLIENT, rocproto.Packet_CONTROL_SERVER)
+			r := goPack.Prepare(uint32(rocproto.Mv_move), rocproto.Packet_COMMAND, rocproto.Packet_VIDEO_CLIENT, rocproto.Packet_VIDEO_SERVER)
 			r.Mv = &p
 			b, err := proto.Marshal(r)
 			if err != nil {
