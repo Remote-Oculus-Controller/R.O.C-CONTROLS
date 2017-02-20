@@ -25,7 +25,7 @@ type Gps struct {
 	*roc.Robot
 	*gpsd.GpsdDriver
 	adaptor *gpsd.GpsdAdaptor
-	coord rocproto.Coord
+	coord   rocproto.Coord
 
 	xoff, yoff, orioff, dir float64
 }

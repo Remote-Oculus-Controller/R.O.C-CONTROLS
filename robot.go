@@ -4,12 +4,12 @@ import (
 	"errors"
 	"log"
 
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/network"
 	"github.com/Remote-Oculus-Controller/proto"
 	"github.com/hybridgroup/gobot"
-	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/network"
 )
 
-//RocRobot defined all element needed to correctly create a robot compatible with the architecture.
+//Robot defined all element needed to correctly create a robot compatible with the architecture.
 type Robot struct {
 	*gobot.Robot
 	l    *network.LRocNet

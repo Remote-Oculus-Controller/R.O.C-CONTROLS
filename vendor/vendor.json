@@ -3,107 +3,150 @@
 	"ignore": "test",
 	"package": [
 		{
-          "checksumSHA1": "WH0my0pZVLfHVPrPE0WS2qB/hQY=",
-          "path": "github.com/Remote-Oculus-Controller/proto",
-          "revision": "10e872e009b143b1e5c611ad7ad4481cf2ec6ccd",
-          "revisionTime": "2016-08-09T19:56:54Z"
-        },
-      {
-        "checksumSHA1": "+VVIp6jX4lTySsnABdjMopLKCuc=",
-        "path": "github.com/Remote-Oculus-Controller/proto/go",
-        "revision": "10e872e009b143b1e5c611ad7ad4481cf2ec6ccd",
-        "revisionTime": "2016-08-09T19:56:54Z"
-      },
-      {
-        "checksumSHA1": "AKjqgiWov1IJWbnpCkjVEs6NunQ=",
+			"checksumSHA1": "WH0my0pZVLfHVPrPE0WS2qB/hQY=",
+			"path": "github.com/Remote-Oculus-Controller/proto",
+			"revision": "10e872e009b143b1e5c611ad7ad4481cf2ec6ccd",
+			"revisionTime": "2016-08-09T19:56:54Z"
+		},
+		{
+			"checksumSHA1": "+VVIp6jX4lTySsnABdjMopLKCuc=",
+			"path": "github.com/Remote-Oculus-Controller/proto/go",
+			"revision": "10e872e009b143b1e5c611ad7ad4481cf2ec6ccd",
+			"revisionTime": "2016-08-09T19:56:54Z"
+		},
+		{
+			"checksumSHA1": "AKjqgiWov1IJWbnpCkjVEs6NunQ=",
 			"path": "github.com/bmizerany/pat",
 			"revision": "c068ca2f0aacee5ac3681d68e4d0a003b7d1fd2c",
 			"revisionTime": "2016-02-17T10:30:50Z"
 		},
 		{
-          "checksumSHA1": "zb7w9zrHw5g5IFXHe6zX2eD7q2Q=",
+			"checksumSHA1": "zb7w9zrHw5g5IFXHe6zX2eD7q2Q=",
 			"path": "github.com/golang/protobuf/proto",
 			"revision": "8616e8ee5e20a1704615e6c8d7afcdac06087a67",
 			"revisionTime": "2016-06-08T21:55:45Z"
 		},
 		{
-          "checksumSHA1": "eQj5yhcPzMVMVgh85CFvOUHB50Q=",
+			"checksumSHA1": "eQj5yhcPzMVMVgh85CFvOUHB50Q=",
 			"path": "github.com/golang/protobuf/ptypes/any",
 			"revision": "8616e8ee5e20a1704615e6c8d7afcdac06087a67",
 			"revisionTime": "2016-06-08T21:55:45Z"
 		},
 		{
-          "checksumSHA1": "Tv1/qmTmjl43MFulf61QbsGuu2c=",
-          "path": "github.com/googollee/go-engine.io/message",
-          "revision": "ca9ced27e02c880970ee7726f9814f8a9c55d777",
-          "revisionTime": "2016-05-10T13:12:59Z"
-        },
-      {
-        "checksumSHA1": "klfNfdEPsrWYLps2qBkLgfJsNYI=",
-        "path": "github.com/gorilla/websocket",
-        "revision": "a69d25be2fe2923a97c2af6849b2f52426f68fc0",
-        "revisionTime": "2016-08-02T13:32:03Z"
-      },
-      {
-        "checksumSHA1": "Eyfg0owr76rXFwMiaIKjWOguVTA=",
+			"checksumSHA1": "Tv1/qmTmjl43MFulf61QbsGuu2c=",
+			"path": "github.com/googollee/go-engine.io/message",
+			"revision": "ca9ced27e02c880970ee7726f9814f8a9c55d777",
+			"revisionTime": "2016-05-10T13:12:59Z"
+		},
+		{
+			"checksumSHA1": "klfNfdEPsrWYLps2qBkLgfJsNYI=",
+			"path": "github.com/gorilla/websocket",
+			"revision": "a69d25be2fe2923a97c2af6849b2f52426f68fc0",
+			"revisionTime": "2016-08-02T13:32:03Z"
+		},
+		{
+			"checksumSHA1": "cdOCt0Yb+hdErz8NAQqayxPmRsY=",
+			"origin": "github.com/hashicorp/go-multierror/vendor/github.com/hashicorp/errwrap",
+			"path": "github.com/hashicorp/errwrap",
+			"revision": "ed905158d87462226a13fe39ddf685ea65f1c11f",
+			"revisionTime": "2016-12-16T18:43:04Z"
+		},
+		{
+			"checksumSHA1": "4fgV2vzKKVyIlQ9nMyXIP5muq9E=",
+			"path": "github.com/hashicorp/go-multierror",
+			"revision": "ed905158d87462226a13fe39ddf685ea65f1c11f",
+			"revisionTime": "2016-12-16T18:43:04Z"
+		},
+		{
+			"checksumSHA1": "Eyfg0owr76rXFwMiaIKjWOguVTA=",
 			"path": "github.com/hybridgroup/gobot",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-          "checksumSHA1": "QZprPRY1jVc5CWzaEWDJFbk405k=",
+			"checksumSHA1": "QZprPRY1jVc5CWzaEWDJFbk405k=",
 			"path": "github.com/hybridgroup/gobot/api",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-          "checksumSHA1": "6MlDU03XQ6GOjNASy/dOjiyYdos=",
+			"checksumSHA1": "6MlDU03XQ6GOjNASy/dOjiyYdos=",
 			"path": "github.com/hybridgroup/gobot/api/robeaux",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-          "checksumSHA1": "BcrSvEILkktJlO+NfPEZpNrzcKE=",
+			"checksumSHA1": "BcrSvEILkktJlO+NfPEZpNrzcKE=",
 			"path": "github.com/hybridgroup/gobot/platforms/firmata",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-          "checksumSHA1": "9OF9ms4A3alhyfcVXGHByaCdOcw=",
+			"checksumSHA1": "9OF9ms4A3alhyfcVXGHByaCdOcw=",
 			"path": "github.com/hybridgroup/gobot/platforms/firmata/client",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-          "checksumSHA1": "TadEXSk2ci4TH0fiGSHAx9yf/xY=",
+			"checksumSHA1": "TadEXSk2ci4TH0fiGSHAx9yf/xY=",
 			"path": "github.com/hybridgroup/gobot/platforms/gpio",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-          "checksumSHA1": "q8LQ3TvcumbJ+MoGIjVlj3YhwGg=",
+			"checksumSHA1": "q8LQ3TvcumbJ+MoGIjVlj3YhwGg=",
 			"path": "github.com/hybridgroup/gobot/platforms/i2c",
 			"revision": "50ea4143f9ae9e11a7cdc5144e9856f0693123f0",
 			"revisionTime": "2016-05-25T04:05:27Z"
 		},
 		{
-          "checksumSHA1": "/a8HGnSCUPzGLk8ODAwMIc3MYGU=",
+			"checksumSHA1": "/a8HGnSCUPzGLk8ODAwMIc3MYGU=",
 			"path": "github.com/larsth/go-gpsdjson",
 			"revision": "8b0a9091ddfeac44817efc4c358693f20878e28c",
 			"revisionTime": "2016-02-23T10:58:57Z"
 		},
 		{
-          "checksumSHA1": "M9QaacDIgorEPLx6yAc7FQtxrnE=",
+			"checksumSHA1": "M9QaacDIgorEPLx6yAc7FQtxrnE=",
 			"path": "github.com/larsth/go-gpsfix",
 			"revision": "8a9f5dfdb1942f6fef27d19c91df8fa382cafa20",
 			"revisionTime": "2015-12-20T19:45:05Z"
 		},
 		{
-          "checksumSHA1": "/8A+wGFPFcBoT5+9APp05ueeokU=",
+			"checksumSHA1": "/8A+wGFPFcBoT5+9APp05ueeokU=",
 			"path": "github.com/tarm/goserial",
 			"revision": "b3440c3c63556c3fd67e915be3b92195bc70294a",
 			"revisionTime": "2015-10-07T20:54:00Z"
+		},
+		{
+			"checksumSHA1": "He+iIBiVfy0WLVtjCRI0ClsSRAQ=",
+			"path": "github.com/tarm/serial",
+			"revision": "37be519d49878d0098e34fb614136b81e6c87861",
+			"revisionTime": "2016-05-08T04:09:34Z"
+		},
+		{
+			"checksumSHA1": "bPrMScgIiGjsHxcdhxIk8S1meQQ=",
+			"path": "gobot.io/x/gobot",
+			"revision": "7a6e247bb8107eb5bbc4dba99bdef47eb102c0b9",
+			"revisionTime": "2016-12-21T06:56:11Z"
+		},
+		{
+			"checksumSHA1": "SilkSZuX/fmqcUDF/XwVrqLpwTo=",
+			"path": "gobot.io/x/gobot/drivers/gpio",
+			"revision": "7a6e247bb8107eb5bbc4dba99bdef47eb102c0b9",
+			"revisionTime": "2016-12-21T06:56:11Z"
+		},
+		{
+			"checksumSHA1": "8MOAVEdpL7JN/qkb1RUck/NWjdY=",
+			"path": "gobot.io/x/gobot/platforms/firmata",
+			"revision": "7a6e247bb8107eb5bbc4dba99bdef47eb102c0b9",
+			"revisionTime": "2016-12-21T06:56:11Z"
+		},
+		{
+			"checksumSHA1": "lXkLvAli7+zZh85KXFxEfbfmKBI=",
+			"path": "gobot.io/x/gobot/platforms/firmata/client",
+			"revision": "7a6e247bb8107eb5bbc4dba99bdef47eb102c0b9",
+			"revisionTime": "2016-12-21T06:56:11Z"
 		}
 	],
-  "rootPath": "github.com/Remote-Oculus-Controller/R.O.C-CONTROLS"
+	"rootPath": "github.com/Remote-Oculus-Controller/R.O.C-CONTROLS"
 }

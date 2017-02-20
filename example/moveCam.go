@@ -41,7 +41,7 @@ func main() {
 			}
 			log.Println("Sending\n", r)
 			//conn.WriteMessage(int(message.MessageBinary), b)
-			time.After(200*time.Millisecond)
+			time.After(200 * time.Millisecond)
 		}
 	}()
 	for {

@@ -8,10 +8,10 @@ type version struct {
 	Name                string
 }
 
-//Version
-var Version = version{1, 0, 0, "dev", "Beta ws v1"}
+//Version build
+var Version = version{2, 0, 2, "dev", "Beta ssl v1"}
 
-//Build
+//Build definition
 var Build string
 
 func (v version) String() string {

@@ -1,13 +1,13 @@
 package main
 
 import (
+	"fmt"
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
 	"log"
 	"net"
-	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
-	"fmt"
 )
 
-func main()  {
+func main() {
 
 	var listener *net.TCPListener
 	var tcp *net.TCPConn

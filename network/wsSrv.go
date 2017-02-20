@@ -1,45 +1,48 @@
 package network
 
 import (
+	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
+	"github.com/Remote-Oculus-Controller/proto"
+	"github.com/golang/protobuf/proto"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
-	"github.com/Remote-Oculus-Controller/proto"
-	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
-	"github.com/golang/protobuf/proto"
 )
 
-type WsSrv struct {
+//WSSrv websocket server implementation for roc network interface
+type WSSrv struct {
 	ws *websocket.Conn
 	*RocNet
 }
 
-func NewWsSrv(r *RocNet) *WsSrv{
-	return &WsSrv{RocNet: r}
+//NewWSSrv return a pointer to a Websocket server
+func NewWSSrv(r *RocNet) *WSSrv {
+	return &WSSrv{RocNet: r}
 }
 
 //Start a websocket connection
 //A websocket http endpoint is created on localhost:port/controls
-func (l *WsSrv) Start() {
+func (ws *WSSrv) Start() {
 
-	log.Printf("Starting websocket on %v/controls\n", l.ip)
-	http.HandleFunc("/controls", l.listen)
-	err := http.ListenAndServe(l.ip, nil)
+	log.Printf("Starting websocket on %v/controls\n", ws.ip)
+	http.HandleFunc("/controls", ws.listen)
+	err := http.ListenAndServe(ws.ip, nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
 }
 
-func (l *WsSrv) Stop() {
+//Stop and free
+func (ws *WSSrv) Stop() {
 
-	l.ws.Close()
-	l.ws = nil
-	l.open = false
+	ws.ws.Close()
+	ws.ws = nil
+	ws.open = false
 }
 
-func (l *WsSrv) listen(w http.ResponseWriter, r *http.Request) {
+func (ws *WSSrv) listen(w http.ResponseWriter, r *http.Request) {
 
-	if l.ws != nil {
+	if ws.ws != nil {
 		er := "Remote connection already taken !!"
 		log.Println(er)
 		w.Write([]byte(er))
@@ -54,44 +57,43 @@ func (l *WsSrv) listen(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	log.Println("Client connected", r.RemoteAddr)
-	l.ws = c
-	l.open = true
-	go l.handle(rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_CLIENT)
+	ws.ws = c
+	ws.open = true
+	go ws.handle(rocproto.Packet_CONTROL_SERVER | rocproto.Packet_VIDEO_CLIENT)
 	return
 }
 
 //Handle websocket connection
 //
 //The t parameters contain the section to which the handle is associated with Controls<=>Server Video / Controls<=>Client Videos
-func (l *WsSrv) handle(t rocproto.Packet_Section) {
+func (ws *WSSrv) handle(t rocproto.Packet_Section) {
 
-	defer l.Stop()
+	defer ws.Stop()
 
 	quit := make(chan bool)
-	go l.receive(quit)
-	l.send(quit)
+	go ws.receive(quit)
+	ws.send(quit)
 }
 
-func (s *WsSrv) receive(quit chan bool)  {
+func (ws *WSSrv) receive(quit chan bool) {
 
 	defer func() { quit <- true }()
 	for {
-		_, buff, err := s.ws.ReadMessage()
+		_, buff, err := ws.ws.ReadMessage()
 		if misc.CheckError(err, "Receiving data from conn", false) != nil {
 			return
 		}
-		s.orderPacket(buff)
+		ws.orderPacket(buff)
 	}
 }
 
-func (s *WsSrv) send(quit chan bool) {
+func (ws *WSSrv) send(quit chan bool) {
 
 	for {
 		select {
 		case <-quit:
 			return
-		case m := <-s.out:
-			log.Printf("Sending ==>	%v\n", m)
+		case m := <-ws.out:
 			b, err := proto.Marshal(m)
 			if misc.CheckError(err, "linker.go/handleWS", false) != nil {
 				if m == nil {
@@ -99,7 +101,7 @@ func (s *WsSrv) send(quit chan bool) {
 				}
 				continue
 			}
-			err = s.ws.WriteMessage(websocket.BinaryMessage, b)
+			err = ws.ws.WriteMessage(websocket.BinaryMessage, b)
 			if misc.CheckError(err, "linker.go/handleWS", false) != nil {
 				return
 			}
@@ -107,9 +109,10 @@ func (s *WsSrv) send(quit chan bool) {
 	}
 }
 
-func (ws *WsSrv) Connected() bool{
+//Connected ...
+func (ws *WSSrv) Connected() bool {
 
-	if (ws.ws != nil) {
+	if ws.ws != nil {
 		return true
 	}
 	return false

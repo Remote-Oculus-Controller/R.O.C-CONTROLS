@@ -1,82 +1,68 @@
 package network
 
 import (
-	"net"
-	"log"
 	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/misc"
 	"github.com/golang/protobuf/proto"
+	"log"
+	"net"
 )
 
-type TcpClient struct {
-	tcp  *net.TCPConn
+//TCPClient tcp client implementation for roc network interface
+type TCPClient struct {
+	tcp *net.TCPConn
 	*RocNet
 }
 
-func NewTcpClient(r *RocNet) *TcpClient {
-	return &TcpClient{RocNet: r}
+//NewTCPClient return a pointer to a TCPClient
+func NewTCPClient(r *RocNet) *TCPClient {
+	return &TCPClient{RocNet: r}
 }
 
+//Start client with provided network information
+//Will throw a fatal error if cannot reach server
 //TODO timeout connection and try
-func (l *TcpClient) Start() {
+func (tcp *TCPClient) Start() {
 
-	if l.ip == "" {
+	if tcp.ip == "" {
 		return
 	}
-	log.Println("Starting connection on ", l.ip)
-	tcpAddr, err := net.ResolveTCPAddr("tcp", l.ip)
+	log.Println("Starting connection on ", tcp.ip)
+	tcpAddr, err := net.ResolveTCPAddr("tcp", tcp.ip)
 	misc.CheckError(err, "resolving address in linker.go/startConn", true)
 	for {
-		/*
-		if m {
-			log.Println("Listening on", tcpAddr.String())
-			listener, err = net.ListenTCP("tcp", tcpAddr)
-			misc.CheckError(err, "listening in linker.go/startConn", true)
-			log.Println("Looking for a client...")
-			l.tcp, err = listener.AcceptTCP()
-			misc.CheckError(err, "Accepting client in linker.go/startCnn", true)
-			log.Print("Connection acepted")
-			listener.Close()
-		*/
-		/*
-		} else {
-		*/
-			log.Println("Dialing...")
-			l.tcp, err = net.DialTCP("tcp", nil, tcpAddr)
-			misc.CheckError(err, "Dialing adresse in linker.go/startConn", true)
+
+		log.Println("Dialing...")
+		tcp.tcp, err = net.DialTCP("tcp", nil, tcpAddr)
+		misc.CheckError(err, "Dialing adresse in linker.go/startConn", true)
 		log.Println("Connection acquired")
-		/*
-		}
-		*/
-		l.handleConn()
+		tcp.handleConn()
 		log.Println("Closing connection")
-		//listener.Close()
-		l.tcp.Close()
-		l.tcp = nil
+		tcp.tcp.Close()
+		tcp.tcp = nil
 	}
 }
 
-func (tcp *TcpClient) Stop() {
+//Stop client and free
+func (tcp *TCPClient) Stop() {
 
 	tcp.tcp.Close()
 	tcp.tcp = nil
 	tcp.open = false
 }
 
-//TODO Insert buffer len and check
 //Handle TCP connection
-//
 //The t parameters contain the section to which the handle is associated with Controls<=>Server Video / Controls<=>Client Videos
-func (l *TcpClient) handleConn() {
+func (tcp *TCPClient) handleConn() {
 
-	defer l.Stop()
+	defer tcp.Stop()
 
-	l.open = true
+	tcp.open = true
 	quit := make(chan bool)
-	go l.receive(quit)
-	l.send(quit)
+	go tcp.receive(quit)
+	tcp.send(quit)
 }
 
-func (c *TcpClient) receive(quit chan bool) {
+func (tcp *TCPClient) receive(quit chan bool) {
 
 	buff := make([]byte, 128)
 
@@ -86,27 +72,27 @@ func (c *TcpClient) receive(quit chan bool) {
 		case <-quit:
 			return
 		default:
-			i, err := c.tcp.Read(buff[0:])
+			i, err := tcp.tcp.Read(buff[0:])
 			if misc.CheckError(err, "Receiving data from conn", false) != nil {
 				return
 			}
-			c.orderPacket(buff[:i])
+			tcp.orderPacket(buff[:i])
 		}
 	}
 }
 
-func (l *TcpClient) send(quit chan bool) {
+func (tcp *TCPClient) send(quit chan bool) {
 
 	for {
 		select {
 		case <-quit:
 			return
-		case m := <-l.out:
+		case m := <-tcp.out:
 			b, err := proto.Marshal(m)
 			if misc.CheckError(err, "tcpClient.go/send", false) != nil {
 				continue
 			}
-			_, err = l.tcp.Write(b)
+			_, err = tcp.tcp.Write(b)
 			if misc.CheckError(err, "tcpClient.go/send", false) != nil {
 				quit <- true
 				return
@@ -115,9 +101,10 @@ func (l *TcpClient) send(quit chan bool) {
 	}
 }
 
-func (tcp *TcpClient) Connected() bool{
+//Connected ...
+func (tcp *TCPClient) Connected() bool {
 
-	if (tcp.tcp != nil) {
+	if tcp.tcp != nil {
 		return true
 	}
 	return false

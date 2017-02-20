@@ -9,6 +9,7 @@ import (
 	"github.com/hybridgroup/gobot/platforms/gpio"
 )
 
+//AI definition
 type AI struct {
 	*roc.Robot
 	m              *Motion
@@ -21,6 +22,7 @@ type AI struct {
 	pattern        chan bool
 }
 
+//Create a new AI
 func NewAI(r *roc.Roc) *AI {
 
 	ai := &AI{Robot: roc.NewRocRobot(nil)}

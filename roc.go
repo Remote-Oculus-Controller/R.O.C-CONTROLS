@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Remote-Oculus-Controller/proto"
-	"github.com/hybridgroup/gobot"
 	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/network"
 	"github.com/Remote-Oculus-Controller/R.O.C-CONTROLS/pkt"
+	"github.com/Remote-Oculus-Controller/proto"
 	"github.com/Remote-Oculus-Controller/proto/go"
+	"github.com/hybridgroup/gobot"
 )
 
 //Roc super control super of robots
 type Roc struct {
 	*gobot.Gobot                                         //Gobot
 	cmap         map[uint32]func(*rocproto.Packet) error //cmd func map
-	l	     network.LRocNet
+	l            network.LRocNet
 	AiLock       chan bool
-	in	     chan *rocproto.Packet
+	in           chan *rocproto.Packet
 	cmd          chan *rocproto.Packet
 	data         chan *rocproto.Packet
 	error        chan *rocproto.Packet
@@ -30,15 +30,15 @@ func NewRoc(lS, rS string, lT, rT bool) *Roc {
 		Gobot:  gobot.NewGobot(),
 		cmap:   make(map[uint32]func(*rocproto.Packet) error),
 		AiLock: make(chan bool),
-		l:	make([]network.RocNetI, 0),
-		in:    make(chan *rocproto.Packet, 1024),
+		l:      make([]network.RocNetI, 0),
+		in:     make(chan *rocproto.Packet, 1024),
 		cmd:    make(chan *rocproto.Packet, 512),
 		data:   make(chan *rocproto.Packet, 512),
 		error:  make(chan *rocproto.Packet, 10),
 	}
-	ws := network.NewWsSrv(network.NewRocNet(rS, rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_CLIENT, rT))
+	ws := network.NewWSSrv(network.NewRocNet(rS, rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_CLIENT, rT))
 	ws.SetInChan(roc.in)
-	loc := network.NewTcpClient(network.NewRocNet(lS, rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_SERVER, lT))
+	loc := network.NewTCPClient(network.NewRocNet(lS, rocproto.Packet_CONTROL_SERVER|rocproto.Packet_VIDEO_SERVER, lT))
 	loc.SetInChan(roc.in)
 	ws.Append(loc.RocNet)
 	loc.Append(ws.RocNet)
@@ -158,7 +158,7 @@ func (r *Roc) AddRocRobot(m *Robot) {
 	r.Gobot.AddRobot(m.Robot)
 }
 
-//Directly add func with code, if specified create the api entry
+//AddFunc directly add func with code, if specified create the api entry
 func (r *Roc) AddFunc(f func(*rocproto.Packet) error, code uint32, api func(map[string]interface{}) interface{}, name string) {
 	if f != nil && code != 0 {
 		log.Println("Assigning function", name, "to code", code)
